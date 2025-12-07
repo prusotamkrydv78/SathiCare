@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { geminiService } from '../services/geminiService'; // Import Service
+import PregnancyAiWidget from './PregnancyAiWidget'; // Import New Widget
 
 const PregnancyTracker = () => {
     const [activeTab, setActiveTab] = useState('Overview');
@@ -106,6 +107,8 @@ const PregnancyTracker = () => {
                         </button>
                     ))}
                 </div>
+                {/* AI Widget Integrated in Header */}
+                <PregnancyAiWidget />
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

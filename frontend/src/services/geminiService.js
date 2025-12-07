@@ -173,6 +173,44 @@ export const geminiService = {
         return tips[Math.floor(Math.random() * tips.length)];
     },
 
+    async getPregnancyChatResponse(userMessage, history = []) {
+        // Specialized System Prompt for Pregnancy
+        const PREG_SYSTEM_PROMPT = `
+        You are Saathi's Pregnancy Companion AI.
+        Your ONLY role is to answer questions related to pregnancy, maternal health, baby development, and post-partum care.
+        
+        Rules:
+        1. If the user asks about anything else (e.g., politics, coding, general news), politely refuse: "I can only help with pregnancy and health-related questions. 🌸"
+        2. Be warm, reassuring, and use emojis.
+        3. For medical symptoms, always add: "Please consult your doctor for medical advice."
+        4. Keep answers short and easy to read.
+        
+        User Context: Pregnant woman in Nepal, Week 20.
+        `;
+
+        if (!model) {
+            await delay(1000);
+            return { text: "[Mock] Please add API Key. (Pregnancy AI: " + userMessage + ")" };
+        }
+
+        try {
+            const chat = model.startChat({
+                history: history.map(h => ({
+                    role: h.sender === 'user' ? 'user' : 'model',
+                    parts: [{ text: h.text }]
+                })),
+            });
+
+            const result = await chat.sendMessage(`${PREG_SYSTEM_PROMPT}\nUser Message: ${userMessage}`);
+            const response = await result.response;
+            return { text: response.text() };
+
+        } catch (error) {
+            console.error("Pregnancy AI Error:", error);
+            return { text: "I'm having trouble connecting. Please try again later. 🤰" };
+        }
+    },
+
     async getPregnancyAdvice(week) {
         // Static rules are often safer/better for week-by-week standard advice than generative
         if (week < 13) return "First Trimester: Focus on rest and hydration.";
