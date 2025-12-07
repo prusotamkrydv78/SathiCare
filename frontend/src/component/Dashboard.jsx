@@ -103,18 +103,18 @@ const Dashboard = () => {
                     <span className="text-xl">🏠</span>
                     <span className="text-[10px] font-medium">Home</span>
                 </Link>
-                <Link to="/track" className="flex flex-col items-center space-y-1 text-primary-pink">
+                <Link to="/track" className="flex flex-col items-center space-y-1 hover:text-primary-pink transition">
                     <span className="text-xl">📊</span>
                     <span className="text-[10px] font-medium">Track</span>
                 </Link>
-                <button className="flex flex-col items-center space-y-1 hover:text-primary-pink transition">
-                    <span className="text-xl">📚</span>
-                    <span className="text-[10px] font-medium">Library</span>
-                </button>
-                <button className="flex flex-col items-center space-y-1 hover:text-primary-pink transition">
+                <Link to="/features" className="flex flex-col items-center space-y-1 hover:text-primary-pink transition">
+                    <span className="text-xl">🧩</span>
+                    <span className="text-[10px] font-medium">Features</span>
+                </Link>
+                <Link to="/profile-settings" className="flex flex-col items-center space-y-1 hover:text-primary-pink transition">
                     <span className="text-xl">👤</span>
                     <span className="text-[10px] font-medium">Profile</span>
-                </button>
+                </Link>
             </nav>
         </div>
     );

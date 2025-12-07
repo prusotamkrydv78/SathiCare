@@ -8,10 +8,10 @@ const LandingPage = () => {
             <nav className="flex justify-between items-center p-6 bg-white shadow-sm">
                 <div className="text-2xl font-bold text-primary-pink">Saathi</div>
                 <div className="hidden md:flex space-x-6">
-                    <a href="#" className="hover:text-primary-pink">Home</a>
-                    <a href="#" className="hover:text-primary-pink">Features</a>
-                    <a href="#" className="hover:text-primary-pink">Testimonials</a>
-                    <a href="#" className="hover:text-primary-pink">Contact</a>
+                    <Link to="/" className="text-gray-600 hover:text-primary-pink transition font-medium">Home</Link>
+                    <Link to="/features" className="text-gray-600 hover:text-primary-pink transition font-medium">Features</Link>
+                    <Link to="/testimonials" className="text-gray-600 hover:text-primary-pink transition font-medium">Testimonials</Link>
+                    <Link to="/about" className="text-gray-600 hover:text-primary-pink transition font-medium">About</Link>
                 </div>
                 <div className="space-x-4">
                     <Link to="/login" className="px-4 py-2 text-primary-pink border border-primary-pink rounded-lg hover:bg-pink-50 inline-block">Login</Link>
@@ -114,7 +114,7 @@ const LandingPage = () => {
                         <ul className="space-y-2 text-gray-400">
                             <li><a href="#" className="hover:text-white">Home</a></li>
                             <li><a href="#" className="hover:text-white">About Us</a></li>
-                            <li><a href="#" className="hover:text-white">Features</a></li>
+                            <li><Link to="/features" className="hover:text-white">Features</Link></li>
                             <li><a href="#" className="hover:text-white">Blog</a></li>
                         </ul>
                     </div>
