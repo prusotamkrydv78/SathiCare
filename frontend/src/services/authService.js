@@ -23,6 +23,11 @@ const authService = {
             const response = await api.post('/auth/signup', userData);
             return response.data;
         } catch (error) {
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                throw error;
+            }
             console.warn("Backend not found. Using Mock Signup.");
             await delay(800);
             return { data: { user: { ...MOCK_USER, ...userData } } };
@@ -35,6 +40,10 @@ const authService = {
             const response = await api.post('/auth/login', credentials);
             return response.data;
         } catch (error) {
+            if (error.response) {
+                // Re-throw server errors
+                throw error;
+            }
             console.warn("Backend not found. Using Mock Login.");
             await delay(800);
             return { data: { user: MOCK_USER, token: 'mock-jwt-token' } };
