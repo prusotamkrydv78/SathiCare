@@ -1,12 +1,31 @@
- 
 import './App.css'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LandingPage from './component/LandingPage'
+import LoginPage from './component/LoginPage';
+import SignupPage from './component/SignupPage';
+import Dashboard from './component/Dashboard';
+import PeriodTracker from './component/PeriodTracker';
+import CompleteProfile from './component/CompleteProfile';
+import HealthDetails from './component/HealthDetails';
+import PregnancyTracker from './component/PregnancyTracker';
+import FacilityFinder from './component/FacilityFinder';
 
-function App() { 
+function App() {
 
   return (
-    <h1 class="text-3xl font-bold underline">
-    Hello world!
-  </h1>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/track" element={<PeriodTracker />} />
+        <Route path="/complete-profile" element={<CompleteProfile />} />
+        <Route path="/health-details" element={<HealthDetails />} />
+        <Route path="/pregnancy-tracker" element={<PregnancyTracker />} />
+        <Route path="/find-facility" element={<FacilityFinder />} />
+      </Routes>
+    </Router>
   )
 }
 

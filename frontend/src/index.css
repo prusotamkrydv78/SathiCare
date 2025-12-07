@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+@theme {
+  --color-primary-pink: #FF6B9D;
+  --color-soft-pink: #FFB3D0;
+  --color-text-dark: #2D3748;
+}
