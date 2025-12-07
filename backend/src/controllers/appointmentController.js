@@ -3,6 +3,7 @@ import Doctor from '../models/doctorModel.js';
 import ConsultationChat from '../models/consultationChatModel.js';
 import PeriodCycle from '../models/periodCycleModel.js';
 import Pregnancy from '../models/pregnancyModel.js';
+import { autoApproveAppointment } from '../services/autoApprovalService.js';
 
 // @desc    Book appointment
 // @route   POST /api/appointments/book
@@ -51,6 +52,11 @@ export const bookAppointment = async (req, res) => {
 
         // Populate doctor details
         await appointment.populate('doctorId', 'name specialization hospital consultationFee');
+
+        // Trigger auto-approval after 10 seconds (non-blocking)
+        autoApproveAppointment(appointment._id.toString()).catch(err => {
+            console.error('Auto-approval failed:', err);
+        });
 
         res.status(201).json({
             success: true,

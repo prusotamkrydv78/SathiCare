@@ -1,5 +1,3 @@
-
-
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
@@ -30,6 +28,7 @@ import NotificationsPage from './component/NotificationsPage';
 import AboutPage from './component/AboutPage';
 import SymptomChecker from './component/SymptomChecker';
 import HealthAssistant from './component/HealthAssistant';
+import ConsultationChat from './component/consultations/ConsultationChat';
 import FindCare from './component/FindCare';
 import HospitalDetails from './component/HospitalDetails';
 import Layout from './component/Layout';
@@ -71,6 +70,7 @@ function App() {
           <Route path="/notifications" element={<ProtectedRoute><Layout><NotificationsPage /></Layout></ProtectedRoute>} />
           <Route path="/symptom-checker" element={<ProtectedRoute><Layout><SymptomChecker /></Layout></ProtectedRoute>} />
           <Route path="/health-assistant" element={<ProtectedRoute><Layout><HealthAssistant /></Layout></ProtectedRoute>} />
+          <Route path="/consultations/:appointmentId/chat" element={<ProtectedRoute><ConsultationChat /></ProtectedRoute>} />
         </Routes>
       </AuthProvider>
     </Router>
