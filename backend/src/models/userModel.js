@@ -55,6 +55,18 @@ const userSchema = new mongoose.Schema(
             }
         },
 
+        // User preferences
+        preferences: {
+            notifications: {
+                type: Boolean,
+                default: true
+            },
+            darkMode: {
+                type: Boolean,
+                default: false
+            }
+        },
+
         // Refresh token for JWT
         refreshToken: {
             type: String,

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import * as notificationService from '../services/notificationService';
 import {
     LayoutDashboard,
     Calendar,
@@ -21,7 +22,8 @@ import {
     ChevronLeft,
     ChevronRight,
     Heart,
-    HeartPulse
+    HeartPulse,
+    MapPin
 } from 'lucide-react';
 
 const Layout = ({ children }) => {
@@ -31,6 +33,7 @@ const Layout = ({ children }) => {
 
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [notificationCount, setNotificationCount] = useState(0);
 
     useEffect(() => {
         setIsMobileMenuOpen(false);
@@ -41,6 +44,37 @@ const Layout = ({ children }) => {
         if (savedState !== null) {
             setIsCollapsed(JSON.parse(savedState));
         }
+    }, []);
+
+    // Fetch notification count
+    useEffect(() => {
+        const fetchNotificationCount = async () => {
+            try {
+                const response = await notificationService.getUnreadCount();
+                if (response.success) {
+                    setNotificationCount(response.data.count);
+                }
+            } catch (error) {
+                console.error('Error fetching notification count:', error);
+            }
+        };
+
+        fetchNotificationCount();
+
+        // Refresh count every 30 seconds
+        const interval = setInterval(fetchNotificationCount, 30000);
+
+        // Listen for notification updates from other components
+        const handleNotificationUpdate = () => {
+            fetchNotificationCount();
+        };
+
+        window.addEventListener('notificationUpdate', handleNotificationUpdate);
+
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('notificationUpdate', handleNotificationUpdate);
+        };
     }, []);
 
     const toggleSidebar = () => {
@@ -56,33 +90,14 @@ const Layout = ({ children }) => {
 
     const isActive = (path) => location.pathname === path;
 
-    const navSections = [
-        {
-            title: 'HEALTH TRACKING',
-            items: [
-                { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-                { path: '/track', label: 'Period Tracker', icon: Calendar },
-                { path: '/pregnancy-tracker', label: 'Pregnancy', icon: Baby },
-                { path: '/symptom-checker', label: 'Symptom Checker', icon: Stethoscope },
-            ]
-        },
-        {
-            title: 'CARE & SUPPORT',
-            items: [
-                { path: '/health-assistant', label: 'Health Assistant', icon: HeartPulse, badge: 'NEW' },
-                { path: '/appointments', label: 'Appointments', icon: CalendarCheck },
-                { path: '/consultations', label: 'Find Doctors', icon: UserRound },
-                { path: '/forum', label: 'Community', icon: Users },
-                { path: '/records', label: 'Health Records', icon: FolderOpen },
-            ]
-        },
-        {
-            title: 'ACCOUNT',
-            items: [
-                { path: '/notifications', label: 'Notifications', icon: Bell, badge: 12 },
-                { path: '/profile-settings', label: 'Settings', icon: Settings },
-            ]
-        }
+    const navItems = [
+        { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+        { path: '/track', label: 'Period Tracker', icon: Calendar },
+        { path: '/pregnancy-tracker', label: 'Pregnancy', icon: Baby },
+        { path: '/health-assistant', label: 'Health Assistant', icon: HeartPulse, badge: 'NEW' },
+        { path: '/find-care', label: 'Find Care', icon: MapPin },
+        { path: '/notifications', label: 'Notifications', icon: Bell, badge: notificationCount > 0 ? notificationCount : null },
+        { path: '/profile-manage', label: 'Profile', icon: Settings },
     ];
 
     return (
@@ -129,7 +144,7 @@ const Layout = ({ children }) => {
                         >
                             <SidebarContent
                                 user={user}
-                                navSections={navSections}
+                                navItems={navItems}
                                 isActive={isActive}
                                 isCollapsed={false}
                                 handleLogout={handleLogout}
@@ -151,7 +166,7 @@ const Layout = ({ children }) => {
             >
                 <SidebarContent
                     user={user}
-                    navSections={navSections}
+                    navItems={navItems}
                     isActive={isActive}
                     isCollapsed={isCollapsed}
                     toggleSidebar={toggleSidebar}
@@ -173,7 +188,7 @@ const Layout = ({ children }) => {
     );
 };
 
-const SidebarContent = ({ user, navSections, isActive, isCollapsed, toggleSidebar, handleLogout, isMobile, onClose }) => {
+const SidebarContent = ({ user, navItems, isActive, isCollapsed, toggleSidebar, handleLogout, isMobile, onClose }) => {
     return (
         <>
             {/* Header */}
@@ -237,53 +252,44 @@ const SidebarContent = ({ user, navSections, isActive, isCollapsed, toggleSideba
 
             {/* Navigation */}
             <nav className="flex-1 overflow-y-auto py-4 px-3">
-                {navSections.map((section) => (
-                    <div key={section.title} className="mb-5">
-                        {(!isCollapsed || isMobile) && (
-                            <h3 className="px-3 mb-2 text-[10px] font-bold text-gray-400 tracking-wider">
-                                {section.title}
-                            </h3>
-                        )}
-                        <div className="space-y-0.5">
-                            {section.items.map((item) => {
-                                const Icon = item.icon;
-                                const active = isActive(item.path);
+                <div className="space-y-0.5">
+                    {navItems.map((item) => {
+                        const Icon = item.icon;
+                        const active = isActive(item.path);
 
-                                return (
-                                    <Link key={item.path} to={item.path}>
-                                        <motion.div
-                                            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${active
-                                                ? 'bg-pink-50 text-pink-600'
-                                                : 'text-gray-600 hover:bg-gray-50'
-                                                }`}
-                                            whileHover={{ x: active ? 0 : 3 }}
-                                        >
-                                            <Icon className={`w-5 h-5 flex-shrink-0 ${active ? 'text-pink-600' : 'text-gray-500'}`} />
-                                            {(!isCollapsed || isMobile) && (
-                                                <>
-                                                    <span className="font-medium text-sm flex-1">
-                                                        {item.label}
-                                                    </span>
-                                                    {item.badge && (
-                                                        <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded-md ${typeof item.badge === 'number'
-                                                            ? 'bg-pink-600 text-white'
-                                                            : 'bg-gradient-to-r from-pink-500 to-purple-600 text-white'
-                                                            }`}>
-                                                            {item.badge}
-                                                        </span>
-                                                    )}
-                                                </>
+                        return (
+                            <Link key={item.path} to={item.path}>
+                                <motion.div
+                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${active
+                                        ? 'bg-pink-50 text-pink-600'
+                                        : 'text-gray-600 hover:bg-gray-50'
+                                        }`}
+                                    whileHover={{ x: active ? 0 : 3 }}
+                                >
+                                    <Icon className={`w-5 h-5 flex-shrink-0 ${active ? 'text-pink-600' : 'text-gray-500'}`} />
+                                    {(!isCollapsed || isMobile) && (
+                                        <>
+                                            <span className="font-medium text-sm flex-1">
+                                                {item.label}
+                                            </span>
+                                            {item.badge && (
+                                                <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded-md ${typeof item.badge === 'number'
+                                                    ? 'bg-pink-600 text-white'
+                                                    : 'bg-gradient-to-r from-pink-500 to-purple-600 text-white'
+                                                    }`}>
+                                                    {item.badge}
+                                                </span>
                                             )}
-                                            {isCollapsed && !isMobile && item.badge && typeof item.badge === 'number' && (
-                                                <div className="absolute right-1.5 top-1.5 w-1.5 h-1.5 bg-pink-600 rounded-full"></div>
-                                            )}
-                                        </motion.div>
-                                    </Link>
-                                );
-                            })}
-                        </div>
-                    </div>
-                ))}
+                                        </>
+                                    )}
+                                    {isCollapsed && !isMobile && item.badge && typeof item.badge === 'number' && (
+                                        <div className="absolute right-1.5 top-1.5 w-1.5 h-1.5 bg-pink-600 rounded-full"></div>
+                                    )}
+                                </motion.div>
+                            </Link>
+                        );
+                    })}
+                </div>
             </nav>
 
             {/* Emergency Button */}

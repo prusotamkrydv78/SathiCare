@@ -1,4 +1,5 @@
 import User from '../models/userModel.js';
+import NotificationService from '../services/notificationService.js';
 
 // @desc    Get user profile
 // @route   GET /api/user/profile
@@ -58,6 +59,9 @@ export const updateUserProfile = async (req, res) => {
         });
 
         await user.save();
+
+        // Send notification
+        await NotificationService.notifyProfileUpdated(req.user._id);
 
         res.status(200).json({
             success: true,
@@ -173,6 +177,47 @@ export const updatePreferences = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Failed to update preferences',
+            error: error.message
+        });
+    }
+};
+
+// @desc    Upload profile image
+// @route   POST /api/user/profile-image
+// @access  Private
+export const uploadProfileImage = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: 'No image file provided'
+            });
+        }
+
+        const user = await User.findById(req.user._id);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        // Update profile image path
+        user.profileImage = `/uploads/${req.file.filename}`;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Profile image uploaded successfully',
+            data: {
+                profileImage: user.profileImage
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to upload profile image',
             error: error.message
         });
     }

@@ -32,6 +32,7 @@ import ConsultationChat from './component/consultations/ConsultationChat';
 import FindCare from './component/FindCare';
 import HospitalDetails from './component/HospitalDetails';
 import SOSPage from './component/SOSPage';
+import ProfileManage from './component/ProfileManage';
 import Layout from './component/Layout';
 import PublicLayout from './component/PublicLayout';
 
@@ -48,7 +49,6 @@ function App() {
           <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />
           <Route path="/features" element={<PublicLayout><FeaturesPage /></PublicLayout>} />
           <Route path="/testimonials" element={<PublicLayout><TestimonialsPage /></PublicLayout>} />
-          <Route path="/find-care" element={<FindCare />} />
           <Route path="/hospital/:id" element={<HospitalDetails />} />
           <Route path="/sos" element={<SOSPage />} />
 
@@ -73,6 +73,8 @@ function App() {
           <Route path="/symptom-checker" element={<ProtectedRoute><Layout><SymptomChecker /></Layout></ProtectedRoute>} />
           <Route path="/health-assistant" element={<ProtectedRoute><Layout><HealthAssistant /></Layout></ProtectedRoute>} />
           <Route path="/consultations/:appointmentId/chat" element={<ProtectedRoute><ConsultationChat /></ProtectedRoute>} />
+          <Route path="/find-care" element={<ProtectedRoute><Layout><FindCare /></Layout></ProtectedRoute>} />
+          <Route path="/profile-manage" element={<ProtectedRoute><Layout><ProfileManage /></Layout></ProtectedRoute>} />
         </Routes>
       </AuthProvider>
     </Router>

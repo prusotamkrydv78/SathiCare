@@ -5,10 +5,12 @@ import {
     updateUserProfile,
     deleteUserAccount,
     updateHealthProfile,
-    updatePreferences
+    updatePreferences,
+    uploadProfileImage
 } from '../controllers/userController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 import { validate } from '../middlewares/validationMiddleware.js';
+import { upload } from '../middlewares/uploadMiddleware.js';
 
 const router = express.Router();
 
@@ -25,5 +27,8 @@ router.put('/health-profile', updateHealthProfile);
 
 // Preferences routes
 router.put('/preferences', updatePreferences);
+
+// Profile image upload
+router.post('/profile-image', upload.single('profileImage'), uploadProfileImage);
 
 export default router;
