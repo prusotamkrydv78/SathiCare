@@ -95,6 +95,7 @@ const Layout = ({ children }) => {
         { path: '/track', label: 'Period Tracker', icon: Calendar },
         { path: '/pregnancy-tracker', label: 'Pregnancy', icon: Baby },
         { path: '/health-assistant', label: 'Health Assistant', icon: HeartPulse, badge: 'NEW' },
+        { path: '/forum', label: 'Community', icon: Users },
         { path: '/find-care', label: 'Find Care', icon: MapPin },
         { path: '/notifications', label: 'Notifications', icon: Bell, badge: notificationCount > 0 ? notificationCount : null },
         { path: '/profile-manage', label: 'Profile', icon: Settings },
@@ -177,8 +178,8 @@ const Layout = ({ children }) => {
 
             {/* Main Content */}
             <main
-                className="flex-1 pt-16 md:pt-0"
-                style={{ marginLeft: isCollapsed ? '70px' : '260px' }}
+                className={`flex-1 pt-16 md:pt-0 transition-[margin] duration-300 ${isCollapsed ? 'md:ml-[70px]' : 'md:ml-[260px]'
+                    }`}
             >
                 <div className="p-4 md:p-6 max-w-7xl mx-auto">
                     {children}

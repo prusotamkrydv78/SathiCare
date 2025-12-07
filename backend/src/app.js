@@ -19,6 +19,7 @@ import notificationRoutes from './routes/notificationRoutes.js';
 import testRoutes from './routes/testRoutes.js';
 import poiRoutes from './routes/poiRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
+import communityRoutes from './routes/communityRoutes.js';
 import { logger, errorHandler, notFound } from './middlewares/common.js';
 
 // Load environment variables
@@ -79,6 +80,7 @@ app.use('/api/emergency', emergencyRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/poi', poiRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/community', communityRoutes);
 app.use('/api', testRoutes);
 
 // 404 handler

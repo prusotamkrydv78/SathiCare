@@ -11,7 +11,6 @@ const pregnancySchema = new mongoose.Schema(
         // Pregnancy dates
         lmpDate: {
             type: Date,
-            required: [true, 'Last menstrual period date is required']
         },
         dueDate: {
             type: Date,
