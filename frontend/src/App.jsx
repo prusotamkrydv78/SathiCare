@@ -17,6 +17,9 @@ import HealthRecords from './component/HealthRecords';
 import ProfileSettings from './component/ProfileSettings';
 import AppointmentCalendar from './component/AppointmentCalendar';
 import EmergencyAccess from './component/EmergencyAccess';
+import FeaturesPage from './component/FeaturesPage';
+import TestimonialsPage from './component/TestimonialsPage';
+import AboutPage from './component/AboutPage';
 
 function App() {
 
@@ -40,6 +43,9 @@ function App() {
         <Route path="/profile-settings" element={<ProfileSettings />} />
         <Route path="/appointments" element={<AppointmentCalendar />} />
         <Route path="/emergency" element={<EmergencyAccess />} />
+        <Route path="/features" element={<FeaturesPage />} />
+        <Route path="/testimonials" element={<TestimonialsPage />} />
+        <Route path="/about" element={<AboutPage />} />
       </Routes>
     </Router>
   )
