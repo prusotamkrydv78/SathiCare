@@ -11,6 +11,8 @@ import PregnancyTracker from './component/PregnancyTracker';
 import FacilityFinder from './component/FacilityFinder';
 import FacilityDetails from './component/FacilityDetails';
 import AiAssistant from './component/AiAssistant';
+import ContentLibrary from './component/ContentLibrary';
+import ArticlePage from './component/ArticlePage';
 
 function App() {
 
@@ -28,6 +30,8 @@ function App() {
         <Route path="/find-facility" element={<FacilityFinder />} />
         <Route path="/facility/:id" element={<FacilityDetails />} />
         <Route path="/ai-chat" element={<AiAssistant />} />
+        <Route path="/library" element={<ContentLibrary />} />
+        <Route path="/article/:id" element={<ArticlePage />} />
       </Routes>
     </Router>
   )
