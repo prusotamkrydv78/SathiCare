@@ -10,6 +10,9 @@ import userRoutes from './routes/userRoutes.js';
 import periodRoutes from './routes/periodRoutes.js';
 import pregnancyRoutes from './routes/pregnancyRoutes.js';
 import healthRoutes from './routes/healthRoutes.js';
+import doctorRoutes from './routes/doctorRoutes.js';
+import appointmentRoutes from './routes/appointmentRoutes.js';
+import consultationRoutes from './routes/consultationRoutes.js';
 import testRoutes from './routes/testRoutes.js';
 import { logger, errorHandler, notFound } from './middlewares/common.js';
 
@@ -63,6 +66,9 @@ app.use('/api/user', userRoutes);
 app.use('/api/period', periodRoutes);
 app.use('/api/pregnancy', pregnancyRoutes);
 app.use('/api/health', healthRoutes);
+app.use('/api/doctors', doctorRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/consultations', consultationRoutes);
 app.use('/api', testRoutes);
 
 // 404 handler
