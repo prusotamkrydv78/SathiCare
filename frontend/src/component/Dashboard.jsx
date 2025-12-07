@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { geminiService } from '../services/geminiService';
 import { useAuth } from '../context/AuthContext';
+import { motion } from 'framer-motion';
 
 const Dashboard = () => {
     const { user } = useAuth();
-    const [dailyTip, setDailyTip] = useState("Loading your daily wellness tip...");
+    const [dailyTip, setDailyTip] = useState("Curating your daily wellness insight...");
 
     useEffect(() => {
         const fetchTip = async () => {
@@ -15,24 +16,47 @@ const Dashboard = () => {
         fetchTip();
     }, []);
 
+    // Animation Variants
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+    };
+
     return (
-        <div className="space-y-8">
+        <motion.div
+            className="space-y-8 pb-10"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+        >
             {/* Header Section */}
-            <div className="flex justify-between items-end">
+            <motion.div variants={itemVariants} className="flex justify-between items-end px-2">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-800">Namaste, <span className="text-primary-pink">{user?.name || 'Sare'}</span></h1>
-                    <p className="text-gray-500 mt-1">Here is your daily health overview.</p>
+                    <h1 className="text-4xl font-extrabold text-gray-800 tracking-tight">
+                        Namaste, <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-pink to-purple-600">{user?.name || 'Sare'}</span>
+                    </h1>
+                    <p className="text-gray-500 mt-2 font-medium">Your daily wellness overview.</p>
                 </div>
                 <div className="flex items-center gap-4">
-                    <p className="text-sm text-gray-500 text-right hidden sm:block">
-                        <span className="block font-bold text-gray-800">Dec 07, 2025</span>
-                        Sunday
-                    </p>
-                    <div className="w-12 h-12 bg-gray-200 rounded-full border-2 border-white shadow-sm flex items-center justify-center text-gray-500 font-bold overflow-hidden">
+                    <div className="text-right hidden sm:block">
+                        <span className="block font-bold text-gray-800 text-lg">Dec 07</span>
+                        <span className="text-gray-500 text-sm">Sunday</span>
+                    </div>
+                    <div className="w-14 h-14 bg-white rounded-full border-2 border-gray-100 shadow-md flex items-center justify-center text-primary-pink font-bold text-xl">
                         S
                     </div>
                 </div>
-            </div>
+            </motion.div>
 
             {/* Main Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -40,50 +64,84 @@ const Dashboard = () => {
                 {/* Left Column (Width 2) */}
                 <div className="lg:col-span-2 space-y-8">
 
-                    {/* Hero Card - Cycle Status */}
-                    <div className="bg-gradient-to-r from-[#FFB3D0] to-[#FF6B9D] rounded-3xl p-8 text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row justify-between items-center">
-                        <div className="relative z-10 text-center md:text-left mb-6 md:mb-0">
-                            <h2 className="text-2xl font-bold mb-2">Cycle Day 14</h2>
-                            <p className="opacity-90 mb-6 text-lg">Ovulation Phase • High Chance of Pregnancy</p>
-                            <Link to="/track" className="px-6 py-2 bg-white text-primary-pink font-bold rounded-full shadow-lg hover:bg-pink-50 transition transform hover:-translate-y-1 inline-block">
-                                Log Symptoms
-                            </Link>
-                        </div>
+                    {/* Hero Card - Cycle Status - Glassmorphism & Gradient */}
+                    <motion.div
+                        variants={itemVariants}
+                        className="relative overflow-hidden rounded-[2.5rem] shadow-2xl group"
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#FF8FB1] via-[#FF5C93] to-[#7B2CBF] opacity-90 transition-opacity duration-500 group-hover:opacity-100"></div>
 
-                        <div className="relative z-10">
-                            <div className="w-32 h-32 rounded-full border-4 border-white/30 flex items-center justify-center bg-white/10 backdrop-blur-sm">
-                                <div className="text-center">
-                                    <span className="text-4xl font-bold block">14</span>
-                                    <span className="text-xs uppercase tracking-wide">Days Left</span>
+                        {/* Glass Effect Overlay */}
+                        <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px]"></div>
+
+                        {/* Decorative Blobs */}
+                        <div className="absolute -top-20 -right-20 w-80 h-80 bg-white/20 rounded-full blur-3xl"></div>
+                        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-purple-500/30 rounded-full blur-3xl"></div>
+
+                        <div className="relative z-10 p-10 flex flex-col md:flex-row justify-between items-center text-white">
+                            <div className="text-center md:text-left mb-8 md:mb-0 max-w-md">
+                                <div className="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold tracking-wider mb-4 border border-white/20">
+                                    OVULATION PHASE
+                                </div>
+                                <h2 className="text-4xl font-bold mb-3 leading-tight">Cycle Day 14</h2>
+                                <p className="text-pink-50 text-lg mb-8 font-medium">Your fertility is at its peak today. It's a great time to conceive!</p>
+                                <Link to="/track" className="px-8 py-3 bg-white text-primary-pink font-bold rounded-2xl shadow-lg hover:shadow-xl hover:bg-gray-50 transition-all transform hover:-translate-y-1 inline-flex items-center gap-2">
+                                    <span>Log Symptoms</span>
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                                </Link>
+                            </div>
+
+                            <div className="relative">
+                                {/* Simulated Progress Ring */}
+                                <svg className="w-40 h-40 transform -rotate-90 text-white/30">
+                                    <circle cx="80" cy="80" r="70" stroke="currentColor" strokeWidth="10" fill="transparent" />
+                                    <circle cx="80" cy="80" r="70" stroke="white" strokeWidth="10" fill="transparent" strokeDasharray="440" strokeDashoffset="220" strokeLinecap="round" />
+                                </svg>
+                                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span className="text-5xl font-bold drop-shadow-md">14</span>
+                                    <span className="text-xs font-bold tracking-widest opacity-80 uppercase mt-1">Days Left</span>
                                 </div>
                             </div>
                         </div>
-
-                        {/* Decorative Circles */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-                        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full translate-y-1/2 -translate-x-1/3"></div>
-                    </div>
+                    </motion.div>
 
                     {/* Secondary Cards Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Today's Tip */}
-                        <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
-                            <div className="flex items-start gap-4">
-                                <div className="bg-yellow-100 p-3 rounded-2xl text-2xl">💡</div>
-                                <div>
-                                    <h3 className="font-bold text-gray-800 text-lg mb-2">Today's Insight</h3>
-                                    <p className="text-gray-600 leading-relaxed">{dailyTip}</p>
+                        <motion.div
+                            variants={itemVariants}
+                            whileHover={{ y: -5 }}
+                            className="bg-white rounded-[2rem] p-8 shadow-lg border border-gray-100 flex flex-col h-full relative overflow-hidden"
+                        >
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-50 rounded-bl-[4rem] -mr-4 -mt-4 z-0"></div>
+                            <div className="relative z-10">
+                                <div className="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-2xl flex items-center justify-center text-2xl mb-4 shadow-sm">
+                                    💡
                                 </div>
+                                <h3 className="font-bold text-gray-800 text-xl mb-3">Daily Insight</h3>
+                                <p className="text-gray-500 leading-relaxed font-medium">{dailyTip}</p>
                             </div>
-                        </div>
+                        </motion.div>
 
                         {/* Quick Access - Emergency */}
-                        <Link to="/emergency" className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition group">
-                            <div className="flex items-center gap-4 mb-3">
-                                <div className="bg-red-50 p-3 rounded-2xl text-2xl group-hover:scale-110 transition-transform">🆘</div>
-                                <h3 className="font-bold text-gray-800 text-lg">Emergency SOS</h3>
-                            </div>
-                            <p className="text-gray-500 text-sm">Quick access to ambulance and help.</p>
+                        <Link to="/emergency" className="block h-full">
+                            <motion.div
+                                variants={itemVariants}
+                                whileHover={{ y: -5 }}
+                                className="bg-white rounded-[2rem] p-8 shadow-lg border border-red-50 h-full relative overflow-hidden group cursor-pointer"
+                            >
+                                <div className="absolute inset-0 bg-red-500 opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
+                                <div className="flex items-center justify-between mb-6">
+                                    <div className="w-14 h-14 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center text-3xl shadow-sm group-hover:scale-110 transition-transform duration-300">
+                                        🆘
+                                    </div>
+                                    <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-400">
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+                                    </div>
+                                </div>
+                                <h3 className="font-bold text-gray-800 text-xl mb-1">Emergency SOS</h3>
+                                <p className="text-gray-400 font-medium text-sm">Instant ambulance & support.</p>
+                            </motion.div>
                         </Link>
                     </div>
 
@@ -92,52 +150,53 @@ const Dashboard = () => {
                 {/* Right Column (Width 1) */}
                 <div className="space-y-8">
 
-                    {/* Quick Actions */}
-                    <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-                        <h3 className="font-bold text-gray-800 mb-6 text-lg">Quick Actions</h3>
+                    {/* Quick Actions - Modern Grid */}
+                    <motion.div variants={itemVariants} className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-gray-50">
+                        <h3 className="font-bold text-gray-800 mb-6 text-xl px-2">Quick Actions</h3>
                         <div className="grid grid-cols-2 gap-4">
-                            <Link to="/find-facility" className="p-4 bg-gray-50 rounded-2xl hover:bg-pink-50 hover:text-primary-pink transition text-center group">
-                                <span className="text-2xl mb-2 block group-hover:scale-110 transition-transform">🏥</span>
-                                <span className="font-medium text-sm">Find Clinic</span>
-                            </Link>
-                            <Link to="/ai-chat" className="p-4 bg-gray-50 rounded-2xl hover:bg-pink-50 hover:text-primary-pink transition text-center group">
-                                <span className="text-2xl mb-2 block group-hover:scale-110 transition-transform">🤖</span>
-                                <span className="font-medium text-sm">Ask AI</span>
-                            </Link>
-                            <Link to="/appointments" className="p-4 bg-gray-50 rounded-2xl hover:bg-pink-50 hover:text-primary-pink transition text-center group">
-                                <span className="text-2xl mb-2 block group-hover:scale-110 transition-transform">📅</span>
-                                <span className="font-medium text-sm">Appointments</span>
-                            </Link>
-                            <Link to="/library" className="p-4 bg-gray-50 rounded-2xl hover:bg-pink-50 hover:text-primary-pink transition text-center group">
-                                <span className="text-2xl mb-2 block group-hover:scale-110 transition-transform">📚</span>
-                                <span className="font-medium text-sm">Library</span>
-                            </Link>
+                            {[
+                                { to: "/find-facility", icon: "🏥", label: "Find Clinic", color: "bg-blue-50 text-blue-600" },
+                                { to: "/ai-chat", icon: "✨", label: "Ask AI", color: "bg-purple-50 text-purple-600" },
+                                { to: "/appointments", icon: "📅", label: "Schedule", color: "bg-pink-50 text-pink-600" },
+                                { to: "/library", icon: "📚", label: "Library", color: "bg-orange-50 text-orange-600" }
+                            ].map((action, idx) => (
+                                <Link key={idx} to={action.to} className="group">
+                                    <div className="p-4 rounded-3xl bg-gray-50 hover:bg-white border border-transparent hover:border-gray-100 hover:shadow-lg transition-all duration-300 flex flex-col items-center gap-3 text-center h-full">
+                                        <span className={`text-3xl w-14 h-14 rounded-2xl flex items-center justify-center mb-1 transition-transform duration-300 group-hover:scale-110 ${action.color}`}>
+                                            {action.icon}
+                                        </span>
+                                        <span className="font-bold text-gray-600 text-sm group-hover:text-primary-pink transition-colors">{action.label}</span>
+                                    </div>
+                                </Link>
+                            ))}
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Upcoming */}
-                    <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+                    <motion.div variants={itemVariants} className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-gray-50">
                         <div className="flex justify-between items-center mb-6">
-                            <h3 className="font-bold text-gray-800 text-lg">Upcoming</h3>
-                            <Link to="/appointments" className="text-sm text-primary-pink font-bold hover:underline">View All</Link>
+                            <h3 className="font-bold text-gray-800 text-xl">Upcoming</h3>
+                            <Link to="/appointments" className="text-sm text-primary-pink font-bold hover:text-pink-600 transition">View All</Link>
                         </div>
                         <div className="space-y-4">
-                            <div className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl transition cursor-pointer">
-                                <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-xl flex flex-col items-center justify-center font-bold">
-                                    <span className="text-xs uppercase">Dec</span>
-                                    <span className="text-xl">12</span>
+                            {[1].map((_, i) => (
+                                <div key={i} className="flex items-center gap-4 p-4 bg-gray-50/50 hover:bg-white rounded-3xl border border-transparent hover:border-gray-100 hover:shadow-md transition cursor-pointer group">
+                                    <div className="w-16 h-16 bg-white border border-gray-100 rounded-2xl flex flex-col items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Dec</span>
+                                        <span className="text-2xl font-black text-gray-800">12</span>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800 group-hover:text-primary-pink transition-colors">Dr. Sharma</h4>
+                                        <p className="text-sm text-gray-500 font-medium">Gynecologist • 10:00 AM</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h4 className="font-bold text-gray-800">Dr. Sharma Consultation</h4>
-                                    <p className="text-xs text-gray-500">Gynecologist • 10:00 AM</p>
-                                </div>
-                            </div>
+                            ))}
                         </div>
-                    </div>
+                    </motion.div>
 
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

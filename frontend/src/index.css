@@ -12,6 +12,11 @@
   --font-sans: "Inter", "Noto Sans Devanagari", sans-serif;
 }
 
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 @keyframes float {
   0% {
     transform: translateY(0px) scale(0.8);
