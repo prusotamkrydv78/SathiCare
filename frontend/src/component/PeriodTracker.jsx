@@ -210,6 +210,11 @@ const PeriodTracker = () => {
                         setShowMainChat={setShowMainChat}
                     />
 
+                    {/* Consult Doctor - New Feature */}
+                    <Link to="/consultations" className="block w-full py-4 bg-white border-2 border-indigo-100 text-indigo-600 rounded-2xl font-bold hover:bg-indigo-50 transition flex items-center justify-center gap-3">
+                        <span className="text-xl">👩‍⚕️</span> Consult a Doctor
+                    </Link>
+
                     {/* Log Button */}
                     <button
                         onClick={() => setIsBottomSheetOpen(true)}

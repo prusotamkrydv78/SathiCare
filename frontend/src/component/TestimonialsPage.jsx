@@ -56,15 +56,7 @@ const TestimonialsPage = () => {
     return (
         <div className="min-h-screen bg-[#FAFAFA] font-sans pb-24">
 
-            {/* Header */}
-            <div className="bg-white p-6 sticky top-0 z-20 shadow-sm border-b border-gray-100 mb-6">
-                <div className="flex items-center gap-3">
-                    <Link to="/" className="text-gray-500 hover:text-gray-700 transition">← Back to Home</Link>
-                    <h1 className="text-xl font-bold text-gray-800">Success Stories</h1>
-                </div>
-            </div>
-
-            <div className="max-w-6xl mx-auto px-6">
+            <div className="max-w-6xl mx-auto px-6 py-12">
                 {/* Hero Section */}
                 <div className="text-center mb-12">
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Loved by Women Across Nepal</h2>
