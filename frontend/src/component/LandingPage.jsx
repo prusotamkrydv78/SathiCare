@@ -41,7 +41,7 @@ const LandingPage = () => {
                         </p>
                         <div className="space-x-4">
                             <Link to="/signup" className="px-8 py-3 bg-primary-pink text-white rounded-full shadow-lg hover:bg-pink-600 transition transform hover:-translate-y-1 inline-block">Get Started</Link>
-                            <Link to="/features" className="px-8 py-3 bg-white text-primary-pink border border-primary-pink rounded-full shadow-lg hover:bg-pink-50 transition transform hover:-translate-y-1 inline-block">Learn More</Link>
+                            <Link to="/dashboard" className="px-8 py-3 bg-white text-primary-pink border border-primary-pink rounded-full shadow-lg hover:bg-pink-50 transition transform hover:-translate-y-1 inline-block">Learn More</Link>
                         </div>
                     </div>
                     <div className="md:w-1/2 relative">

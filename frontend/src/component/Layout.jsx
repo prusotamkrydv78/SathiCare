@@ -1,11 +1,19 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Layout = ({ children }) => {
     const location = useLocation();
+    const navigate = useNavigate();
+    const { logout } = useAuth();
 
     const isActive = (path) => {
         return location.pathname === path ? "bg-pink-50 text-primary-pink border-r-4 border-primary-pink" : "text-gray-500 hover:bg-gray-50 hover:text-gray-800";
+    };
+
+    const handleLogout = async () => {
+        await logout();
+        navigate('/');
     };
 
     const navItems = [
@@ -53,10 +61,13 @@ const Layout = ({ children }) => {
                 </div>
 
                 <div className="p-4">
-                    <Link to="/" className="flex items-center gap-3 px-4 py-2 text-gray-400 hover:text-red-500 transition text-sm font-medium">
+                    <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-4 py-2 text-gray-400 hover:text-red-500 transition text-sm font-medium"
+                    >
                         <span>🚪</span>
                         <span>Logout</span>
-                    </Link>
+                    </button>
                 </div>
             </aside>
 

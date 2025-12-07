@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { geminiService } from '../services/geminiService';
+import { useAuth } from '../context/AuthContext';
 
 const Dashboard = () => {
+    const { user } = useAuth();
     const [dailyTip, setDailyTip] = useState("Loading your daily wellness tip...");
 
     useEffect(() => {
@@ -18,7 +20,7 @@ const Dashboard = () => {
             {/* Header Section */}
             <div className="flex justify-between items-end">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-800">Namaste, <span className="text-primary-pink">Sita</span></h1>
+                    <h1 className="text-3xl font-bold text-gray-800">Namaste, <span className="text-primary-pink">{user?.name || 'Sare'}</span></h1>
                     <p className="text-gray-500 mt-1">Here is your daily health overview.</p>
                 </div>
                 <div className="flex items-center gap-4">

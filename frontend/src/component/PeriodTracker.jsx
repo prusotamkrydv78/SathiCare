@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { geminiService } from '../services/geminiService';
+import periodService from '../services/periodService';
 import PeriodAiSideBar from './PeriodAiSideBar';
 import PeriodAiChat from './PeriodAiChat';
 
@@ -9,6 +10,11 @@ const PeriodTracker = () => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [activeTab, setActiveTab] = useState('Calendar');
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+
+    // Data State
+    const [cycleData, setCycleData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     // Main Chat State
     const [showMainChat, setShowMainChat] = useState(false);
@@ -25,6 +31,25 @@ const PeriodTracker = () => {
         flow: 'Medium',
         notes: ''
     });
+
+    // Fetch Data on Mount
+    useEffect(() => {
+        fetchCycleData();
+    }, []);
+
+    const fetchCycleData = async () => {
+        try {
+            setLoading(true);
+            const { data } = await periodService.getCurrentCycle();
+            setCycleData(data);
+        } catch (err) {
+            console.error("Failed to fetch cycle data", err);
+            // Fallback to null/mock if needed, or show error
+            // For now, we will rely on UI defaults if data is missing
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Main Chat Logic
     const handleMainChatSubmit = async (e) => {
@@ -59,10 +84,11 @@ const PeriodTracker = () => {
         return "Your cycle appears regular. Keep tracking to help our AI predict your next window more accurately!";
     };
 
-    // Mock Calendar Data
+    // Mock Calendar Data (Enhanced with fetched data if available in future)
     const days = Array.from({ length: 35 }, (_, i) => {
         const day = i - 2; // Offset
         let status = 'safe';
+        // In a real app, mapping would compare 'day' with 'cycleData' ranges
         if (day >= 1 && day <= 5) status = 'period';
         if (day >= 12 && day <= 16) status = 'fertile';
         if (day >= 25 && day <= 28) status = 'pms';
@@ -78,6 +104,29 @@ const PeriodTracker = () => {
 
     const handleSymptomChange = (field, value) => {
         setSymptoms(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleSaveLog = async () => {
+        try {
+            // Log for selected date or today
+            const logDate = selectedDate
+                ? new Date(2025, 11, selectedDate).toISOString() // Mock month Dec 2025
+                : new Date().toISOString();
+
+            await periodService.logPeriod({
+                startDate: logDate,
+                endDate: logDate, // Single day log for now
+                symptoms: symptoms // Backend needs to handle this structure or we map it
+            });
+
+            // Close and refresh
+            setIsBottomSheetOpen(false);
+            fetchCycleData(); // Refresh stats
+            alert("Symptoms logged successfully!");
+        } catch (err) {
+            console.error("Failed to log symptoms", err);
+            alert("Failed to save log. Please try again.");
+        }
     };
 
     return (
@@ -115,15 +164,21 @@ const PeriodTracker = () => {
                     <div className="bg-gradient-to-r from-pink-500 to-pink-400 rounded-3xl p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
                         <div className="relative z-10 text-center md:text-left">
                             <h2 className="text-sm font-bold uppercase tracking-wider opacity-80 mb-2">Current Cycle</h2>
-                            <p className="text-5xl font-black mb-2">Day 14</p>
+                            <p className="text-5xl font-black mb-2">
+                                {cycleData ? `Day ${cycleData.currentDay}` : 'Day 14'}
+                            </p>
                             <span className="bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-bold border border-white/30 inline-block">
-                                Ovulation Phase
+                                {cycleData ? cycleData.phase : 'Ovulation Phase'}
                             </span>
                         </div>
                         <div className="mt-8 md:mt-0 relative z-10 text-center md:text-right">
                             <p className="text-sm opacity-90 mb-1">Prediction</p>
-                            <p className="text-2xl font-bold">Next Period in 14 Days</p>
-                            <p className="text-xs opacity-75 mt-2">Dec 21, 2025</p>
+                            <p className="text-2xl font-bold">
+                                {cycleData?.nextPeriod ? `Next Period: ${new Date(cycleData.nextPeriod).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}` : 'Next Period in 14 Days'}
+                            </p>
+                            <p className="text-xs opacity-75 mt-2">
+                                {cycleData?.nextPeriod ? new Date(cycleData.nextPeriod).toLocaleDateString() : 'Dec 21, 2025'}
+                            </p>
                         </div>
 
                         {/* Decorative */}
@@ -307,7 +362,7 @@ const PeriodTracker = () => {
                             </div>
 
                             <button
-                                onClick={() => setIsBottomSheetOpen(false)}
+                                onClick={handleSaveLog}
                                 className="w-full mt-8 py-4 bg-primary-pink text-white font-bold rounded-2xl hover:bg-pink-600 transition shadow-lg shadow-pink-200"
                             >
                                 Save Log
