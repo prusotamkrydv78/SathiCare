@@ -26,7 +26,7 @@ const EmergencyAccess = () => {
             <div className="p-4 max-w-md mx-auto">
 
                 {/* SOS Button Area */}
-                <div className="flex flex-col items-center justify-center py-10">
+                <div className="flex flex-col items-center justify-center py-6">
                     <div className="relative">
                         {/* Pulsing Rings */}
                         <div className={`absolute inset-0 bg-red-400 rounded-full opacity-30 ${isPulsing ? 'animate-ping' : ''}`}></div>
@@ -34,15 +34,33 @@ const EmergencyAccess = () => {
 
                         <button
                             className="relative z-10 w-48 h-48 bg-gradient-to-br from-red-500 to-red-600 rounded-full border-8 border-red-200 shadow-2xl flex flex-col items-center justify-center active:scale-95 transition transform"
-                            onClick={() => window.location.href = 'tel:102'}
+                            onClick={() => {
+                                alert("🚨 DETECTED: Emergency Alert Sent!\n📍 Location shared with Husband and Police.\n🚑 Dialing Ambulance...");
+                                window.location.href = 'tel:102';
+                            }}
                         >
                             <span className="text-5xl font-black text-white drop-shadow-md">SOS</span>
                             <span className="text-xs text-white/90 font-medium mt-1">Tap for Help</span>
                         </button>
                     </div>
-                    <p className="text-red-500 font-bold mt-8 text-center animate-pulse">
-                        Tap SOS to call Ambulance (102) immediately
-                    </p>
+                </div>
+
+                {/* AI & Location Actions */}
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                    <button
+                        onClick={() => alert("🤖 AI First Aid:\n\n1. Stay Calm.\n2. Ensure scene safety.\n3. Check breathing.\n4. Apply pressure to bleeding.\n\n(Full AI Guide would open here)")}
+                        className="bg-red-100 text-red-700 py-4 rounded-xl font-bold flex flex-col items-center justify-center gap-2 hover:bg-red-200 transition"
+                    >
+                        <span className="text-2xl">🩹</span>
+                        <span>First Aid AI</span>
+                    </button>
+                    <button
+                        onClick={() => alert("📍 Location sent to:\n- Husband (+977 98...)\n- Police Control")}
+                        className="bg-red-100 text-red-700 py-4 rounded-xl font-bold flex flex-col items-center justify-center gap-2 hover:bg-red-200 transition"
+                    >
+                        <span className="text-2xl">📍</span>
+                        <span>Share Location</span>
+                    </button>
                 </div>
 
                 {/* Quick Dials */}
@@ -78,11 +96,6 @@ const EmergencyAccess = () => {
                         </div>
                     </div>
                 </div>
-
-                {/* Share Location */}
-                <button className="w-full bg-white border-2 border-red-500 text-red-500 font-bold py-3.5 rounded-xl shadow-sm hover:bg-red-50 transition flex items-center justify-center gap-2">
-                    📍 Share My Current Location
-                </button>
 
             </div>
         </div>

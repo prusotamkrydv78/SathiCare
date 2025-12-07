@@ -1,13 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { geminiService } from '../services/geminiService';
+import PeriodAiSideBar from './PeriodAiSideBar';
+import PeriodAiChat from './PeriodAiChat';
 
 const PeriodTracker = () => {
+    // Component Refactored and Fixed
     const [selectedDate, setSelectedDate] = useState(null);
     const [activeTab, setActiveTab] = useState('Calendar');
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
-    // Main Chat State (Renamed from Sidebar for consistency)
+    // Main Chat State
     const [showMainChat, setShowMainChat] = useState(false);
     const [mainChatMessages, setMainChatMessages] = useState([
         { id: 1, text: "Hi! Ask me anything about your cycle or symptoms. 🌸", sender: 'ai' }
@@ -22,13 +25,6 @@ const PeriodTracker = () => {
         flow: 'Medium',
         notes: ''
     });
-
-    // Auto-scroll main chat
-    useEffect(() => {
-        if (showMainChat) {
-            mainChatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-        }
-    }, [mainChatMessages, showMainChat]);
 
     // Main Chat Logic
     const handleMainChatSubmit = async (e) => {
@@ -135,52 +131,17 @@ const PeriodTracker = () => {
                         <div className="absolute bottom-0 left-0 w-40 h-40 bg-white opacity-10 rounded-full -translate-x-1/2 translate-y-1/2"></div>
                     </div>
 
-                    {/* Ask AI Section (Visible only when chat is open) */}
-                    <div className={`transition-all duration-300 ${showMainChat ? 'bg-purple-50 rounded-3xl p-6 border border-purple-100 flex flex-col' : 'hidden'}`}>
-                        {showMainChat && (
-                            <>
-                                <div className="flex justify-between items-center mb-4 animate-fade-in">
-                                    <h3 className="font-bold text-purple-800 flex items-center gap-2">
-                                        <span className="bg-purple-100 p-1.5 rounded-lg">🤖</span> Period Health Companion
-                                    </h3>
-                                </div>
-                                <div className="mt-4 animate-fade-in">
-                                    <div className="h-64 overflow-y-auto mb-4 bg-white rounded-xl p-3 border border-purple-100 space-y-3">
-                                        {mainChatMessages.map(msg => (
-                                            <div key={msg.id} className={`p-2 rounded-lg text-xs ${msg.sender === 'user' ? 'bg-purple-500 text-white ml-auto max-w-[85%]' : 'bg-gray-100 text-gray-700 mr-auto max-w-[90%]'}`}>
-                                                {msg.text}
-                                            </div>
-                                        ))}
-                                        {mainChatLoading && (
-                                            <div className="text-xs text-gray-400 italic">Thinking...</div>
-                                        )}
-                                        <div ref={mainChatEndRef} />
-                                    </div>
-                                    <form onSubmit={handleMainChatSubmit} className="flex gap-2">
-                                        <input
-                                            type="text"
-                                            className="flex-1 text-sm border border-purple-200 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-purple-500"
-                                            placeholder="Type here..."
-                                            value={mainChatInput}
-                                            onChange={(e) => setMainChatInput(e.target.value)}
-                                        />
-                                        <button
-                                            type="submit"
-                                            className="bg-purple-600 text-white px-3 py-2 rounded-lg text-sm font-bold hover:bg-purple-700"
-                                        >
-                                            ➤
-                                        </button>
-                                    </form>
-                                    <button
-                                        onClick={() => setShowMainChat(false)}
-                                        className="w-full text-center text-xs text-purple-600 mt-2 hover:underline"
-                                    >
-                                        Close Chat
-                                    </button>
-                                </div>
-                            </>
-                        )}
-                    </div>
+                    {/* AI Chat Layout Interface - NOW MODULAR */}
+                    <PeriodAiChat
+                        showMainChat={showMainChat}
+                        setShowMainChat={setShowMainChat}
+                        messages={mainChatMessages}
+                        loading={mainChatLoading}
+                        input={mainChatInput}
+                        setInput={setMainChatInput}
+                        handleSubmit={handleMainChatSubmit}
+                        messagesEndRef={mainChatEndRef}
+                    />
 
                     {/* Calendar Section */}
                     {activeTab === 'Calendar' && (
@@ -243,59 +204,16 @@ const PeriodTracker = () => {
                 {/* Sidebar (Right) - AI & Inputs */}
                 <div className="space-y-6">
 
-                    {/* Ask AI Contextual (Inserted) */}
-                    <div className="bg-purple-50 rounded-3xl p-6 border border-purple-100 transition-all duration-300">
-                        <h3 className="font-bold text-purple-800 mb-4 flex items-center gap-2">
-                            <span className="bg-purple-100 p-1.5 rounded-lg">🤖</span> Ask AI Companion
-                        </h3>
-                        <p className="text-sm text-purple-700 mb-4">
-                            "Is this recurring cramp normal?"
-                        </p>
+                    {/* Ask AI Contextual - NOW MODULAR */}
+                    <PeriodAiSideBar
+                        showMainChat={showMainChat}
+                        setShowMainChat={setShowMainChat}
+                    />
 
-                        {!showSidebarChat ? (
-                            <button
-                                onClick={() => setShowSidebarChat(true)}
-                                className="block w-full py-3 bg-purple-500 text-white rounded-xl font-bold text-center hover:bg-purple-600 transition shadow-lg shadow-purple-200"
-                            >
-                                Ask Now
-                            </button>
-                        ) : (
-                            <div className="mt-4 animate-fade-in">
-                                <div className="h-64 overflow-y-auto mb-4 bg-white rounded-xl p-3 border border-purple-100 space-y-3">
-                                    {sidebarChatMessages.map(msg => (
-                                        <div key={msg.id} className={`p-2 rounded-lg text-xs ${msg.sender === 'user' ? 'bg-purple-500 text-white ml-auto max-w-[85%]' : 'bg-gray-100 text-gray-700 mr-auto max-w-[90%]'}`}>
-                                            {msg.text}
-                                        </div>
-                                    ))}
-                                    {sidebarChatLoading && (
-                                        <div className="text-xs text-gray-400 italic">Thinking...</div>
-                                    )}
-                                    <div ref={sidebarChatEndRef} />
-                                </div>
-                                <form onSubmit={handleSidebarChatSubmit} className="flex gap-2">
-                                    <input
-                                        type="text"
-                                        className="flex-1 text-sm border border-purple-200 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-purple-500"
-                                        placeholder="Type here..."
-                                        value={sidebarChatInput}
-                                        onChange={(e) => setSidebarChatInput(e.target.value)}
-                                    />
-                                    <button
-                                        type="submit"
-                                        className="bg-purple-600 text-white px-3 py-2 rounded-lg text-sm font-bold hover:bg-purple-700"
-                                    >
-                                        ➤
-                                    </button>
-                                </form>
-                                <button
-                                    onClick={() => setShowSidebarChat(false)}
-                                    className="w-full text-center text-xs text-purple-600 mt-2 hover:underline"
-                                >
-                                    Close Chat
-                                </button>
-                            </div>
-                        )}
-                    </div>
+                    {/* Consult Doctor - New Feature */}
+                    <Link to="/consultations" className="block w-full py-4 bg-white border-2 border-indigo-100 text-indigo-600 rounded-2xl font-bold hover:bg-indigo-50 transition flex items-center justify-center gap-3">
+                        <span className="text-xl">👩‍⚕️</span> Consult a Doctor
+                    </Link>
 
                     {/* Log Button */}
                     <button

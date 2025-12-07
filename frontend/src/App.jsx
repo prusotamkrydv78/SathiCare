@@ -38,7 +38,9 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/about" element={<AboutPage />} />
+          <Route path="/about" element={<Layout><AboutPage /></Layout>} />
+          <Route path="/features" element={<Layout><FeaturesPage /></Layout>} />
+          <Route path="/testimonials" element={<Layout><TestimonialsPage /></Layout>} />
 
           {/* Protected Routes with Layout */}
           <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
@@ -55,8 +57,6 @@ function App() {
           <Route path="/profile-settings" element={<ProtectedRoute><Layout><ProfileSettings /></Layout></ProtectedRoute>} />
           <Route path="/appointments" element={<ProtectedRoute><Layout><AppointmentCalendar /></Layout></ProtectedRoute>} />
           <Route path="/emergency" element={<ProtectedRoute><Layout><EmergencyAccess /></Layout></ProtectedRoute>} />
-          <Route path="/features" element={<ProtectedRoute><Layout><FeaturesPage /></Layout></ProtectedRoute>} />
-          <Route path="/testimonials" element={<ProtectedRoute><Layout><TestimonialsPage /></Layout></ProtectedRoute>} />
           <Route path="/forum" element={<ProtectedRoute><Layout><CommunityForum /></Layout></ProtectedRoute>} />
           <Route path="/consultations" element={<ProtectedRoute><Layout><DoctorConsultations /></Layout></ProtectedRoute>} />
           <Route path="/notifications" element={<ProtectedRoute><Layout><NotificationsPage /></Layout></ProtectedRoute>} />
