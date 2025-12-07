@@ -34,7 +34,7 @@ router.use(protect);
 // Validation rules
 const startPregnancyValidation = [
     body('lmpDate').optional().isISO8601().withMessage('Valid LMP date required'),
-    body('dueDate').optional().isISO8601().withMessage('Valid due date required'),
+    body('currentWeek').optional().isInt({ min: 1, max: 42 }).withMessage('Current week must be between 1 and 42'),
     validate
 ];
 

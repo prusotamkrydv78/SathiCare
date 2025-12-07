@@ -12,7 +12,15 @@ import {
 // @access  Private
 export const startPregnancy = async (req, res) => {
     try {
-        const { lmpDate, dueDate, conceptionDate } = req.body;
+        const { lmpDate, currentWeek } = req.body;
+
+        // Validate input - need either lmpDate or currentWeek
+        if (!lmpDate && !currentWeek) {
+            return res.status(400).json({
+                success: false,
+                message: 'Either LMP date or current pregnancy week is required'
+            });
+        }
 
         // Check if user already has an active pregnancy
         const existingPregnancy = await Pregnancy.findOne({
@@ -27,28 +35,34 @@ export const startPregnancy = async (req, res) => {
             });
         }
 
-        let calculatedDueDate;
         let calculatedLMP;
+        let calculatedDueDate;
 
         if (lmpDate) {
+            // User knows their LMP date
             calculatedLMP = new Date(lmpDate);
             calculatedDueDate = Pregnancy.calculateDueDate(calculatedLMP);
-        } else if (dueDate) {
-            calculatedDueDate = new Date(dueDate);
-            calculatedLMP = Pregnancy.calculateLMPFromDueDate(calculatedDueDate);
-        } else {
-            return res.status(400).json({
-                success: false,
-                message: 'Either LMP date or due date is required'
-            });
+        } else if (currentWeek) {
+            // User is joining mid-pregnancy, calculate LMP from current week
+            const weeksAgo = parseInt(currentWeek);
+            if (weeksAgo < 1 || weeksAgo > 42) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Current week must be between 1 and 42'
+                });
+            }
+
+            // Calculate LMP by going back from today
+            calculatedLMP = new Date();
+            calculatedLMP.setDate(calculatedLMP.getDate() - (weeksAgo * 7));
+            calculatedDueDate = Pregnancy.calculateDueDate(calculatedLMP);
         }
 
         // Create pregnancy tracker
         const pregnancy = await Pregnancy.create({
             userId: req.user._id,
             lmpDate: calculatedLMP,
-            dueDate: calculatedDueDate,
-            conceptionDate: conceptionDate ? new Date(conceptionDate) : null
+            dueDate: calculatedDueDate
         });
 
         // Generate first week tips

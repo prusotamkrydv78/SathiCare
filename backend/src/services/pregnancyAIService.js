@@ -330,40 +330,43 @@ export const chatAboutPregnancy = async (userMessage, pregnancyData, userProfile
             ? chatHistory.slice(-6).map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`).join('\n')
             : 'This is the start of the conversation.';
 
-        const prompt = `You are Saathi, a compassionate AI pregnancy assistant. You are chatting with a pregnant user about their pregnancy.
+        const prompt = `You are Saathi, a friendly pregnancy AI. Give simple, easy answers.
 
 **User's Pregnancy:**
-- Current week: ${pregnancyData.currentWeek}
+- Week: ${pregnancyData.currentWeek}
 - Trimester: ${pregnancyData.trimester}
-- Due date: ${new Date(pregnancyData.dueDate).toLocaleDateString()}
-- Days remaining: ${Math.ceil((pregnancyData.dueDate - new Date()) / (1000 * 60 * 60 * 24))}
-- User age: ${userProfile?.age || 'Not specified'}
-- Language preference: ${userProfile?.language || 'english'}
 
-**Recent Conversation:**
+**Recent Chat:**
 ${conversationContext}
 
-**User's Current Question:**
+**Question:**
 ${userMessage}
 
 **Instructions:**
-1. Answer the user's question based on their pregnancy week
-2. Be warm, supportive, and empathetic
-3. Use simple, easy-to-understand language
-4. Provide accurate, evidence-based information
-5. If you detect a serious concern, recommend seeing a doctor
-6. Keep responses concise (2-4 paragraphs max)
-7. Respond in ${userProfile?.language || 'english'} if possible, otherwise English
-8. Use culturally relevant advice for Nepal/South Asia
-9. Mention local foods and practices when appropriate
+1. Keep answers simple and short
+2. Use easy words anyone can understand
+3. Give 3-4 bullet points for tips/suggestions
+4. Each bullet point should be ONE short sentence
+5. For serious issues: Say "Please see your doctor"
+6. Respond in ${userProfile?.language || 'english'}
 
-**Important:**
-- You are NOT a replacement for medical professionals
-- For serious concerns, always recommend consulting a doctor
-- Be culturally sensitive (user is from Nepal/South Asia)
-- Use local context when giving advice
+**Response Format:**
+- Start with 1-2 sentence answer
+- If giving tips: List 3-4 short bullet points
+- Each point = one simple sentence
+- End with one encouraging sentence
 
-Provide a helpful, conversational response:`;
+**Example:**
+"Yes, mangoes are safe and healthy during pregnancy!
+
+• Rich in vitamin C for immunity
+• Helps with digestion
+• Good for baby's development
+• Eat 1-2 per day
+
+Enjoy this delicious fruit! 🥭"
+
+Give a simple, helpful answer:`;
 
         const result = await pregnancyAIModel.generateContent(prompt);
         const response = result.response.text();

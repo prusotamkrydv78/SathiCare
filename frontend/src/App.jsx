@@ -12,7 +12,7 @@ import Dashboard from './component/Dashboard';
 import PeriodTracker from './component/PeriodTracker';
 import CompleteProfile from './component/CompleteProfile';
 import HealthDetails from './component/HealthDetails';
-import PregnancyTracker from './component/PregnancyTracker';
+import PregnancyTracker from './component/PregnancyTrackerNew';
 import FacilityFinder from './component/FacilityFinder';
 import FacilityDetails from './component/FacilityDetails';
 import AiAssistant from './component/AiAssistant';
