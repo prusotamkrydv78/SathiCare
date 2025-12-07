@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { geminiService } from '../services/geminiService';
 import { Link } from 'react-router-dom';
 
-const AiAssistant = () => {
+const AiAssistant = ({ className }) => {
     const [messages, setMessages] = useState([
         { id: 1, text: "Namaste! I am Saathi, your personal health assistant. How can I help you today?", sender: 'ai' }
     ]);
@@ -65,7 +65,7 @@ const AiAssistant = () => {
     };
 
     return (
-        <div className="flex flex-col h-[calc(100vh-6rem)] bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden font-sans">
+        <div className={`flex flex-col bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden font-sans ${className || 'h-[calc(100vh-6rem)]'}`}>
             {/* Chat Header */}
             <div className="bg-primary-pink p-4 flex justify-between items-center text-white">
                 <div className="flex items-center gap-3">
@@ -93,8 +93,8 @@ const AiAssistant = () => {
                         )}
                         <div
                             className={`max-w-[80%] p-3 rounded-2xl text-sm leading-relaxed ${msg.sender === 'user'
-                                    ? 'bg-primary-pink text-white rounded-tr-none shadow-md shadow-pink-100'
-                                    : 'bg-white text-gray-800 rounded-tl-none border border-gray-100 shadow-sm'
+                                ? 'bg-primary-pink text-white rounded-tr-none shadow-md shadow-pink-100'
+                                : 'bg-white text-gray-800 rounded-tl-none border border-gray-100 shadow-sm'
                                 } ${msg.type === 'emergency' ? 'border-2 border-red-500 bg-red-50 text-red-700' : ''}`}
                         >
                             {msg.text}
