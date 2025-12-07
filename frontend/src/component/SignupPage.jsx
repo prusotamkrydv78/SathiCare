@@ -1,202 +1,382 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const SignupPage = () => {
-    const [step, setStep] = useState(1);
+    const navigate = useNavigate();
+    const { signup, loading } = useAuth();
+
     const [formData, setFormData] = useState({
+        email: '',
         phone: '',
-        otp: '',
-        fullName: '',
-        dob: '',
-        language: 'Nepali',
-        isPregnant: false,
-        lastPeriodDate: ''
+        name: '',
+        password: '',
+        confirmPassword: '',
+        age: '',
+        language: 'english'
     });
+    const [errors, setErrors] = useState({});
+    const [apiError, setApiError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
+        const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: type === 'checkbox' ? checked : value
+            [name]: value
         }));
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: '' }));
+        }
+        if (apiError) setApiError('');
     };
 
-    const nextStep = () => setStep(prev => prev + 1);
-    const prevStep = () => setStep(prev => prev - 1);
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!formData.email) {
+            newErrors.email = 'Email is required';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            newErrors.email = 'Please enter a valid email';
+        }
+
+        if (!formData.phone) {
+            newErrors.phone = 'Phone number is required';
+        } else if (!/^[+]?[\d\s-()]+$/.test(formData.phone)) {
+            newErrors.phone = 'Please enter a valid phone number';
+        }
+
+        if (!formData.name) {
+            newErrors.name = 'Name is required';
+        } else if (formData.name.length < 2) {
+            newErrors.name = 'Name must be at least 2 characters';
+        }
+
+        if (!formData.password) {
+            newErrors.password = 'Password is required';
+        } else if (formData.password.length < 6) {
+            newErrors.password = 'Password must be at least 6 characters';
+        }
+
+        if (!formData.confirmPassword) {
+            newErrors.confirmPassword = 'Please confirm your password';
+        } else if (formData.password !== formData.confirmPassword) {
+            newErrors.confirmPassword = 'Passwords do not match';
+        }
+
+        if (formData.age && (formData.age < 13 || formData.age > 100)) {
+            newErrors.age = 'Age must be between 13 and 100';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setApiError('');
+
+        if (!validateForm()) {
+            return;
+        }
+
+        const { confirmPassword, ...signupData } = formData;
+
+        if (signupData.age) {
+            signupData.age = parseInt(signupData.age);
+        }
+
+        const result = await signup(signupData);
+
+        if (result.success) {
+            navigate('/dashboard');
+        } else {
+            setApiError(result.error);
+        }
+    };
 
     return (
-        <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center px-4 font-sans text-text-dark">
-            <div className="bg-white w-full max-w-[500px] p-8 rounded-lg shadow-[0_4px_6px_rgba(0,0,0,0.1)]">
+        <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 flex items-center justify-center px-4 font-sans py-8">
+            <div className="bg-white w-full max-w-[550px] p-10 rounded-2xl shadow-xl border border-gray-100">
 
-                {/* Progress Indicator */}
-                <div className="flex justify-between items-center mb-8 relative">
-                    <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-200 -z-10"></div>
-                    <div className={`absolute top-1/2 left-0 h-1 bg-primary-pink -z-10 transition-all duration-300`} style={{ width: `${((step - 1) / 2) * 100}%` }}></div>
-
-                    {[1, 2, 3].map((s) => (
-                        <div key={s} className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${step >= s ? 'bg-primary-pink text-white' : 'bg-gray-200 text-gray-500'}`}>
-                            {s}
+                {/* Header */}
+                <div className="text-center mb-8">
+                    <div className="inline-block mb-3">
+                        <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                            </svg>
                         </div>
-                    ))}
+                    </div>
+                    <h2 className="text-3xl font-bold text-gray-800 mb-2">Create Account</h2>
+                    <p className="text-gray-500 text-sm">Join Saathi for personalized health care</p>
                 </div>
 
-                <h2 className="text-2xl font-bold text-center mb-6">
-                    {step === 1 ? 'Create Account' : step === 2 ? 'Personal Details' : 'Health Profile'}
-                </h2>
-
-                {/* Step 1: Phone & OTP */}
-                {step === 1 && (
-                    <div className="space-y-6">
-                        <div>
-                            <label className="block text-sm font-medium mb-2 text-gray-700">Phone Number</label>
-                            <div className="flex">
-                                <select className="h-11 border border-gray-300 rounded-l-lg px-3 bg-gray-50 text-gray-700 focus:outline-none focus:border-primary-pink">
-                                    <option>+977</option>
-                                </select>
-                                <input
-                                    type="tel"
-                                    name="phone"
-                                    value={formData.phone}
-                                    onChange={handleChange}
-                                    placeholder="9800000000"
-                                    className="h-11 w-full border border-l-0 border-gray-300 rounded-r-lg px-4 focus:outline-none focus:border-primary-pink focus:ring-1 focus:ring-primary-pink transition"
-                                />
-                            </div>
+                {/* API Error Message */}
+                {apiError && (
+                    <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg animate-shake">
+                        <div className="flex items-center">
+                            <svg className="w-5 h-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                            </svg>
+                            <p className="text-sm text-red-700 font-medium">{apiError}</p>
                         </div>
-                        {formData.phone.length >= 10 && (
-                            <div>
-                                <label className="block text-sm font-medium mb-2 text-gray-700">OTP Code</label>
-                                <input
-                                    type="text"
-                                    name="otp"
-                                    value={formData.otp}
-                                    onChange={handleChange}
-                                    placeholder="Enter 6-digit OTP"
-                                    className="h-11 w-full border border-gray-300 rounded-lg px-4 focus:outline-none focus:border-primary-pink focus:ring-1 focus:ring-primary-pink transition"
-                                />
-                                <p className="text-xs text-gray-500 mt-2">OTP sent to your mobile number.</p>
-                            </div>
-                        )}
-                        <button
-                            onClick={nextStep}
-                            disabled={!formData.phone || (formData.phone.length >= 10 && !formData.otp)}
-                            className="w-full h-12 bg-primary-pink text-white font-bold rounded-lg hover:bg-pink-600 transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            Verify & Continue
-                        </button>
                     </div>
                 )}
 
-                {/* Step 2: Personal Details */}
-                {step === 2 && (
-                    <div className="space-y-6">
-                        <div>
-                            <label className="block text-sm font-medium mb-2 text-gray-700">Full Name</label>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                    {/* Email */}
+                    <div>
+                        <label className="block text-sm font-semibold mb-2 text-gray-700">Email Address</label>
+                        <div className="relative">
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                                </svg>
+                            </div>
+                            <input
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                placeholder="your.email@example.com"
+                                className={`h-12 w-full pl-12 pr-4 border-2 ${errors.email ? 'border-red-400' : 'border-gray-200'} rounded-xl focus:outline-none focus:border-pink-500 transition bg-gray-50 focus:bg-white`}
+                            />
+                        </div>
+                        {errors.email && (
+                            <p className="text-xs text-red-500 mt-1.5 ml-1 flex items-center">
+                                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                                {errors.email}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Phone */}
+                    <div>
+                        <label className="block text-sm font-semibold mb-2 text-gray-700">Phone Number</label>
+                        <div className="relative">
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                            </div>
+                            <input
+                                type="tel"
+                                name="phone"
+                                value={formData.phone}
+                                onChange={handleChange}
+                                placeholder="+977 9800000000"
+                                className={`h-12 w-full pl-12 pr-4 border-2 ${errors.phone ? 'border-red-400' : 'border-gray-200'} rounded-xl focus:outline-none focus:border-pink-500 transition bg-gray-50 focus:bg-white`}
+                            />
+                        </div>
+                        {errors.phone && (
+                            <p className="text-xs text-red-500 mt-1.5 ml-1 flex items-center">
+                                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                                {errors.phone}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Name */}
+                    <div>
+                        <label className="block text-sm font-semibold mb-2 text-gray-700">Full Name</label>
+                        <div className="relative">
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                            </div>
                             <input
                                 type="text"
-                                name="fullName"
-                                value={formData.fullName}
+                                name="name"
+                                value={formData.name}
                                 onChange={handleChange}
                                 placeholder="Enter your full name"
-                                className="h-11 w-full border border-gray-300 rounded-lg px-4 focus:outline-none focus:border-primary-pink focus:ring-1 focus:ring-primary-pink transition"
+                                className={`h-12 w-full pl-12 pr-4 border-2 ${errors.name ? 'border-red-400' : 'border-gray-200'} rounded-xl focus:outline-none focus:border-pink-500 transition bg-gray-50 focus:bg-white`}
                             />
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-2 text-gray-700">Date of Birth</label>
+                        {errors.name && (
+                            <p className="text-xs text-red-500 mt-1.5 ml-1 flex items-center">
+                                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                                {errors.name}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Password */}
+                    <div>
+                        <label className="block text-sm font-semibold mb-2 text-gray-700">Password</label>
+                        <div className="relative">
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                            </div>
                             <input
-                                type="date"
-                                name="dob"
-                                value={formData.dob}
+                                type={showPassword ? 'text' : 'password'}
+                                name="password"
+                                value={formData.password}
                                 onChange={handleChange}
-                                className="h-11 w-full border border-gray-300 rounded-lg px-4 focus:outline-none focus:border-primary-pink focus:ring-1 focus:ring-primary-pink transition"
+                                placeholder="At least 6 characters"
+                                className={`h-12 w-full pl-12 pr-12 border-2 ${errors.password ? 'border-red-400' : 'border-gray-200'} rounded-xl focus:outline-none focus:border-pink-500 transition bg-gray-50 focus:bg-white`}
                             />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+                            >
+                                {showPassword ? (
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                    </svg>
+                                ) : (
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                )}
+                            </button>
                         </div>
+                        {errors.password && (
+                            <p className="text-xs text-red-500 mt-1.5 ml-1 flex items-center">
+                                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                                {errors.password}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Confirm Password */}
+                    <div>
+                        <label className="block text-sm font-semibold mb-2 text-gray-700">Confirm Password</label>
+                        <div className="relative">
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                </svg>
+                            </div>
+                            <input
+                                type={showConfirmPassword ? 'text' : 'password'}
+                                name="confirmPassword"
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
+                                placeholder="Re-enter your password"
+                                className={`h-12 w-full pl-12 pr-12 border-2 ${errors.confirmPassword ? 'border-red-400' : 'border-gray-200'} rounded-xl focus:outline-none focus:border-pink-500 transition bg-gray-50 focus:bg-white`}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+                            >
+                                {showConfirmPassword ? (
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                    </svg>
+                                ) : (
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                )}
+                            </button>
+                        </div>
+                        {errors.confirmPassword && (
+                            <p className="text-xs text-red-500 mt-1.5 ml-1 flex items-center">
+                                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                                {errors.confirmPassword}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Age and Language Row */}
+                    <div className="grid grid-cols-2 gap-4">
+                        {/* Age */}
                         <div>
-                            <label className="block text-sm font-medium mb-2 text-gray-700">Language Preference</label>
+                            <label className="block text-sm font-semibold mb-2 text-gray-700">Age <span className="text-gray-400 font-normal">(Optional)</span></label>
+                            <input
+                                type="number"
+                                name="age"
+                                value={formData.age}
+                                onChange={handleChange}
+                                placeholder="25"
+                                min="13"
+                                max="100"
+                                className={`h-12 w-full px-4 border-2 ${errors.age ? 'border-red-400' : 'border-gray-200'} rounded-xl focus:outline-none focus:border-pink-500 transition bg-gray-50 focus:bg-white`}
+                            />
+                            {errors.age && (
+                                <p className="text-xs text-red-500 mt-1.5 ml-1">{errors.age}</p>
+                            )}
+                        </div>
+
+                        {/* Language */}
+                        <div>
+                            <label className="block text-sm font-semibold mb-2 text-gray-700">Language</label>
                             <select
                                 name="language"
                                 value={formData.language}
                                 onChange={handleChange}
-                                className="h-11 w-full border border-gray-300 rounded-lg px-4 focus:outline-none focus:border-primary-pink focus:ring-1 focus:ring-primary-pink transition bg-white"
+                                className="h-12 w-full px-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-pink-500 transition bg-gray-50 focus:bg-white"
                             >
-                                <option value="Nepali">Nepali</option>
-                                <option value="English">English</option>
-                                <option value="Maithili">Maithili</option>
+                                <option value="english">English</option>
+                                <option value="nepali">Nepali</option>
+                                <option value="hindi">Hindi</option>
+                                <option value="maithili">Maithili</option>
                             </select>
                         </div>
-                        <div className="flex space-x-4">
-                            <button
-                                onClick={prevStep}
-                                className="w-1/3 h-12 border border-gray-300 text-gray-700 font-bold rounded-lg hover:bg-gray-50 transition"
-                            >
-                                Back
-                            </button>
-                            <button
-                                onClick={nextStep}
-                                disabled={!formData.fullName || !formData.dob}
-                                className="w-2/3 h-12 bg-primary-pink text-white font-bold rounded-lg hover:bg-pink-600 transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                Next Step
-                            </button>
-                        </div>
                     </div>
-                )}
 
-                {/* Step 3: Health Profile */}
-                {step === 3 && (
-                    <div className="space-y-6">
-                        <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-gray-50">
-                            <span className="font-medium text-gray-700">Are you currently pregnant?</span>
-                            <label className="relative inline-flex items-center cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    name="isPregnant"
-                                    checked={formData.isPregnant}
-                                    onChange={handleChange}
-                                    className="sr-only peer"
-                                />
-                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-pink"></div>
-                            </label>
-                        </div>
-
-                        {!formData.isPregnant && (
-                            <div>
-                                <label className="block text-sm font-medium mb-2 text-gray-700">Last Period Date</label>
-                                <input
-                                    type="date"
-                                    name="lastPeriodDate"
-                                    value={formData.lastPeriodDate}
-                                    onChange={handleChange}
-                                    className="h-11 w-full border border-gray-300 rounded-lg px-4 focus:outline-none focus:border-primary-pink focus:ring-1 focus:ring-primary-pink transition"
-                                />
-                            </div>
+                    {/* Submit Button */}
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full h-13 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center mt-6"
+                    >
+                        {loading ? (
+                            <>
+                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                                Creating Account...
+                            </>
+                        ) : (
+                            <>
+                                Create Account
+                                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                </svg>
+                            </>
                         )}
-
-                        <div className="flex space-x-4">
-                            <button
-                                onClick={prevStep}
-                                className="w-1/3 h-12 border border-gray-300 text-gray-700 font-bold rounded-lg hover:bg-gray-50 transition"
-                            >
-                                Back
-                            </button>
-                            <Link
-                                to="/dashboard"
-                                className="w-2/3 h-12 bg-primary-pink text-white font-bold rounded-lg hover:bg-pink-600 transition shadow-md flex items-center justify-center"
-                            >
-                                Get Started
-                            </Link>
-                        </div>
-                    </div>
-                )}
+                    </button>
+                </form>
 
                 {/* Login Link */}
-                <div className="text-center text-sm mt-8">
+                <div className="text-center text-sm mt-8 pt-6 border-t border-gray-100">
                     <span className="text-gray-600">Already have an account? </span>
-                    <Link to="/login" className="text-primary-pink font-bold hover:underline">
+                    <Link to="/login" className="text-pink-600 font-bold hover:text-pink-700 hover:underline transition">
                         Login
                     </Link>
                 </div>
             </div>
+
+            {/* Custom Animations */}
+            <style jsx>{`
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    25% { transform: translateX(-5px); }
+                    75% { transform: translateX(5px); }
+                }
+                .animate-shake {
+                    animation: shake 0.3s ease-in-out;
+                }
+            `}</style>
         </div>
     );
 };

@@ -1,5 +1,7 @@
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './component/ProtectedRoute';
 import LandingPage from './component/LandingPage'
 import LoginPage from './component/LoginPage';
 import SignupPage from './component/SignupPage';
@@ -17,37 +19,36 @@ import HealthRecords from './component/HealthRecords';
 import ProfileSettings from './component/ProfileSettings';
 import AppointmentCalendar from './component/AppointmentCalendar';
 import EmergencyAccess from './component/EmergencyAccess';
-import FeaturesPage from './component/FeaturesPage';
-import TestimonialsPage from './component/TestimonialsPage';
-import AboutPage from './component/AboutPage';
 
 function App() {
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/track" element={<PeriodTracker />} />
-        <Route path="/complete-profile" element={<CompleteProfile />} />
-        <Route path="/health-details" element={<HealthDetails />} />
-        <Route path="/pregnancy-tracker" element={<PregnancyTracker />} />
-        <Route path="/find-facility" element={<FacilityFinder />} />
-        <Route path="/facility/:id" element={<FacilityDetails />} />
-        <Route path="/ai-chat" element={<AiAssistant />} />
-        <Route path="/library" element={<ContentLibrary />} />
-        <Route path="/article/:id" element={<ArticlePage />} />
-        <Route path="/records" element={<HealthRecords />} />
-        <Route path="/profile-settings" element={<ProfileSettings />} />
-        <Route path="/appointments" element={<AppointmentCalendar />} />
-        <Route path="/emergency" element={<EmergencyAccess />} />
-        <Route path="/features" element={<FeaturesPage />} />
-        <Route path="/testimonials" element={<TestimonialsPage />} />
-        <Route path="/about" element={<AboutPage />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+
+          {/* Protected routes */}
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/track" element={<ProtectedRoute><PeriodTracker /></ProtectedRoute>} />
+          <Route path="/complete-profile" element={<ProtectedRoute><CompleteProfile /></ProtectedRoute>} />
+          <Route path="/health-details" element={<ProtectedRoute><HealthDetails /></ProtectedRoute>} />
+          <Route path="/pregnancy-tracker" element={<ProtectedRoute><PregnancyTracker /></ProtectedRoute>} />
+          <Route path="/find-facility" element={<ProtectedRoute><FacilityFinder /></ProtectedRoute>} />
+          <Route path="/facility/:id" element={<ProtectedRoute><FacilityDetails /></ProtectedRoute>} />
+          <Route path="/ai-chat" element={<ProtectedRoute><AiAssistant /></ProtectedRoute>} />
+          <Route path="/library" element={<ProtectedRoute><ContentLibrary /></ProtectedRoute>} />
+          <Route path="/article/:id" element={<ProtectedRoute><ArticlePage /></ProtectedRoute>} />
+          <Route path="/records" element={<ProtectedRoute><HealthRecords /></ProtectedRoute>} />
+          <Route path="/profile-settings" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
+          <Route path="/appointments" element={<ProtectedRoute><AppointmentCalendar /></ProtectedRoute>} />
+          <Route path="/emergency" element={<ProtectedRoute><EmergencyAccess /></ProtectedRoute>} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   )
 }
 
