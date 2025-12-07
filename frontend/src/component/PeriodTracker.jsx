@@ -4,6 +4,7 @@ import { geminiService } from '../services/geminiService';
 import periodService from '../services/periodService';
 import PeriodAiSideBar from './PeriodAiSideBar';
 import PeriodAiChat from './PeriodAiChat';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const PeriodTracker = () => {
     // Component Refactored and Fixed
@@ -44,8 +45,6 @@ const PeriodTracker = () => {
             setCycleData(data);
         } catch (err) {
             console.error("Failed to fetch cycle data", err);
-            // Fallback to null/mock if needed, or show error
-            // For now, we will rely on UI defaults if data is missing
         } finally {
             setLoading(false);
         }
@@ -84,11 +83,10 @@ const PeriodTracker = () => {
         return "Your cycle appears regular. Keep tracking to help our AI predict your next window more accurately!";
     };
 
-    // Mock Calendar Data (Enhanced with fetched data if available in future)
+    // Mock Calendar Data
     const days = Array.from({ length: 35 }, (_, i) => {
         const day = i - 2; // Offset
         let status = 'safe';
-        // In a real app, mapping would compare 'day' with 'cycleData' ranges
         if (day >= 1 && day <= 5) status = 'period';
         if (day >= 12 && day <= 16) status = 'fertile';
         if (day >= 25 && day <= 28) status = 'pms';
@@ -108,20 +106,18 @@ const PeriodTracker = () => {
 
     const handleSaveLog = async () => {
         try {
-            // Log for selected date or today
             const logDate = selectedDate
-                ? new Date(2025, 11, selectedDate).toISOString() // Mock month Dec 2025
+                ? new Date(2025, 11, selectedDate).toISOString()
                 : new Date().toISOString();
 
             await periodService.logPeriod({
                 startDate: logDate,
-                endDate: logDate, // Single day log for now
-                symptoms: symptoms // Backend needs to handle this structure or we map it
+                endDate: logDate,
+                symptoms: symptoms
             });
 
-            // Close and refresh
             setIsBottomSheetOpen(false);
-            fetchCycleData(); // Refresh stats
+            fetchCycleData();
             alert("Symptoms logged successfully!");
         } catch (err) {
             console.error("Failed to log symptoms", err);
@@ -129,62 +125,99 @@ const PeriodTracker = () => {
         }
     };
 
+    // Animation Variants
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+    };
+
     return (
-        <div className="font-sans text-gray-800">
+        <motion.div
+            className="font-sans text-gray-800 pb-12"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+        >
             {/* Page Header */}
-            <header className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <motion.header
+                variants={itemVariants}
+                className="mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-6"
+            >
                 <div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <Link to="/dashboard" className="text-gray-400 hover:text-primary-pink transition">Dashboard</Link>
+                    <div className="flex items-center gap-2 mb-2 text-sm">
+                        <Link to="/dashboard" className="text-gray-400 hover:text-primary-pink transition font-medium">Dashboard</Link>
                         <span className="text-gray-300">/</span>
-                        <span className="text-gray-600 font-medium">Tracker</span>
+                        <span className="text-pink-600 font-bold bg-pink-50 px-2 py-0.5 rounded-full">Tracker</span>
                     </div>
-                    <h1 className="text-2xl font-bold">Period Tracker</h1>
-                    <p className="text-gray-500 text-sm">Track your cycle, symptoms, and health.</p>
+                    <h1 className="text-4xl font-extrabold text-gray-800 tracking-tight">Period Tracker</h1>
+                    <p className="text-gray-500 mt-2 font-medium">Track your cycle, symptoms, and health.</p>
                 </div>
-                <div className="flex bg-white p-1 rounded-xl border border-gray-100 shadow-sm">
-                    {['Calendar', 'History', 'Insights'].map(tab => (
+                <div className="flex bg-white p-1.5 rounded-2xl border border-gray-100 shadow-sm">
+                    {['Calendar', 'History', 'Insights'].map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`px-6 py-2 rounded-lg text-sm font-bold transition ${activeTab === tab ? 'bg-primary-pink text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${activeTab === tab
+                                ? 'bg-gradient-to-r from-primary-pink to-pink-500 text-white shadow-md transform scale-105'
+                                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                                }`}
                         >
                             {tab}
                         </button>
                     ))}
                 </div>
-            </header>
+            </motion.header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                 {/* Main Content (Left) */}
                 <div className="lg:col-span-2 space-y-8">
 
-                    {/* Status Card */}
-                    <div className="bg-gradient-to-r from-pink-500 to-pink-400 rounded-3xl p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
-                        <div className="relative z-10 text-center md:text-left">
-                            <h2 className="text-sm font-bold uppercase tracking-wider opacity-80 mb-2">Current Cycle</h2>
-                            <p className="text-5xl font-black mb-2">
-                                {cycleData ? `Day ${cycleData.currentDay}` : 'Day 14'}
-                            </p>
-                            <span className="bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-bold border border-white/30 inline-block">
-                                {cycleData ? cycleData.phase : 'Ovulation Phase'}
-                            </span>
-                        </div>
-                        <div className="mt-8 md:mt-0 relative z-10 text-center md:text-right">
-                            <p className="text-sm opacity-90 mb-1">Prediction</p>
-                            <p className="text-2xl font-bold">
-                                {cycleData?.nextPeriod ? `Next Period: ${new Date(cycleData.nextPeriod).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}` : 'Next Period in 14 Days'}
-                            </p>
-                            <p className="text-xs opacity-75 mt-2">
-                                {cycleData?.nextPeriod ? new Date(cycleData.nextPeriod).toLocaleDateString() : 'Dec 21, 2025'}
-                            </p>
-                        </div>
+                    {/* Status Card - Luxury Glassmorphism */}
+                    <motion.div
+                        variants={itemVariants}
+                        className="relative overflow-hidden rounded-[2.5rem] shadow-2xl group"
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B9D] via-[#FF8FB1] to-[#FF4785] transition-all duration-500"></div>
 
-                        {/* Decorative */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full translate-x-1/3 -translate-y-1/3"></div>
-                        <div className="absolute bottom-0 left-0 w-40 h-40 bg-white opacity-10 rounded-full -translate-x-1/2 translate-y-1/2"></div>
-                    </div>
+                        {/* Glass Effect */}
+                        <div className="absolute inset-0 bg-white/10 backdrop-blur-[1px]"></div>
+
+                        {/* Decorative Elements */}
+                        <div className="absolute -top-24 -right-24 w-80 h-80 bg-white/20 rounded-full blur-3xl mix-blend-overlay"></div>
+                        <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/10 to-transparent"></div>
+
+                        <div className="relative z-10 p-10 flex flex-col md:flex-row items-center justify-between text-white">
+                            <div className="text-center md:text-left">
+                                <span className="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold tracking-wider mb-4 border border-white/20">
+                                    CURRENT CYCLE
+                                </span>
+                                <div className="text-6xl font-black mb-2 tracking-tight drop-shadow-sm">
+                                    {cycleData ? `Day ${cycleData.currentDay}` : 'Day 14'}
+                                </div>
+                                <div className="text-xl font-medium opacity-90 mt-2 flex items-center gap-2 justify-center md:justify-start">
+                                    <span className="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_10px_rgba(74,222,128,0.8)]"></span>
+                                    {cycleData ? cycleData.phase : 'Ovulation Phase'}
+                                </div>
+                            </div>
+                            <div className="mt-8 md:mt-0 text-center md:text-right bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10 shadow-lg">
+                                <p className="text-sm font-bold opacity-80 mb-2 uppercase tracking-wide">Next Period</p>
+                                <p className="text-3xl font-extrabold mb-1">
+                                    {cycleData?.nextPeriod
+                                        ? new Date(cycleData.nextPeriod).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+                                        : 'Dec 21'}
+                                </p>
+                                <p className="text-sm font-medium opacity-75">
+                                    {cycleData?.nextPeriod ? 'Estimated' : 'In 14 Days'}
+                                </p>
+                            </div>
+                        </div>
+                    </motion.div>
 
                     {/* AI Chat Layout Interface - NOW MODULAR */}
                     <PeriodAiChat
@@ -371,7 +404,7 @@ const PeriodTracker = () => {
                     </div>
                 )}
             </div>
-        </div>
+        </motion.div>
     );
 };
 

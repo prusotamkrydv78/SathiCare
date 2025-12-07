@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { geminiService } from '../services/geminiService'; // Import Service
-import PregnancyAiWidget from './PregnancyAiWidget'; // Import New Widget
+import { geminiService } from '../services/geminiService';
+import PregnancyAiWidget from './PregnancyAiWidget';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const PregnancyTracker = () => {
     const [activeTab, setActiveTab] = useState('Overview');
@@ -40,7 +41,6 @@ const PregnancyTracker = () => {
     // Fetch AI Insight on Mount
     useEffect(() => {
         const fetchInsight = async () => {
-            // Mocking a fetch for "Week 20" context
             const response = await geminiService.getChatResponse("What should I expect in week 20 of pregnancy? Give me a short summary for baby and mom.");
             setWeeklyInsight(response.text);
             setLoadingInsight(false);
@@ -69,7 +69,6 @@ const PregnancyTracker = () => {
     // Timer Functions
     const toggleTimer = () => {
         if (isTimerRunning) {
-            // Stop
             const newItem = {
                 id: Date.now(),
                 duration: timerDuration,
@@ -79,7 +78,6 @@ const PregnancyTracker = () => {
             setIsTimerRunning(false);
             setTimerDuration(0);
         } else {
-            // Start
             setTimerStart(Date.now());
             setIsTimerRunning(true);
         }
@@ -109,7 +107,6 @@ const PregnancyTracker = () => {
         setMainChatLoading(true);
 
         try {
-            // Reuse the pregnancy-specific chat logic
             const history = mainChatMessages.map(m => ({
                 text: m.text,
                 sender: m.sender
@@ -124,117 +121,156 @@ const PregnancyTracker = () => {
         }
     };
 
+    // Animation Variants
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+    };
+
     return (
-        <div className="font-sans text-gray-800 pb-12">
+        <motion.div
+            className="font-sans text-gray-800 pb-12"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+        >
 
             {/* Header */}
-            <header className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <motion.header variants={itemVariants} className="mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
                 <div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <Link to="/dashboard" className="text-gray-400 hover:text-primary-pink transition">Dashboard</Link>
+                    <div className="flex items-center gap-2 mb-2 text-sm">
+                        <Link to="/dashboard" className="text-gray-400 hover:text-primary-pink transition font-medium">Dashboard</Link>
                         <span className="text-gray-300">/</span>
-                        <span className="text-gray-600 font-medium">Pregnancy</span>
+                        <span className="text-purple-600 font-bold bg-purple-50 px-2 py-0.5 rounded-full">Pregnancy</span>
                     </div>
-                    <h1 className="text-2xl font-bold">Pregnancy Companion</h1>
-                    <p className="text-gray-500 text-sm">Week-by-week guidance and tools.</p>
+                    <h1 className="text-4xl font-extrabold text-gray-800 tracking-tight">Pregnancy Companion</h1>
+                    <p className="text-gray-500 mt-2 font-medium">Week-by-week guidance for you and your baby.</p>
                 </div>
-                <div className="flex bg-white p-1 rounded-xl border border-gray-100 shadow-sm overflow-x-auto">
+                <div className="flex bg-white p-1.5 rounded-2xl border border-gray-100 shadow-sm overflow-x-auto">
                     {['Overview', 'Checklist', 'Timer', 'Nutrition'].map(tab => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`px-6 py-2 rounded-lg text-sm font-bold transition whitespace-nowrap ${activeTab === tab ? 'bg-primary-pink text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
+                            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 whitespace-nowrap ${activeTab === tab
+                                ? 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-md transform scale-105'
+                                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                                }`}
                         >
                             {tab}
                         </button>
                     ))}
                 </div>
-            </header>
+            </motion.header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                 {/* Main Content */}
                 <div className="lg:col-span-2 space-y-8">
 
-                    {/* Weekly Hero Card */}
-                    <div className="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
-                        <div className="relative z-10 flex justify-between items-start">
-                            <div>
-                                <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold border border-white/20 mb-4">2nd Trimester</span>
-                                <h2 className="text-4xl font-black mb-1">Week 20</h2>
-                                <p className="opacity-90">20 Weeks to go</p>
-                            </div>
-                            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 flex items-center gap-4 border border-white/20">
-                                <span className="text-4xl">🍌</span>
+                    {/* Weekly Hero Card - Luxury Redesign */}
+                    <motion.div
+                        variants={itemVariants}
+                        className="relative overflow-hidden rounded-[2.5rem] shadow-2xl group"
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-indigo-500 to-blue-600 transition-all duration-500"></div>
+                        <div className="absolute inset-0 bg-white/10 backdrop-blur-[1px]"></div>
+                        <div className="absolute -top-32 -left-32 w-96 h-96 bg-white/20 rounded-full blur-3xl mix-blend-overlay"></div>
+                        <div className="absolute top-1/2 right-0 w-64 h-64 bg-pink-500/30 rounded-full blur-3xl mix-blend-overlay"></div>
+
+                        <div className="relative z-10 p-10">
+                            <div className="flex justify-between items-start mb-12">
                                 <div>
-                                    <p className="text-xs uppercase opacity-75 font-bold tracking-wider">Baby Size</p>
-                                    <p className="font-bold">Banana</p>
+                                    <span className="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold border border-white/20 mb-4 text-white uppercase tracking-wider">
+                                        2nd Trimester
+                                    </span>
+                                    <h2 className="text-6xl font-black text-white mb-2 drop-shadow-sm">Week 20</h2>
+                                    <p className="text-indigo-100 text-xl font-medium">Halfway there! 20 weeks to go.</p>
+                                </div>
+                                <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 flex flex-col items-center border border-white/20 shadow-lg group-hover:scale-105 transition-transform duration-300">
+                                    <span className="text-5xl mb-2 drop-shadow-md">🍌</span>
+                                    <p className="text-xs text-indigo-100 uppercase font-bold tracking-widest mb-1">Baby Size</p>
+                                    <p className="font-exrabold text-white text-lg">Banana</p>
+                                </div>
+                            </div>
+
+                            <div className="bg-black/20 backdrop-blur-sm rounded-full p-1.5 border border-white/10">
+                                <div className="flex justify-between text-[10px] font-bold text-white/70 mb-2 px-2">
+                                    <span>Week 0</span>
+                                    <span>Week 40</span>
+                                </div>
+                                <div className="w-full bg-black/30 h-3 rounded-full overflow-hidden relative">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: '50%' }}
+                                        transition={{ duration: 1.5, ease: "easeOut" }}
+                                        className="absolute top-0 left-0 h-full bg-gradient-to-r from-pink-400 to-purple-300 rounded-full shadow-[0_0_10px_rgba(232,121,249,0.5)]"
+                                    ></motion.div>
                                 </div>
                             </div>
                         </div>
+                    </motion.div>
 
-                        <div className="mt-8">
-                            <div className="flex justify-between text-xs font-bold opacity-75 mb-2">
-                                <span>Week 0</span>
-                                <span>Week 40</span>
-                            </div>
-                            <div className="w-full bg-black/20 h-2 rounded-full overflow-hidden">
-                                <div className="bg-white h-full rounded-full" style={{ width: '50%' }}></div>
-                            </div>
-                        </div>
-
-                        {/* Abstract Shapes */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full translate-x-1/4 -translate-y-1/4 blur-3xl"></div>
-                    </div>
-
-                    {/* Ask AI Section (Moved Below Hero Card) */}
                     {/* Ask AI Section (Visible only when chat is open) */}
-                    <div className={`transition-all duration-300 ${showMainChat ? 'bg-teal-50 rounded-3xl p-6 border border-teal-100 flex flex-col' : 'hidden'}`}>
+                    <AnimatePresence>
                         {showMainChat && (
-                            <>
-                                <div className="flex justify-between items-center mb-4 animate-fade-in">
-                                    <h3 className="font-bold text-teal-800 flex items-center gap-2">
-                                        <span className="bg-teal-100 p-1.5 rounded-lg">🤖</span> Ask AI Companion
+                            <motion.div
+                                initial={{ opacity: 0, height: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, height: 'auto', scale: 1 }}
+                                exit={{ opacity: 0, height: 0, scale: 0.95 }}
+                                className="bg-white rounded-[2rem] border border-gray-100 shadow-xl overflow-hidden"
+                            >
+                                <div className="p-6 bg-gradient-to-r from-teal-50 to-white flex justify-between items-center border-b border-gray-100">
+                                    <h3 className="font-bold text-teal-800 flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center text-xl shadow-sm">🤖</div>
+                                        Pregnancy AI Assistant
                                     </h3>
+                                    <button onClick={() => setShowMainChat(false)} className="w-8 h-8 rounded-full bg-white text-gray-400 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition">✕</button>
                                 </div>
-                                {/* Chat Content */}
-                                <div className="mt-4 animate-fade-in">
-                                    <div className="h-64 overflow-y-auto mb-4 bg-white rounded-xl p-3 border border-teal-100 space-y-3">
+                                <div className="p-6">
+                                    <div className="h-72 overflow-y-auto mb-4 bg-gray-50/50 rounded-2xl p-4 border border-gray-100 space-y-4 scroll-smooth">
                                         {mainChatMessages.map(msg => (
-                                            <div key={msg.id} className={`p-2 rounded-lg text-xs ${msg.sender === 'user' ? 'bg-teal-500 text-white ml-auto max-w-[85%]' : 'bg-gray-100 text-gray-700 mr-auto max-w-[90%]'}`}>
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                key={msg.id}
+                                                className={`p-3.5 rounded-2xl text-sm leading-relaxed max-w-[85%] shadow-sm ${msg.sender === 'user' ? 'bg-teal-500 text-white ml-auto rounded-tr-none' : 'bg-white text-gray-700 mr-auto rounded-tl-none border border-gray-100'}`}
+                                            >
                                                 {msg.text}
-                                            </div>
+                                            </motion.div>
                                         ))}
                                         {mainChatLoading && (
-                                            <div className="text-xs text-gray-400 italic">Thinking...</div>
+                                            <div className="flex gap-2 p-2 ml-2">
+                                                <div className="w-2 h-2 bg-teal-400 rounded-full animate-bounce"></div>
+                                                <div className="w-2 h-2 bg-teal-400 rounded-full animate-bounce delay-100"></div>
+                                                <div className="w-2 h-2 bg-teal-400 rounded-full animate-bounce delay-200"></div>
+                                            </div>
                                         )}
                                         <div ref={mainChatEndRef} />
                                     </div>
-                                    <form onSubmit={handleMainChatSubmit} className="flex gap-2">
+                                    <form onSubmit={handleMainChatSubmit} className="flex gap-3">
                                         <input
                                             type="text"
-                                            className="flex-1 text-sm border border-teal-200 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-teal-500"
-                                            placeholder="Type here..."
+                                            className="flex-1 text-sm border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition shadow-sm"
+                                            placeholder="Type your question..."
                                             value={mainChatInput}
                                             onChange={(e) => setMainChatInput(e.target.value)}
                                         />
                                         <button
                                             type="submit"
-                                            className="bg-teal-600 text-white px-3 py-2 rounded-lg text-sm font-bold hover:bg-teal-700"
+                                            className="bg-teal-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-teal-700 shadow-lg shadow-teal-200 transition transform hover:-translate-y-0.5"
                                         >
-                                            ➤
+                                            Send
                                         </button>
                                     </form>
-                                    <button
-                                        onClick={() => setShowMainChat(false)}
-                                        className="w-full text-center text-xs text-teal-600 mt-2 hover:underline"
-                                    >
-                                        Close Chat
-                                    </button>
                                 </div>
-                            </>
+                            </motion.div>
                         )}
-                    </div>
+                    </AnimatePresence>
 
                     {/* Tab Content Area */}
                     <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 min-h-[400px]">
@@ -401,7 +437,7 @@ const PregnancyTracker = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 
