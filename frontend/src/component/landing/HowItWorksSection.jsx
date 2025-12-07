@@ -1,4 +1,6 @@
 import React from 'react';
+import { FadeInLeft, FadeInRight, FadeInUp } from '../animations/ScrollAnimations';
+import { motion } from 'framer-motion';
 
 const HowItWorksSection = () => {
     const steps = [
@@ -31,37 +33,59 @@ const HowItWorksSection = () => {
     return (
         <section className="py-20 px-6 bg-gray-50">
             <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
-                        How It Works
-                    </h2>
-                    <p className="text-gray-600 max-w-2xl mx-auto">
-                        Get started with SaathiCare in just 4 simple steps
-                    </p>
-                </div>
+                <FadeInUp>
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
+                            How It Works
+                        </h2>
+                        <p className="text-gray-600 max-w-2xl mx-auto">
+                            Get started with SaathiCare in just 4 simple steps
+                        </p>
+                    </div>
+                </FadeInUp>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {steps.map((step, index) => (
-                        <div key={index} className="relative">
-                            {/* Connector Line */}
-                            {index < steps.length - 1 && (
-                                <div className="hidden lg:block absolute top-16 left-full w-full h-0.5 bg-gradient-to-r from-pink-300 to-purple-300 -translate-x-1/2 z-0"></div>
-                            )}
+                    {steps.map((step, index) => {
+                        const AnimationComponent = index % 2 === 0 ? FadeInLeft : FadeInRight;
 
-                            <div className="relative bg-white p-8 rounded-3xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 z-10">
-                                <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center text-3xl mb-6 mx-auto">
-                                    {step.icon}
-                                </div>
-                                <div className="text-center mb-4">
-                                    <span className="text-6xl font-bold text-gray-100">{step.number}</span>
-                                </div>
-                                <h3 className="text-xl font-bold mb-3 text-gray-800 text-center">{step.title}</h3>
-                                <p className="text-gray-600 text-center leading-relaxed">
-                                    {step.description}
-                                </p>
+                        return (
+                            <div key={index} className="relative">
+                                {/* Connector Line */}
+                                {index < steps.length - 1 && (
+                                    <motion.div
+                                        className="hidden lg:block absolute top-16 left-full w-full h-0.5 bg-gradient-to-r from-pink-300 to-purple-300 -translate-x-1/2 z-0"
+                                        initial={{ scaleX: 0 }}
+                                        whileInView={{ scaleX: 1 }}
+                                        viewport={{ once: true }}
+                                        transition={{ duration: 0.8, delay: index * 0.2 }}
+                                    />
+                                )}
+
+                                <AnimationComponent delay={index * 0.15}>
+                                    <motion.div
+                                        className="relative bg-white p-8 rounded-3xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 z-10 h-full"
+                                        whileHover={{ y: -10 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        <motion.div
+                                            className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center text-3xl mb-6 mx-auto"
+                                            whileHover={{ rotate: 360, scale: 1.1 }}
+                                            transition={{ duration: 0.6 }}
+                                        >
+                                            {step.icon}
+                                        </motion.div>
+                                        <div className="text-center mb-4">
+                                            <span className="text-6xl font-bold text-gray-100">{step.number}</span>
+                                        </div>
+                                        <h3 className="text-xl font-bold mb-3 text-gray-800 text-center">{step.title}</h3>
+                                        <p className="text-gray-600 text-center leading-relaxed">
+                                            {step.description}
+                                        </p>
+                                    </motion.div>
+                                </AnimationComponent>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
         </section>

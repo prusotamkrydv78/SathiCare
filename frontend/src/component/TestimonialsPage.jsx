@@ -1,218 +1,285 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FadeInUp, StaggerContainer, StaggerItem, ScaleIn } from './animations/ScrollAnimations';
+import { motion } from 'framer-motion';
 
 const TestimonialsPage = () => {
+    const stats = [
+        { number: '10,000+', label: 'Happy Users', icon: '👥' },
+        { number: '4.9/5', label: 'Average Rating', icon: '⭐' },
+        { number: '98%', label: 'Satisfaction Rate', icon: '💝' }
+    ];
+
     const testimonials = [
         {
             id: 1,
-            name: "Sita Sharma",
-            location: "Kathmandu",
-            role: "Mother of two",
-            quote: "SaathiCare has been a game-changer for me. The period tracker is so accurate, and I love the health tips! It feels like a personal assistant for my health. I've recommended it to all my friends.",
-            avatar: "S",
+            name: 'Sita Sharma',
+            location: 'Kathmandu',
+            avatar: 'S',
             rating: 5,
-            color: "pink",
-            feature: "Period Tracker"
+            text: 'SaathiCare has completely changed how I track my health. The AI predictions are incredibly accurate, and I love getting personalized tips every day!',
+            features: ['Period Tracker', 'AI Insights'],
+            color: 'pink'
         },
         {
             id: 2,
-            name: "Rita K.C.",
-            location: "Pokhara",
-            role: "Expecting Mother",
-            quote: "I used the pregnancy companion throughout my journey. It felt like having a friend by my side. The weekly updates were exactly what I needed, and the AI tips were incredibly helpful.",
-            avatar: "R",
+            name: 'Rita K.C.',
+            location: 'Pokhara',
+            avatar: 'R',
             rating: 5,
-            color: "purple",
-            feature: "Pregnancy Companion"
+            text: 'The pregnancy companion feature was my best friend during my journey. Week-by-week guidance and the AI assistant answered all my questions instantly.',
+            features: ['Pregnancy Tracker', 'AI Assistant'],
+            color: 'purple'
         },
         {
             id: 3,
-            name: "Anita Gurung",
-            location: "Lalitpur",
-            role: "Student",
-            quote: "Finding a gynecologist was always awkward for me until I found SaathiCare. The facility finder is amazing and helped me find a great doctor nearby. The app is so easy to use!",
-            avatar: "A",
+            name: 'Anjali Thapa',
+            location: 'Lalitpur',
+            avatar: 'A',
             rating: 5,
-            color: "blue",
-            feature: "Doctor Finder"
+            text: 'Finding a good gynecologist was so easy with SaathiCare. I could see ratings, availability, and book an appointment in minutes!',
+            features: ['Doctor Finder', 'Appointments'],
+            color: 'blue'
         },
         {
             id: 4,
-            name: "Manju Shrestha",
-            location: "Biratnagar",
-            role: "Teacher",
-            quote: "The educational content in the library is top-notch. I've learned so much about my body and health that I never knew before. Highly recommended for all women!",
-            avatar: "M",
+            name: 'Kamala Rai',
+            location: 'Bhaktapur',
+            avatar: 'K',
             rating: 5,
-            color: "green",
-            feature: "Health Library"
+            text: 'I appreciate that everything is in Nepali. It makes me feel more comfortable discussing my health concerns.',
+            features: ['Nepali Support', 'Health Library'],
+            color: 'green'
         },
         {
             id: 5,
-            name: "Priya Singh",
-            location: "Birgunj",
-            role: "Nurse",
-            quote: "As a healthcare professional, I appreciate the accuracy of the information provided. It's a great resource for my patients as well. The AI assistant is surprisingly knowledgeable.",
-            avatar: "P",
+            name: 'Sunita Gurung',
+            location: 'Chitwan',
+            avatar: 'S',
             rating: 5,
-            color: "indigo",
-            feature: "AI Assistant"
+            text: 'The emergency SOS feature gives me peace of mind. Knowing that help is just one tap away is reassuring.',
+            features: ['Emergency SOS', 'Location Services'],
+            color: 'red'
         },
         {
             id: 6,
-            name: "Gita Thapa",
-            location: "Dhangadhi",
-            role: "Entrepreneur",
-            quote: "The Emergency SOS feature gives me peace of mind when I travel alone for work. SaathiCare truly cares about women's safety. It's more than just a health app.",
-            avatar: "G",
+            name: 'Mina Shrestha',
+            location: 'Biratnagar',
+            avatar: 'M',
             rating: 5,
-            color: "red",
-            feature: "Emergency SOS"
+            text: 'As someone who lives in a smaller city, having access to verified health information and AI support has been invaluable.',
+            features: ['AI Assistant', 'Health Library'],
+            color: 'indigo'
         },
         {
             id: 7,
-            name: "Sunita Rai",
-            location: "Chitwan",
-            role: "Homemaker",
-            quote: "I love how everything is in Nepali too! It makes it so much easier for me to understand. The app is very user-friendly and the support team is always helpful.",
-            avatar: "S",
+            name: 'Gita Tamang',
+            location: 'Dharan',
+            avatar: 'G',
             rating: 5,
-            color: "pink",
-            feature: "Nepali Support"
+            text: 'The symptom checker helped me understand when I needed to see a doctor. It\'s like having a health expert in my pocket!',
+            features: ['Symptom Checker', 'AI Insights'],
+            color: 'teal'
         },
         {
             id: 8,
-            name: "Kamala Adhikari",
-            location: "Bhaktapur",
-            role: "Doctor",
-            quote: "I recommend SaathiCare to all my patients. It helps them track their health better and makes our consultations more productive. The data insights are very useful.",
-            avatar: "K",
+            name: 'Laxmi Adhikari',
+            location: 'Butwal',
+            avatar: 'L',
             rating: 5,
-            color: "purple",
-            feature: "Health Tracking"
+            text: 'I love how the app learns from my data and gives me personalized recommendations. It truly feels made for me.',
+            features: ['AI Personalization', 'Period Tracker'],
+            color: 'pink'
         },
         {
             id: 9,
-            name: "Deepa Tamang",
-            location: "Janakpur",
-            role: "College Student",
-            quote: "The symptom checker helped me understand when I needed to see a doctor. It's like having a health advisor in my pocket. Very grateful for this app!",
-            avatar: "D",
+            name: 'Radha Poudel',
+            location: 'Hetauda',
+            avatar: 'R',
             rating: 5,
-            color: "blue",
-            feature: "Symptom Checker"
+            text: 'The community forum is amazing! It\'s so helpful to connect with other women and share experiences.',
+            features: ['Community Forum', 'Support Groups'],
+            color: 'purple'
         }
-    ];
-
-    const stats = [
-        { number: '10,000+', label: 'Happy Users' },
-        { number: '4.9/5', label: 'Average Rating' },
-        { number: '50,000+', label: 'Reviews' },
-        { number: '98%', label: 'Satisfaction' }
     ];
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white font-sans pb-24">
 
             {/* Hero Section */}
-            <div className="bg-gradient-to-r from-pink-600 to-purple-600 py-20 px-6 text-white">
-                <div className="max-w-4xl mx-auto text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                        Loved by Women Across Nepal
-                    </h1>
-                    <p className="text-xl opacity-90 mb-8">
-                        Join thousands of women who trust SaathiCare for their health and wellness journey
-                    </p>
-                    <div className="flex flex-wrap justify-center gap-8 mt-12">
-                        {stats.map((stat, index) => (
-                            <div key={index} className="text-center">
-                                <div className="text-4xl font-bold mb-1">{stat.number}</div>
-                                <div className="text-sm opacity-75">{stat.label}</div>
+            <FadeInUp>
+                <div className="bg-gradient-to-r from-pink-600 to-purple-600 py-20 px-6 text-white">
+                    <div className="max-w-4xl mx-auto text-center">
+                        <motion.h1
+                            className="text-4xl md:text-5xl font-bold mb-6"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6 }}
+                        >
+                            Loved by Women Across Nepal
+                        </motion.h1>
+                        <motion.p
+                            className="text-xl opacity-90 mb-12"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
+                        >
+                            Join thousands of women who trust SaathiCare for their health journey
+                        </motion.p>
+
+                        {/* Stats */}
+                        <StaggerContainer staggerDelay={0.15}>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                {stats.map((stat, index) => (
+                                    <StaggerItem key={index}>
+                                        <ScaleIn delay={index * 0.1}>
+                                            <motion.div
+                                                className="text-center"
+                                                whileHover={{ scale: 1.05 }}
+                                            >
+                                                <div className="text-5xl mb-3">{stat.icon}</div>
+                                                <div className="text-4xl font-bold mb-2">{stat.number}</div>
+                                                <div className="text-pink-100">{stat.label}</div>
+                                            </motion.div>
+                                        </ScaleIn>
+                                    </StaggerItem>
+                                ))}
                             </div>
-                        ))}
+                        </StaggerContainer>
                     </div>
                 </div>
-            </div>
+            </FadeInUp>
 
             {/* Testimonials Grid */}
             <div className="max-w-7xl mx-auto px-6 py-16">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {testimonials.map((t) => (
-                        <div
-                            key={t.id}
-                            className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col"
-                        >
-                            {/* Header */}
-                            <div className="flex items-center mb-6">
-                                <div className={`w-16 h-16 bg-${t.color}-100 text-${t.color}-600 rounded-full flex items-center justify-center font-bold text-2xl mr-4 shadow-md`}>
-                                    {t.avatar}
-                                </div>
-                                <div>
-                                    <h4 className="font-bold text-gray-800 text-lg">{t.name}</h4>
-                                    <p className="text-sm text-gray-500">{t.role}</p>
-                                    <p className="text-xs text-gray-400 flex items-center gap-1 mt-1">
-                                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                                        </svg>
-                                        {t.location}
-                                    </p>
-                                </div>
-                            </div>
+                <FadeInUp>
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                            Real Stories from Real Women
+                        </h2>
+                        <p className="text-gray-600 max-w-2xl mx-auto">
+                            Hear what our users have to say about their experience with SaathiCare
+                        </p>
+                    </div>
+                </FadeInUp>
 
-                            {/* Quote */}
-                            <p className="text-gray-600 italic leading-relaxed mb-6 flex-grow">
-                                "{t.quote}"
-                            </p>
+                <StaggerContainer staggerDelay={0.1}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {testimonials.map((testimonial, index) => (
+                            <StaggerItem key={testimonial.id}>
+                                <ScaleIn delay={index * 0.05}>
+                                    <motion.div
+                                        className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 h-full flex flex-col"
+                                        whileHover={{ y: -8 }}
+                                    >
+                                        {/* Header */}
+                                        <div className="flex items-center mb-4">
+                                            <motion.div
+                                                className={`w-12 h-12 bg-${testimonial.color}-100 text-${testimonial.color}-600 rounded-full flex items-center justify-center font-bold text-lg mr-3 shadow-md`}
+                                                whileHover={{ rotate: 360, scale: 1.1 }}
+                                                transition={{ duration: 0.6 }}
+                                            >
+                                                {testimonial.avatar}
+                                            </motion.div>
+                                            <div>
+                                                <h4 className="font-bold text-gray-800">{testimonial.name}</h4>
+                                                <p className="text-sm text-gray-500 flex items-center gap-1">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    </svg>
+                                                    {testimonial.location}
+                                                </p>
+                                            </div>
+                                        </div>
 
-                            {/* Footer */}
-                            <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                                <div className="flex gap-1">
-                                    {[...Array(t.rating)].map((_, i) => (
-                                        <svg key={i} className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                    ))}
-                                </div>
-                                <span className={`text-xs px-3 py-1 bg-${t.color}-50 text-${t.color}-600 rounded-full font-semibold`}>
-                                    {t.feature}
-                                </span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                                        {/* Rating */}
+                                        <motion.div
+                                            className="flex gap-1 mb-4"
+                                            initial={{ opacity: 0 }}
+                                            whileInView={{ opacity: 1 }}
+                                            viewport={{ once: true }}
+                                            transition={{ delay: 0.3 }}
+                                        >
+                                            {[...Array(testimonial.rating)].map((_, i) => (
+                                                <motion.svg
+                                                    key={i}
+                                                    className="w-5 h-5 text-yellow-400"
+                                                    fill="currentColor"
+                                                    viewBox="0 0 20 20"
+                                                    initial={{ scale: 0, rotate: -180 }}
+                                                    whileInView={{ scale: 1, rotate: 0 }}
+                                                    viewport={{ once: true }}
+                                                    transition={{ delay: 0.4 + (i * 0.1), type: "spring", stiffness: 300 }}
+                                                >
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                </motion.svg>
+                                            ))}
+                                        </motion.div>
+
+                                        {/* Testimonial Text */}
+                                        <p className="text-gray-600 italic leading-relaxed mb-4 flex-grow">
+                                            "{testimonial.text}"
+                                        </p>
+
+                                        {/* Feature Tags */}
+                                        <div className="flex flex-wrap gap-2">
+                                            {testimonial.features.map((feature, i) => (
+                                                <motion.span
+                                                    key={i}
+                                                    className={`px-3 py-1 bg-${testimonial.color}-50 text-${testimonial.color}-600 text-xs font-semibold rounded-full`}
+                                                    initial={{ opacity: 0, scale: 0.8 }}
+                                                    whileInView={{ opacity: 1, scale: 1 }}
+                                                    viewport={{ once: true }}
+                                                    transition={{ delay: 0.5 + (i * 0.1) }}
+                                                    whileHover={{ scale: 1.1 }}
+                                                >
+                                                    {feature}
+                                                </motion.span>
+                                            ))}
+                                        </div>
+                                    </motion.div>
+                                </ScaleIn>
+                            </StaggerItem>
+                        ))}
+                    </div>
+                </StaggerContainer>
             </div>
 
             {/* Share Your Story CTA */}
-            <div className="max-w-4xl mx-auto px-6 mt-8">
-                <div className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-3xl p-12 text-center border border-pink-100">
-                    <div className="text-6xl mb-6">💝</div>
-                    <h3 className="text-3xl font-bold text-gray-800 mb-4">Have Your Own Story?</h3>
-                    <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-                        We'd love to hear how SaathiCare has helped you. Share your experience and inspire other women on their health journey.
-                    </p>
-                    <Link
-                        to="/signup"
-                        className="inline-block px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
+            <FadeInUp delay={0.2}>
+                <div className="max-w-4xl mx-auto px-6 mt-16">
+                    <motion.div
+                        className="bg-gradient-to-r from-pink-600 to-purple-600 rounded-3xl p-12 text-center text-white shadow-2xl relative overflow-hidden"
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ duration: 0.3 }}
                     >
-                        Share Your Story
-                    </Link>
+                        <motion.div
+                            className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full"
+                            animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }}
+                            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                            style={{ translateX: '50%', translateY: '-50%' }}
+                        />
+                        <div className="relative z-10">
+                            <h3 className="text-3xl font-bold mb-4">Share Your Story</h3>
+                            <p className="text-xl opacity-90 mb-8">
+                                Have you had a great experience with SaathiCare? We'd love to hear from you!
+                            </p>
+                            <motion.div
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                <Link
+                                    to="/signup"
+                                    className="inline-block px-10 py-4 bg-white text-primary-pink rounded-xl font-bold shadow-xl hover:shadow-2xl transition-shadow duration-200"
+                                >
+                                    Join SaathiCare
+                                </Link>
+                            </motion.div>
+                        </div>
+                    </motion.div>
                 </div>
-            </div>
-
-            {/* Bottom CTA */}
-            <div className="max-w-4xl mx-auto px-6 mt-16">
-                <div className="bg-gradient-to-r from-pink-600 to-purple-600 rounded-3xl p-12 text-center text-white shadow-2xl">
-                    <h3 className="text-3xl font-bold mb-4">Ready to Start Your Journey?</h3>
-                    <p className="text-xl opacity-90 mb-8">Join our community of empowered women</p>
-                    <Link
-                        to="/signup"
-                        className="inline-block px-10 py-4 bg-white text-primary-pink rounded-xl font-bold shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-200"
-                    >
-                        Get Started Free
-                    </Link>
-                    <p className="mt-6 text-sm opacity-75">No credit card required • Free forever</p>
-                </div>
-            </div>
+            </FadeInUp>
 
         </div>
     );
