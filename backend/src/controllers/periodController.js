@@ -20,11 +20,49 @@ export const logPeriod = async (req, res) => {
             });
         }
 
+        // Get previous completed cycles to calculate average period duration
+        const previousCycles = await PeriodCycle.find({
+            userId: req.user._id,
+            endDate: { $ne: null } // Only completed periods
+        }).sort({ startDate: -1 }).limit(6); // Last 6 cycles
+
+        let predictedEndDate = null;
+
+        // If endDate is provided (for historical/completed periods), use it
+        if (endDate) {
+            predictedEndDate = new Date(endDate);
+        }
+        // Otherwise, predict based on previous cycles
+        else if (previousCycles.length > 0) {
+            // Calculate average period duration
+            const totalDuration = previousCycles.reduce((sum, cycle) => {
+                const duration = Math.ceil((new Date(cycle.endDate) - new Date(cycle.startDate)) / (1000 * 60 * 60 * 24)) + 1;
+                return sum + duration;
+            }, 0);
+
+            const avgDuration = Math.round(totalDuration / previousCycles.length);
+
+            // Predict end date based on average duration
+            const start = new Date(startDate);
+            predictedEndDate = new Date(start);
+            predictedEndDate.setDate(predictedEndDate.getDate() + avgDuration - 1);
+
+            console.log(`Predicted period duration: ${avgDuration} days (based on ${previousCycles.length} previous cycles)`);
+        }
+        // If no previous data, use default 5-day period
+        else {
+            const start = new Date(startDate);
+            predictedEndDate = new Date(start);
+            predictedEndDate.setDate(predictedEndDate.getDate() + 4); // 5 days total (0-4)
+
+            console.log('No previous cycles found. Using default 5-day period duration.');
+        }
+
         // Create new period cycle
         const periodCycle = await PeriodCycle.create({
             userId: req.user._id,
             startDate: new Date(startDate),
-            endDate: endDate ? new Date(endDate) : null,
+            endDate: predictedEndDate,
             flowIntensity: flowIntensity || [],
             symptoms: symptoms || {},
             notes
@@ -62,7 +100,8 @@ export const logPeriod = async (req, res) => {
             message: 'Period logged successfully',
             data: {
                 cycle: periodCycle,
-                aiInsights: insights.success ? insights.data : null
+                aiInsights: insights.success ? insights.data : null,
+                predictedDuration: predictedEndDate ? Math.ceil((predictedEndDate - new Date(startDate)) / (1000 * 60 * 60 * 24)) + 1 : null
             }
         });
     } catch (error) {
@@ -457,6 +496,72 @@ export const getAIInsights = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Failed to generate insights',
+            error: error.message
+        });
+    }
+};
+
+// @desc    Period AI Chat
+// @route   POST /api/period/ai/chat
+// @access  Private
+export const periodAIChat = async (req, res) => {
+    try {
+        const { message, history = [] } = req.body;
+
+        if (!message || !message.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: 'Message is required'
+            });
+        }
+
+        // Get user's period data for context
+        const cycles = await PeriodCycle.find({ userId: req.user._id })
+            .sort({ startDate: -1 })
+            .limit(3);
+
+        // Build context from user's data
+        let userContext = {
+            hasCycles: cycles.length > 0,
+            userName: req.user.name || 'there'
+        };
+
+        if (cycles.length > 0) {
+            const latestCycle = cycles[0];
+            const cycleLengths = cycles.filter(c => c.cycleLength).map(c => c.cycleLength);
+
+            userContext = {
+                ...userContext,
+                lastPeriodDate: latestCycle.startDate,
+                averageCycleLength: cycleLengths.length > 0
+                    ? Math.round(cycleLengths.reduce((a, b) => a + b, 0) / cycleLengths.length)
+                    : 28,
+                totalCyclesLogged: cycles.length,
+                hasSymptoms: latestCycle.symptoms?.physicalSymptoms?.length > 0,
+                commonSymptoms: latestCycle.symptoms?.physicalSymptoms || []
+            };
+        }
+
+        // Call AI service with context
+        const { getPeriodChatResponse } = await import('../services/periodAIService.js');
+        const response = await getPeriodChatResponse(message, history, userContext);
+
+        if (!response.success) {
+            return res.status(400).json(response);
+        }
+
+        res.status(200).json({
+            success: true,
+            data: {
+                message: response.data.message,
+                context: userContext
+            }
+        });
+    } catch (error) {
+        console.error('Period AI Chat Error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to process chat message',
             error: error.message
         });
     }

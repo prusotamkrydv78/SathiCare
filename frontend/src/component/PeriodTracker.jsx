@@ -1,24 +1,44 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Calendar as CalendarIcon, History, Sparkles, Plus, X, Upload, MessageSquare } from 'lucide-react';
 import { geminiService } from '../services/geminiService';
 import periodService from '../services/periodService';
-import PeriodAiSideBar from './PeriodAiSideBar';
 import PeriodAiChat from './PeriodAiChat';
-import { motion, AnimatePresence } from 'framer-motion';
+import CurrentCycleCard from './period/CurrentCycleCard';
+import PeriodHistory from './period/PeriodHistory';
+import PeriodInsights from './period/PeriodInsights';
+import LogPeriodModal from './period/LogPeriodModal';
+import PeriodCalendar from './period/PeriodCalendar';
+import BulkUploadModal from './period/BulkUploadModal';
 
 const PeriodTracker = () => {
-    // Component Refactored and Fixed
-    const [selectedDate, setSelectedDate] = useState(null);
+    // Tab State
     const [activeTab, setActiveTab] = useState('Calendar');
-    const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
     // Data State
     const [cycleData, setCycleData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [stats, setStats] = useState(null);
+    const [history, setHistory] = useState([]);
+    const [insights, setInsights] = useState(null);
+    const [pagination, setPagination] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    // Loading States
+    const [loading, setLoading] = useState({
+        cycle: true,
+        stats: true,
+        history: true,
+        insights: true
+    });
     const [error, setError] = useState(null);
 
-    // Main Chat State
-    const [showMainChat, setShowMainChat] = useState(false);
+    // Modal State
+    const [isLogModalOpen, setIsLogModalOpen] = useState(false);
+    const [isBulkUploadModalOpen, setIsBulkUploadModalOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(null);
+
+    // AI Chat State
     const [mainChatMessages, setMainChatMessages] = useState([
         { id: 1, text: "Hi! Ask me anything about your cycle or symptoms. 🌸", sender: 'ai' }
     ]);
@@ -26,32 +46,174 @@ const PeriodTracker = () => {
     const [mainChatLoading, setMainChatLoading] = useState(false);
     const mainChatEndRef = useRef(null);
 
-    const [symptoms, setSymptoms] = useState({
-        pain: 5,
-        mood: '😊',
-        flow: 'Medium',
+    // Log Form State
+    const [logForm, setLogForm] = useState({
+        startDate: new Date().toISOString().split('T')[0],
+        flowIntensity: [],
+        symptoms: {
+            pain: { level: 0, location: [] },
+            mood: [],
+            physicalSymptoms: []
+        },
         notes: ''
     });
 
-    // Fetch Data on Mount
+    // Fetch all data on mount
     useEffect(() => {
-        fetchCycleData();
+        fetchAllData();
     }, []);
 
-    const fetchCycleData = async () => {
+    // Fetch history when page changes
+    useEffect(() => {
+        if (currentPage > 1) {
+            fetchHistory(currentPage);
+        }
+    }, [currentPage]);
+
+    const fetchAllData = async () => {
+        await Promise.all([
+            fetchCurrentCycle(),
+            fetchStats(),
+            fetchHistory(1),
+            fetchInsights()
+        ]);
+    };
+
+    const fetchCurrentCycle = async () => {
         try {
-            setLoading(true);
-            const { data } = await periodService.getCurrentCycle();
-            setCycleData(data);
+            setLoading(prev => ({ ...prev, cycle: true }));
+            const response = await periodService.getCurrentCycle();
+            if (response.success) {
+                setCycleData(response.data);
+            }
         } catch (err) {
-            console.error("Failed to fetch cycle data", err);
+            console.error('Failed to fetch current cycle:', err);
+            // Not an error if no data exists yet
+            if (err.response?.status !== 404) {
+                setError('Failed to load cycle data');
+            }
         } finally {
-            setLoading(false);
+            setLoading(prev => ({ ...prev, cycle: false }));
         }
     };
 
-    // Main Chat Logic
-    const handleMainChatSubmit = async (e) => {
+    const fetchStats = async () => {
+        try {
+            setLoading(prev => ({ ...prev, stats: true }));
+            const response = await periodService.getStats();
+            if (response.success) {
+                setStats(response.data);
+            }
+        } catch (err) {
+            console.error('Failed to fetch stats:', err);
+        } finally {
+            setLoading(prev => ({ ...prev, stats: false }));
+        }
+    };
+
+    const fetchHistory = async (page = 1) => {
+        try {
+            setLoading(prev => ({ ...prev, history: true }));
+            const response = await periodService.getHistory(page, 6);
+            if (response.success) {
+                setHistory(response.data.cycles);
+                setPagination(response.data.pagination);
+            }
+        } catch (err) {
+            console.error('Failed to fetch history:', err);
+        } finally {
+            setLoading(prev => ({ ...prev, history: false }));
+        }
+    };
+
+    const fetchInsights = async () => {
+        try {
+            setLoading(prev => ({ ...prev, insights: true }));
+            const response = await periodService.getInsights();
+            if (response.success) {
+                setInsights(response.data);
+            }
+        } catch (err) {
+            console.error('Failed to fetch insights:', err);
+        } finally {
+            setLoading(prev => ({ ...prev, insights: false }));
+        }
+    };
+
+    // Handle log period
+    const handleLogPeriod = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await periodService.logPeriod(logForm);
+            if (response.success) {
+                setIsLogModalOpen(false);
+                resetLogForm();
+                fetchAllData(); // Refresh all data
+                alert('Period logged successfully!');
+            }
+        } catch (err) {
+            console.error('Failed to log period:', err);
+            alert(err.response?.data?.message || 'Failed to log period. Please try again.');
+        }
+    };
+
+    // Handle delete period
+    const handleDeletePeriod = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this period entry?')) return;
+
+        try {
+            await periodService.deletePeriod(id);
+            fetchAllData(); // Refresh all data
+            alert('Period deleted successfully!');
+        } catch (err) {
+            console.error('Failed to delete period:', err);
+            alert('Failed to delete period. Please try again.');
+        }
+    };
+
+    // Handle edit period (placeholder)
+    const handleEditPeriod = (cycle) => {
+        // TODO: Implement edit functionality
+        console.log('Edit cycle:', cycle);
+        alert('Edit functionality coming soon!');
+    };
+
+    // Handle page change
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    // Reset log form
+    const resetLogForm = () => {
+        setLogForm({
+            startDate: new Date().toISOString().split('T')[0],
+            flowIntensity: [],
+            symptoms: {
+                pain: { level: 0, location: [] },
+                mood: [],
+                physicalSymptoms: []
+            },
+            notes: ''
+        });
+    };
+
+    // Handle form changes
+    const handleFormChange = (field, value) => {
+        setLogForm(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleSymptomChange = (category, value) => {
+        setLogForm(prev => ({
+            ...prev,
+            symptoms: {
+                ...prev.symptoms,
+                [category]: value
+            }
+        }));
+    };
+
+    // AI Chat handlers
+    const handleMainChatSend = async (e) => {
         e.preventDefault();
         if (!mainChatInput.trim()) return;
 
@@ -66,346 +228,264 @@ const PeriodTracker = () => {
                 sender: m.sender
             }));
 
-            const response = await geminiService.getPeriodChatResponse(userMsg, history);
-            setMainChatMessages(prev => [...prev, { id: Date.now() + 1, text: response.text, sender: 'ai' }]);
+            const response = await periodService.sendChatMessage(userMsg, history);
+
+            if (response.success) {
+                setMainChatMessages(prev => [...prev, {
+                    id: Date.now() + 1,
+                    text: response.data.message,
+                    sender: 'ai'
+                }]);
+            } else {
+                setMainChatMessages(prev => [...prev, {
+                    id: Date.now() + 1,
+                    text: "Sorry, I couldn't process that. Please try again.",
+                    sender: 'ai'
+                }]);
+            }
         } catch (error) {
-            setMainChatMessages(prev => [...prev, { id: Date.now() + 1, text: "Connection error. Please try again.", sender: 'ai' }]);
+            console.error('Chat error:', error);
+            setMainChatMessages(prev => [...prev, {
+                id: Date.now() + 1,
+                text: "Connection error. Please try again.",
+                sender: 'ai'
+            }]);
         } finally {
             setMainChatLoading(false);
         }
     };
 
-    // Mock AI Insight Generation based on symptoms
-    const getAiInsight = () => {
-        if (symptoms.pain > 7) return "Your reported pain level is high. Consider using a heat pad and staying hydrated. If pain persists, please consult a doctor.";
-        if (symptoms.mood === '😢' || symptoms.mood === '😰') return "It looks like you're feeling down or anxious. This is common during PMS due to hormonal shifts. Try some light yoga or meditation.";
-        if (symptoms.flow === 'Heavy') return "Heavy flow noted. Ensure you are getting enough iron-rich foods like spinach and lentils to prevent fatigue.";
-        return "Your cycle appears regular. Keep tracking to help our AI predict your next window more accurately!";
-    };
-
-    // Mock Calendar Data
-    const days = Array.from({ length: 35 }, (_, i) => {
-        const day = i - 2; // Offset
-        let status = 'safe';
-        if (day >= 1 && day <= 5) status = 'period';
-        if (day >= 12 && day <= 16) status = 'fertile';
-        if (day >= 25 && day <= 28) status = 'pms';
-        return { day: day > 0 && day <= 31 ? day : null, status };
-    });
-
-    const handleDateClick = (day) => {
-        if (day) {
-            setSelectedDate(day);
-            setIsBottomSheetOpen(true);
-        }
-    };
-
-    const handleSymptomChange = (field, value) => {
-        setSymptoms(prev => ({ ...prev, [field]: value }));
-    };
-
-    const handleSaveLog = async () => {
-        try {
-            const logDate = selectedDate
-                ? new Date(2025, 11, selectedDate).toISOString()
-                : new Date().toISOString();
-
-            await periodService.logPeriod({
-                startDate: logDate,
-                endDate: logDate,
-                symptoms: symptoms
-            });
-
-            setIsBottomSheetOpen(false);
-            fetchCycleData();
-            alert("Symptoms logged successfully!");
-        } catch (err) {
-            console.error("Failed to log symptoms", err);
-            alert("Failed to save log. Please try again.");
-        }
-    };
-
-    // Animation Variants
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
-    };
-
-    const itemVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
-    };
+    // Tabs configuration
+    const tabs = [
+        { id: 'Calendar', label: 'Calendar', icon: CalendarIcon },
+        { id: 'History', label: 'History', icon: History },
+        { id: 'Insights', label: 'Insights', icon: Sparkles },
+        { id: 'AI Chat', label: 'AI Chat', icon: MessageSquare }
+    ];
 
     return (
-        <motion.div
-            className="font-sans text-gray-800 pb-12"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-        >
+        <div className="font-sans text-gray-800">
             {/* Page Header */}
             <motion.header
-                variants={itemVariants}
-                className="mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-6"
+                className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
             >
                 <div>
-                    <div className="flex items-center gap-2 mb-2 text-sm">
-                        <Link to="/dashboard" className="text-gray-400 hover:text-primary-pink transition font-medium">Dashboard</Link>
+                    <div className="flex items-center gap-2 mb-1">
+                        <Link to="/dashboard" className="text-gray-400 hover:text-primary-pink transition text-sm">
+                            Dashboard
+                        </Link>
                         <span className="text-gray-300">/</span>
-                        <span className="text-pink-600 font-bold bg-pink-50 px-2 py-0.5 rounded-full">Tracker</span>
+                        <span className="text-gray-600 font-medium text-sm">Period Tracker</span>
                     </div>
-                    <h1 className="text-4xl font-extrabold text-gray-800 tracking-tight">Period Tracker</h1>
-                    <p className="text-gray-500 mt-2 font-medium">Track your cycle, symptoms, and health.</p>
+                    <h1 className="text-2xl font-bold">Period Tracker</h1>
+                    <p className="text-gray-500 text-sm">Track your cycle, symptoms, and health</p>
                 </div>
-                <div className="flex bg-white p-1.5 rounded-2xl border border-gray-100 shadow-sm">
-                    {['Calendar', 'History', 'Insights'].map((tab) => (
-                        <button
-                            key={tab}
-                            onClick={() => setActiveTab(tab)}
-                            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${activeTab === tab
-                                ? 'bg-gradient-to-r from-primary-pink to-pink-500 text-white shadow-md transform scale-105'
-                                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
-                                }`}
-                        >
-                            {tab}
-                        </button>
-                    ))}
+
+                {/* Tab Navigation */}
+                <div className="flex bg-white p-1 rounded-xl border border-gray-100 shadow-sm">
+                    {tabs.map(tab => {
+                        const Icon = tab.icon;
+                        return (
+                            <motion.button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 ${activeTab === tab.id
+                                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md'
+                                    : 'text-gray-500 hover:bg-gray-50'
+                                    }`}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                <Icon className="w-4 h-4" />
+                                <span className="hidden sm:inline">{tab.label}</span>
+                            </motion.button>
+                        );
+                    })}
                 </div>
             </motion.header>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Main Content */}
+                <div className="lg:col-span-2 space-y-6">
+                    {/* Current Cycle Card */}
+                    <CurrentCycleCard cycleData={cycleData} loading={loading.cycle} />
 
-                {/* Main Content (Left) */}
-                <div className="lg:col-span-2 space-y-8">
+                    {/* Tab Content */}
+                    <AnimatePresence mode="wait">
+                        {activeTab === 'Calendar' && (
+                            <motion.div
+                                key="calendar"
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                <PeriodCalendar
+                                    history={history}
+                                    currentCycle={cycleData}
+                                    insights={insights}
+                                />
+                            </motion.div>
+                        )}
 
-                    {/* Status Card - Luxury Glassmorphism */}
-                    <motion.div
-                        variants={itemVariants}
-                        className="relative overflow-hidden rounded-[2.5rem] shadow-2xl group"
-                    >
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B9D] via-[#FF8FB1] to-[#FF4785] transition-all duration-500"></div>
+                        {activeTab === 'History' && (
+                            <motion.div
+                                key="history"
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                <PeriodHistory
+                                    cycles={history}
+                                    loading={loading.history}
+                                    onDelete={handleDeletePeriod}
+                                    onEdit={handleEditPeriod}
+                                    pagination={pagination}
+                                    onPageChange={handlePageChange}
+                                />
+                            </motion.div>
+                        )}
 
-                        {/* Glass Effect */}
-                        <div className="absolute inset-0 bg-white/10 backdrop-blur-[1px]"></div>
+                        {activeTab === 'Insights' && (
+                            <motion.div
+                                key="insights"
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                <PeriodInsights
+                                    stats={stats}
+                                    insights={insights}
+                                    loading={loading.stats || loading.insights}
+                                    onRefresh={() => fetchInsights(true)}
+                                />
+                            </motion.div>
+                        )}
 
-                        {/* Decorative Elements */}
-                        <div className="absolute -top-24 -right-24 w-80 h-80 bg-white/20 rounded-full blur-3xl mix-blend-overlay"></div>
-                        <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/10 to-transparent"></div>
-
-                        <div className="relative z-10 p-10 flex flex-col md:flex-row items-center justify-between text-white">
-                            <div className="text-center md:text-left">
-                                <span className="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold tracking-wider mb-4 border border-white/20">
-                                    CURRENT CYCLE
-                                </span>
-                                <div className="text-6xl font-black mb-2 tracking-tight drop-shadow-sm">
-                                    {cycleData ? `Day ${cycleData.currentDay}` : 'Day 14'}
-                                </div>
-                                <div className="text-xl font-medium opacity-90 mt-2 flex items-center gap-2 justify-center md:justify-start">
-                                    <span className="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_10px_rgba(74,222,128,0.8)]"></span>
-                                    {cycleData ? cycleData.phase : 'Ovulation Phase'}
-                                </div>
-                            </div>
-                            <div className="mt-8 md:mt-0 text-center md:text-right bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10 shadow-lg">
-                                <p className="text-sm font-bold opacity-80 mb-2 uppercase tracking-wide">Next Period</p>
-                                <p className="text-3xl font-extrabold mb-1">
-                                    {cycleData?.nextPeriod
-                                        ? new Date(cycleData.nextPeriod).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
-                                        : 'Dec 21'}
-                                </p>
-                                <p className="text-sm font-medium opacity-75">
-                                    {cycleData?.nextPeriod ? 'Estimated' : 'In 14 Days'}
-                                </p>
-                            </div>
-                        </div>
-                    </motion.div>
-
-                    {/* AI Chat Layout Interface - NOW MODULAR */}
-                    <PeriodAiChat
-                        showMainChat={showMainChat}
-                        setShowMainChat={setShowMainChat}
-                        messages={mainChatMessages}
-                        loading={mainChatLoading}
-                        input={mainChatInput}
-                        setInput={setMainChatInput}
-                        handleSubmit={handleMainChatSubmit}
-                        messagesEndRef={mainChatEndRef}
-                    />
-
-                    {/* Calendar Section */}
-                    {activeTab === 'Calendar' && (
-                        <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
-                            <div className="flex justify-between items-center mb-6">
-                                <h3 className="font-bold text-gray-800 text-lg">December 2025</h3>
-                                <div className="flex space-x-2">
-                                    <button className="w-8 h-8 rounded-full bg-gray-50 hover:bg-pink-50 text-gray-500 hover:text-primary-pink flex items-center justify-center transition">{'<'}</button>
-                                    <button className="w-8 h-8 rounded-full bg-gray-50 hover:bg-pink-50 text-gray-500 hover:text-primary-pink flex items-center justify-center transition">{'>'}</button>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-7 gap-4 mb-4 text-center">
-                                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
-                                    <div key={d} className="text-xs font-bold text-gray-400 uppercase tracking-wide">{d}</div>
-                                ))}
-                            </div>
-
-                            <div className="grid grid-cols-7 gap-4">
-                                {days.map((d, i) => (
-                                    <div key={i} className="flex flex-col items-center">
-                                        <button
-                                            disabled={!d.day}
-                                            onClick={() => handleDateClick(d.day)}
-                                            className={`
-                                                    w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-sm font-medium transition relative group
-                                                    ${!d.day ? 'invisible' : ''}
-                                                    ${d.day === 14 ? 'ring-2 ring-primary-pink ring-offset-2' : ''}
-                                                    ${d.status === 'period' ? 'bg-pink-500 text-white shadow-pink-200 shadow-lg' : ''}
-                                                    ${d.status === 'fertile' ? 'bg-green-100 text-green-700' : ''}
-                                                    ${d.status === 'pms' ? 'bg-yellow-50 text-yellow-600 border border-yellow-100' : ''}
-                                                    ${d.status === 'safe' && d.day ? 'bg-gray-50 text-gray-600 hover:bg-gray-100' : ''}
-                                                `}
-                                        >
-                                            {d.day}
-                                            {d.day && <span className="absolute -bottom-6 text-[10px] text-gray-400 opacity-0 group-hover:opacity-100 transition whitespace-nowrap bg-gray-800 text-white px-2 py-1 rounded z-10">Log</span>}
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <div className="flex items-center gap-6 mt-8 justify-center text-xs text-gray-600">
-                                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-pink-500"></div>Period</div>
-                                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-green-100 border border-green-200"></div>Fertile</div>
-                                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-yellow-50 border border-yellow-200"></div>PMS</div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Charts / History Placeholder for other tabs */}
-                    {activeTab !== 'Calendar' && (
-                        <div className="bg-white rounded-3xl p-12 shadow-sm border border-gray-100 text-center">
-                            <div className="text-6xl mb-4">📊</div>
-                            <h3 className="text-xl font-bold text-gray-800 mb-2">{activeTab} View</h3>
-                            <p className="text-gray-500 max-w-sm mx-auto">Detailed {activeTab.toLowerCase()} analytics and history logs will be displayed here.</p>
-                        </div>
-                    )}
+                        {activeTab === 'AI Chat' && (
+                            <motion.div
+                                key="ai-chat"
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                <PeriodAiChat
+                                    messages={mainChatMessages}
+                                    input={mainChatInput}
+                                    setInput={setMainChatInput}
+                                    onSend={handleMainChatSend}
+                                    loading={mainChatLoading}
+                                    messagesEndRef={mainChatEndRef}
+                                />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
-                {/* Sidebar (Right) - AI & Inputs */}
-                <div className="space-y-6">
-
-                    {/* Ask AI Contextual - NOW MODULAR */}
-                    <PeriodAiSideBar
-                        showMainChat={showMainChat}
-                        setShowMainChat={setShowMainChat}
-                    />
-
-                    {/* Consult Doctor - New Feature */}
-                    <Link to="/consultations" className="block w-full py-4 bg-white border-2 border-indigo-100 text-indigo-600 rounded-2xl font-bold hover:bg-indigo-50 transition flex items-center justify-center gap-3">
-                        <span className="text-xl">👩‍⚕️</span> Consult a Doctor
+                {/* Sidebar */}
+                <div className="space-y-4">
+                    {/* Consult Doctor */}
+                    <Link to="/consultations">
+                        <motion.div
+                            className="w-full py-3 bg-white border-2 border-indigo-100 text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition flex items-center justify-center gap-2"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                        >
+                            <span className="text-xl">👩‍⚕️</span>
+                            <span>Consult a Doctor</span>
+                        </motion.div>
                     </Link>
 
-                    {/* Log Button */}
-                    <button
-                        onClick={() => setIsBottomSheetOpen(true)}
-                        className="w-full py-4 bg-primary-pink text-white rounded-2xl font-bold shadow-lg shadow-pink-200 hover:bg-pink-600 transition flex items-center justify-center gap-3"
+                    {/* Log Period Button */}
+                    <motion.button
+                        onClick={() => setIsLogModalOpen(true)}
+                        className="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-xl font-semibold shadow-lg shadow-pink-200 hover:shadow-xl transition flex items-center justify-center gap-2"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                     >
-                        <span className="text-2xl">+</span> Log Today's Symptoms
-                    </button>
+                        <Plus className="w-5 h-5" />
+                        <span>Log Period</span>
+                    </motion.button>
 
-                    {/* AI Insight Card */}
-                    <div className="bg-gradient-to-br from-indigo-50 to-white rounded-3xl p-6 shadow-sm border border-indigo-100">
+                    {/* Bulk Upload Button */}
+                    <motion.button
+                        onClick={() => setIsBulkUploadModalOpen(true)}
+                        className="w-full py-3 bg-gradient-to-r from-indigo-500 to-blue-600 text-white rounded-xl font-semibold shadow-lg shadow-indigo-200 hover:shadow-xl transition flex items-center justify-center gap-2"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                    >
+                        <Upload className="w-5 h-5" />
+                        <span>Upload Previous Periods</span>
+                    </motion.button>
 
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-xl">✨</div>
-                            <h3 className="font-bold text-indigo-900">AI Health Insight</h3>
-                        </div>
-                        <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                            "{getAiInsight()}"
-                        </p>
-                        <div className="flex gap-2">
-                            <span className="text-[10px] px-2 py-1 bg-indigo-50 text-indigo-600 rounded-full font-bold">#Wellness</span>
-                            <span className="text-[10px] px-2 py-1 bg-indigo-50 text-indigo-600 rounded-full font-bold">#Cycle</span>
-                        </div>
-
-                    </div>
+                    {/* Quick Stats */}
+                    {stats && (
+                        <motion.div
+                            className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 shadow-sm border border-purple-100"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                        >
+                            <h3 className="font-semibold text-gray-800 mb-3 text-sm">Quick Stats</h3>
+                            <div className="space-y-2 text-sm">
+                                <div className="flex justify-between">
+                                    <span className="text-gray-600">Avg Cycle:</span>
+                                    <span className="font-semibold text-purple-600">{stats.averageCycleLength} days</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-600">Avg Duration:</span>
+                                    <span className="font-semibold text-pink-600">{stats.averagePeriodDuration} days</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-600">Total Logged:</span>
+                                    <span className="font-semibold text-indigo-600">{stats.totalCyclesLogged}</span>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
                 </div>
-
-                {/* Logging Modal / Bottom Sheet */}
-                {isBottomSheetOpen && (
-                    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setIsBottomSheetOpen(false)}>
-                        <div className="bg-white w-full max-w-lg rounded-3xl p-8 animate-scale-in shadow-2xl" onClick={e => e.stopPropagation()}>
-
-                            <div className="flex justify-between items-center mb-8">
-                                <div>
-                                    <h3 className="text-2xl font-bold text-gray-800">Log Symptoms</h3>
-                                    <p className="text-gray-500 text-sm">For {selectedDate ? `Dec ${selectedDate}, 2025` : 'Today'}</p>
-                                </div>
-                                <button onClick={() => setIsBottomSheetOpen(false)} className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition">✕</button>
-                            </div>
-
-                            <div className="space-y-6">
-                                {/* Pain Level */}
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-3">Pain Level: <span className="text-primary-pink">{symptoms.pain}/10</span></label>
-                                    <input
-                                        type="range"
-                                        min="1"
-                                        max="10"
-                                        value={symptoms.pain}
-                                        onChange={(e) => handleSymptomChange('pain', e.target.value)}
-                                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-pink"
-                                    />
-                                    <div className="flex justify-between text-xs text-gray-400 mt-2 font-medium">
-                                        <span>No Pain</span>
-                                        <span>Moderate</span>
-                                        <span>Unbearable</span>
-                                    </div>
-                                </div>
-
-                                {/* Mood */}
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-3">Mood</label>
-                                    <div className="flex justify-between gap-2">
-                                        {['😊', '😢', '😠', '😰', '😴'].map(emoji => (
-                                            <button
-                                                key={emoji}
-                                                onClick={() => handleSymptomChange('mood', emoji)}
-                                                className={`flex-1 h-14 rounded-2xl text-2xl transition border-2 ${symptoms.mood === emoji ? 'border-primary-pink bg-pink-50' : 'border-gray-100 hover:border-pink-200'}`}
-                                            >
-                                                {emoji}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Flow */}
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-3">Flow Intensity</label>
-                                    <div className="grid grid-cols-3 gap-3">
-                                        {['Light', 'Medium', 'Heavy'].map(flow => (
-                                            <button
-                                                key={flow}
-                                                onClick={() => handleSymptomChange('flow', flow)}
-                                                className={`py-3 rounded-xl text-sm font-bold transition border-2 ${symptoms.flow === flow ? 'border-primary-pink bg-pink-50 text-primary-pink' : 'border-gray-100 text-gray-500 hover:border-pink-200'}`}
-                                            >
-                                                {flow}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button
-                                onClick={handleSaveLog}
-                                className="w-full mt-8 py-4 bg-primary-pink text-white font-bold rounded-2xl hover:bg-pink-600 transition shadow-lg shadow-pink-200"
-                            >
-                                Save Log
-                            </button>
-                        </div>
-                    </div>
-                )}
             </div>
+
+            {/* Log Period Modal */}
+            <LogPeriodModal
+                isOpen={isLogModalOpen}
+                onClose={() => setIsLogModalOpen(false)}
+                formData={logForm}
+                onChange={handleFormChange}
+                onSymptomChange={handleSymptomChange}
+                onSubmit={handleLogPeriod}
+            />
+
+            {/* Bulk Upload Modal */}
+            <BulkUploadModal
+                isOpen={isBulkUploadModalOpen}
+                onClose={() => setIsBulkUploadModalOpen(false)}
+                onSuccess={fetchAllData}
+            />
+        </div>
+    );
+};
+
+// Calendar Placeholder Component
+const CalendarPlaceholder = () => {
+    return (
+        <motion.div
+            className="bg-white rounded-3xl p-12 shadow-sm border border-gray-100 text-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+        >
+            <div className="text-6xl mb-4">📅</div>
+            <h3 className="text-xl font-bold text-gray-800 mb-2">Calendar View</h3>
+            <p className="text-gray-500 max-w-sm mx-auto">
+                Interactive calendar with period tracking coming soon!
+            </p>
         </motion.div>
     );
 };
+
 
 export default PeriodTracker;

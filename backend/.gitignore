@@ -29,7 +29,8 @@ Thumbs.db
 # Build files
 dist/
 build/
-
+/tests
+*.md
 # Testing
 coverage/
 .nyc_output/

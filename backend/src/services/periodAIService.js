@@ -8,9 +8,11 @@ if (!process.env.GEMINI_API_KEY) {
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Period Tracker AI Model - Dedicated instance for period-related features
+// Period Tracker AI Model - Using gemini-1.5-flash for higher quota
+// gemini-1.5-flash: 1500 requests/day (free tier)
+// gemini-2.5-flash-lite: 20 requests/day (free tier)
 const periodTrackerModel = genAI.getGenerativeModel({
-    model: "gemini-2.5-flash-lite",
+    model: "gemini-2.5-flash",
     generationConfig: {
         temperature: 0.7,
         topK: 40,
@@ -274,12 +276,29 @@ export const generatePeriodInsights = async (cycles, userProfile) => {
             };
         }
 
+        console.log(`Generating insights for ${cycles.length} cycles...`);
+
         // Get all AI insights in parallel
         const [prediction, patterns, latestSymptomTips] = await Promise.all([
             predictNextPeriod(cycles, userProfile),
-            cycles.length >= 3 ? analyzeCyclePatterns(cycles, userProfile) : null,
-            cycles[0]?.symptoms ? getSymptomReliefTips(cycles[0].symptoms, userProfile) : null
+            cycles.length >= 3 ? analyzeCyclePatterns(cycles, userProfile) : Promise.resolve({ success: false, message: 'Need 3+ cycles' }),
+            cycles[0]?.symptoms ? getSymptomReliefTips(cycles[0].symptoms, userProfile) : Promise.resolve({ success: false, message: 'No symptoms' })
         ]);
+
+        console.log('Prediction result:', prediction.success ? 'Success' : prediction.message);
+        console.log('Patterns result:', patterns?.success ? 'Success' : patterns?.message);
+        console.log('Symptom tips result:', latestSymptomTips?.success ? 'Success' : latestSymptomTips?.message);
+
+        // If prediction failed, log the error
+        if (!prediction.success) {
+            console.error('Prediction failed:', prediction);
+        }
+        if (patterns && !patterns.success) {
+            console.error('Patterns failed:', patterns);
+        }
+        if (latestSymptomTips && !latestSymptomTips.success) {
+            console.error('Symptom tips failed:', latestSymptomTips);
+        }
 
         return {
             success: true,
@@ -300,9 +319,57 @@ export const generatePeriodInsights = async (cycles, userProfile) => {
     }
 };
 
+/**
+ * Get Period AI Chat Response
+ */
+export const getPeriodChatResponse = async (message, history = [], userContext = {}) => {
+    try {
+        // Build context-aware prompt
+        let contextInfo = '';
+        if (userContext.hasCycles) {
+            contextInfo = `
+User Context:
+- Last period: ${new Date(userContext.lastPeriodDate).toLocaleDateString()}
+- Average cycle: ${userContext.averageCycleLength} days
+- Cycles logged: ${userContext.totalCyclesLogged}
+- Common symptoms: ${userContext.commonSymptoms.join(', ') || 'None'}
+`;
+        }
+
+        const prompt = `You are a compassionate menstrual health AI assistant.
+
+${contextInfo}
+
+User's question: ${message}
+
+Provide a helpful, warm response about menstrual health. Use emojis like 🌸, 🩸, 💊.
+Keep it concise (2-3 sentences). If it's a medical concern, suggest consulting a doctor.
+
+Response:`;
+
+        const result = await periodTrackerModel.generateContent(prompt);
+        const response = result.response.text();
+
+        return {
+            success: true,
+            data: {
+                message: response.trim()
+            }
+        };
+    } catch (error) {
+        console.error('Period Chat Error:', error);
+        return {
+            success: false,
+            message: 'Failed to generate chat response',
+            error: error.message
+        };
+    }
+};
+
 export default {
     predictNextPeriod,
     analyzeCyclePatterns,
     getSymptomReliefTips,
-    generatePeriodInsights
+    generatePeriodInsights,
+    getPeriodChatResponse
 };
