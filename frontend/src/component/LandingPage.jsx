@@ -20,8 +20,17 @@ const LandingPage = () => {
             </nav>
 
             {/* Hero Section */}
-            <header className="bg-gradient-to-b from-soft-pink to-white py-20 px-6 text-center md:text-left">
-                <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center">
+            <header className="bg-gradient-to-b from-soft-pink to-white py-20 px-6 text-center md:text-left relative overflow-hidden">
+                {/* Floating Hearts Background */}
+                <div className="absolute inset-0 pointer-events-none">
+                    <span className="absolute top-[60%] left-[10%] text-2xl animate-float opacity-0" style={{ animationDelay: '0s' }}>🌸</span>
+                    <span className="absolute top-[80%] left-[20%] text-3xl animate-float opacity-0" style={{ animationDelay: '2s' }}>💖</span>
+                    <span className="absolute top-[50%] left-[80%] text-xl animate-float opacity-0" style={{ animationDelay: '1s' }}>💗</span>
+                    <span className="absolute top-[70%] left-[90%] text-4xl animate-float opacity-0" style={{ animationDelay: '3s' }}>🌺</span>
+                    <span className="absolute top-[40%] left-[5%] text-2xl animate-float opacity-0" style={{ animationDelay: '4s' }}>💕</span>
+                </div>
+
+                <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center relative z-10">
                     <div className="md:w-1/2 mb-10 md:mb-0">
                         <h1 className="text-4xl md:text-6xl font-bold mb-4 leading-tight">
                             Your Trusted Health Companion <br />
@@ -31,13 +40,14 @@ const LandingPage = () => {
                             Empowering women with personalized health tracking, expert advice, and a supportive community.
                         </p>
                         <div className="space-x-4">
-                            <button className="px-8 py-3 bg-primary-pink text-white rounded-full shadow-lg hover:bg-pink-600 transition transform hover:-translate-y-1">Get Started</button>
-                            <button className="px-8 py-3 bg-white text-primary-pink border border-primary-pink rounded-full shadow-lg hover:bg-pink-50 transition transform hover:-translate-y-1">Learn More</button>
+                            <Link to="/signup" className="px-8 py-3 bg-primary-pink text-white rounded-full shadow-lg hover:bg-pink-600 transition transform hover:-translate-y-1 inline-block">Get Started</Link>
+                            <Link to="/features" className="px-8 py-3 bg-white text-primary-pink border border-primary-pink rounded-full shadow-lg hover:bg-pink-50 transition transform hover:-translate-y-1 inline-block">Learn More</Link>
                         </div>
                     </div>
                     <div className="md:w-1/2 relative">
                         {/* Placeholder for Illustration - In a real scenario, an image would be here */}
-                        <div className="w-full h-96 bg-pink-100 rounded-3xl flex items-center justify-center shadow-xl overflow-hidden">
+                        <div className="w-full h-96 bg-pink-100 rounded-3xl flex items-center justify-center shadow-xl overflow-hidden relative">
+                            <span className="text-6xl absolute top-10 right-10 animate-bounce delay-700 opacity-50">🌸</span>
                             <span className="text-pink-400 text-xl font-semibold">App Interface Illustration</span>
                         </div>
                     </div>
