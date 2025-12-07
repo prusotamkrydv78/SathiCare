@@ -2,9 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Map, { Marker, Popup, NavigationControl } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import hospitalsData from '../data/hospitals.json';
-
-const hospitals = hospitalsData.hospitals;
+import poiService from '../services/poiService';
 
 // Map style - using a free beautiful style
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
@@ -267,19 +265,24 @@ const FindCare = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedType, setSelectedType] = useState('All');
     const [selectedHospital, setSelectedHospital] = useState(null);
-    const [filteredHospitals, setFilteredHospitals] = useState(hospitals);
+    const [hospitals, setHospitals] = useState([]);
+    const [filteredHospitals, setFilteredHospitals] = useState([]);
     const [hoveredCard, setHoveredCard] = useState(null);
     const [popupInfo, setPopupInfo] = useState(null);
+
+    // API loading states
+    const [isLoading, setIsLoading] = useState(true);
+    const [apiError, setApiError] = useState(null);
 
     // Location state
     const [userLocation, setUserLocation] = useState(null);
     const [isLocating, setIsLocating] = useState(false);
     const [locationError, setLocationError] = useState(null);
 
-    // Map state
+    // Map state - Center on Janakpur
     const [viewState, setViewState] = useState({
-        longitude: 85.324,
-        latitude: 27.7172,
+        longitude: 85.9244,
+        latitude: 26.7288,
         zoom: 13
     });
 
@@ -314,6 +317,95 @@ const FindCare = () => {
                 : [...prev, hospitalId]
         );
     };
+
+    // Transform OSM data to match component structure
+    const transformOSMData = (osmFacilities) => {
+        return osmFacilities.map(facility => {
+            // Map OSM types to component types
+            let type = 'Hospital';
+            if (facility.type === 'clinic') type = 'Clinic';
+            else if (facility.type === 'pharmacy') type = 'Pharmacy';
+            else if (facility.type === 'doctors') type = 'Clinic';
+            else if (facility.category === 'organization') type = 'Organization';
+
+            // Generate a rating (since OSM doesn't have ratings)
+            // You can enhance this later with real ratings from your database
+            const rating = 4.0 + (Math.random() * 0.8); // Random between 4.0-4.8
+            const reviews = Math.floor(Math.random() * 500) + 50; // Random 50-550 reviews
+
+            return {
+                id: facility.id.toString(),
+                name: facility.name,
+                type: type,
+                latitude: facility.lat,
+                longitude: facility.lon,
+                address: facility.address || facility.city || 'Janakpur, Nepal',
+                phone: facility.phone || 'N/A',
+                email: facility.email || '',
+                website: facility.website || '',
+                rating: parseFloat(rating.toFixed(1)),
+                reviews: reviews,
+                isOpen: true, // Default to open
+                hasFemaleDoctor: Math.random() > 0.5, // Random for now
+                services: facility.emergency ? ['Emergency', 'General Care'] : ['General Care'],
+                images: ['https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800'],
+                operatingHours: facility.opening_hours ? {
+                    Monday: facility.opening_hours,
+                    Tuesday: facility.opening_hours,
+                    Wednesday: facility.opening_hours,
+                    Thursday: facility.opening_hours,
+                    Friday: facility.opening_hours,
+                    Saturday: facility.opening_hours,
+                    Sunday: facility.opening_hours
+                } : {
+                    Monday: 'Open 24 Hours',
+                    Tuesday: 'Open 24 Hours',
+                    Wednesday: 'Open 24 Hours',
+                    Thursday: 'Open 24 Hours',
+                    Friday: 'Open 24 Hours',
+                    Saturday: 'Open 24 Hours',
+                    Sunday: 'Open 24 Hours'
+                },
+                description: `${facility.name} is a healthcare facility in Janakpur providing quality medical services.`,
+                userReviews: []
+            };
+        });
+    };
+
+    // Fetch facilities from API
+    useEffect(() => {
+        const fetchFacilities = async () => {
+            try {
+                setIsLoading(true);
+                setApiError(null);
+
+                // Fetch all nearby facilities
+                const response = await poiService.getNearbyFacilities('all', 100);
+
+                if (response.success && response.data) {
+                    // Transform the data
+                    const transformedData = transformOSMData(response.data.all);
+                    setHospitals(transformedData);
+                    setFilteredHospitals(transformedData);
+
+                    console.log(`Loaded ${transformedData.length} facilities from OpenStreetMap`);
+                } else {
+                    throw new Error('Failed to fetch facilities');
+                }
+            } catch (error) {
+                console.error('Error fetching facilities:', error);
+                setApiError('Unable to load facilities. Please try again later.');
+                // Set empty array on error
+                setHospitals([]);
+                setFilteredHospitals([]);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchFacilities();
+    }, []); // Run once on mount
+
 
 
     // Get user location
@@ -511,6 +603,65 @@ const FindCare = () => {
                     ))}
                 </div>
             </div>
+
+            {/* ===== LOADING STATE ===== */}
+            {isLoading && (
+                <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: 1000,
+                    backgroundColor: 'white',
+                    padding: '30px 40px',
+                    borderRadius: '16px',
+                    boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
+                    textAlign: 'center'
+                }}>
+                    <LoaderIcon />
+                    <p style={{ marginTop: '15px', color: '#64748b', fontSize: '14px', fontWeight: 500 }}>
+                        Loading facilities from OpenStreetMap...
+                    </p>
+                </div>
+            )}
+
+            {/* ===== ERROR STATE ===== */}
+            {apiError && !isLoading && (
+                <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: 1000,
+                    backgroundColor: '#fee2e2',
+                    color: '#dc2626',
+                    padding: '20px 30px',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 12px rgba(220, 38, 38, 0.2)',
+                    textAlign: 'center',
+                    maxWidth: '400px'
+                }}>
+                    <p style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>
+                        {apiError}
+                    </p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        style={{
+                            marginTop: '15px',
+                            padding: '8px 20px',
+                            backgroundColor: '#dc2626',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '8px',
+                            fontSize: '13px',
+                            fontWeight: 600,
+                            cursor: 'pointer'
+                        }}
+                    >
+                        Retry
+                    </button>
+                </div>
+            )}
 
             {/* ===== MAIN CONTENT ===== */}
             <div style={styles.mainContent}>

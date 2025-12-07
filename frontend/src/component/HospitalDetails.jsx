@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Map, { Marker } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import hospitalsData from '../data/hospitals.json';
+import poiService from '../services/poiService';
 
 const hospitals = hospitalsData.hospitals;
 
@@ -175,6 +176,8 @@ const HospitalDetails = () => {
     const [hospital, setHospital] = useState(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isSaved, setIsSaved] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     // Review form state
     const [showReviewForm, setShowReviewForm] = useState(false);
@@ -187,49 +190,196 @@ const HospitalDetails = () => {
     const [submitSuccess, setSubmitSuccess] = useState(false);
 
     useEffect(() => {
-        const found = hospitals.find(h => h.id === id);
-        if (found) {
-            setHospital(found);
-            setReviews(found.userReviews || []);
+        const fetchHospitalDetails = async () => {
+            try {
+                setIsLoading(true);
+                setError(null);
+
+                // Parallel fetch: Facility details and Reviews
+                const [detailsResponse, reviewsResponse] = await Promise.all([
+                    poiService.getFacilityDetails(id),
+                    poiService.getReviews(id).catch(err => ({ success: false, data: [] })) // Handle review fetch error gracefully
+                ]);
+
+                if (detailsResponse.success && detailsResponse.data) {
+                    const data = detailsResponse.data;
+                    const fetchedReviews = reviewsResponse.success ? reviewsResponse.data.map(r => ({
+                        name: r.user?.name || 'Anonymous',
+                        rating: r.rating,
+                        comment: r.comment,
+                        date: r.createdAt
+                    })) : [];
+
+                    // Calculate average rating if reviews exist
+                    let averageRating = 4.5; // Default fallback
+                    if (fetchedReviews.length > 0) {
+                        const totalRating = fetchedReviews.reduce((sum, rev) => sum + rev.rating, 0);
+                        averageRating = (totalRating / fetchedReviews.length).toFixed(1);
+                    }
+
+                    // Transform API data to match component structure
+                    const facilityData = {
+                        id: data.id,
+                        name: data.name,
+                        type: data.type.charAt(0).toUpperCase() + data.type.slice(1),
+                        latitude: data.location.lat,
+                        longitude: data.location.lon,
+                        address: data.location.address.full ||
+                            [data.location.address.street, data.location.address.city, data.location.address.district]
+                                .filter(Boolean).join(', ') || 'Address not available',
+                        phone: data.contact.phone || 'N/A',
+                        email: data.contact.email || null,
+                        website: data.contact.website || null,
+                        rating: averageRating,
+                        reviews: fetchedReviews.length,
+                        isOpen: true, // Default
+                        hasFemaleDoctor: false, // Not available in OSM usually
+                        services: data.healthcare?.services?.length > 0
+                            ? data.healthcare.services
+                            : ['General Care', 'Emergency', 'OPD'],
+                        images: ['https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800'],
+                        operatingHours: {
+                            Monday: data.hours.opening_hours || 'Open 24 Hours',
+                            Tuesday: data.hours.opening_hours || 'Open 24 Hours',
+                            Wednesday: data.hours.opening_hours || 'Open 24 Hours',
+                            Thursday: data.hours.opening_hours || 'Open 24 Hours',
+                            Friday: data.hours.opening_hours || 'Open 24 Hours',
+                            Saturday: data.hours.opening_hours || 'Open 24 Hours',
+                            Sunday: data.hours.opening_hours || 'Open 24 Hours'
+                        },
+                        description: data.info.description ||
+                            `${data.name} is a ${data.type} located in ${data.location.address.city || 'Janakpur'}.`,
+                        userReviews: []
+                    };
+
+                    setHospital(facilityData);
+                    setReviews(fetchedReviews);
+                } else {
+                    setError('Hospital not found');
+                }
+            } catch (err) {
+                console.error('Error fetching hospital details:', err);
+                setError('Failed to load hospital details');
+
+                // Fallback to static data if API fails
+                const found = hospitals.find(h => h.id === id);
+                if (found) {
+                    setHospital(found);
+                    setReviews(found.userReviews || []);
+                    setError(null);
+                }
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchHospitalDetails();
         }
     }, [id]);
 
-    const handleSubmitReview = (e) => {
+    const handleSubmitReview = async (e) => {
         e.preventDefault();
         if (!reviewName.trim() || !reviewComment.trim() || reviewRating === 0) return;
 
         setIsSubmitting(true);
 
-        // Simulate API call
-        setTimeout(() => {
-            const newReview = {
+        try {
+            const reviewData = {
+                hospitalId: id,
                 name: reviewName,
                 rating: reviewRating,
                 comment: reviewComment
             };
 
-            setReviews([newReview, ...reviews]);
-            setReviewName('');
-            setReviewRating(0);
-            setReviewComment('');
-            setIsSubmitting(false);
-            setSubmitSuccess(true);
-            setShowReviewForm(false);
+            const response = await poiService.submitReview(reviewData);
 
-            setTimeout(() => setSubmitSuccess(false), 3000);
-        }, 500);
+            if (response.success) {
+                const rawReview = response.data;
+                const newReview = {
+                    name: rawReview.user?.name || reviewName,
+                    rating: rawReview.rating,
+                    comment: rawReview.comment,
+                    date: rawReview.createdAt
+                };
+
+                // Add new review to top of list
+                setReviews([newReview, ...reviews]);
+
+                // Update average rating
+                const newTotalRating = (hospital.rating * reviews.length) + newReview.rating;
+                const newCount = reviews.length + 1;
+                setHospital(prev => ({
+                    ...prev,
+                    rating: (newTotalRating / newCount).toFixed(1)
+                }));
+
+                setReviewName('');
+                setReviewRating(0);
+                setReviewComment('');
+                setSubmitSuccess(true);
+                setShowReviewForm(false);
+
+                setTimeout(() => setSubmitSuccess(false), 3000);
+            }
+        } catch (error) {
+            console.error('Error submitting review:', error);
+            // Optionally set an error state to show to the user
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
-    if (!hospital) {
+    if (isLoading) {
         return (
             <div style={{
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: '100vh',
                 fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif'
             }}>
-                <p>Hospital not found</p>
+                <div style={{
+                    width: 40,
+                    height: 40,
+                    border: '3px solid #f1f5f9',
+                    borderTopColor: '#ff6b9c',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite'
+                }} />
+                <p style={{ marginTop: 16, color: '#64748b' }}>Loading hospital details...</p>
+                <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+            </div>
+        );
+    }
+
+    if (error || !hospital) {
+        return (
+            <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100vh',
+                fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif'
+            }}>
+                <p style={{ fontSize: 18, fontWeight: 600, color: '#1e293b' }}>{error || 'Hospital not found'}</p>
+                <button
+                    onClick={() => navigate('/find-care')}
+                    style={{
+                        marginTop: 16,
+                        padding: '10px 20px',
+                        backgroundColor: '#ff6b9c',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: 8,
+                        cursor: 'pointer',
+                        fontWeight: 600
+                    }}
+                >
+                    Back to Search
+                </button>
             </div>
         );
     }

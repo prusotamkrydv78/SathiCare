@@ -70,7 +70,7 @@ const PublicLayout = ({ children }) => {
                                         Dashboard
                                     </Link>
                                     <Link
-                                        to="/profile"
+                                        to="/profile-manage"
                                         className="px-6 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center gap-2"
                                     >
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
