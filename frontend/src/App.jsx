@@ -19,7 +19,7 @@ import ArticlePage from './component/ArticlePage';
 import HealthRecords from './component/HealthRecords';
 import ProfileSettings from './component/ProfileSettings';
 import AppointmentCalendar from './component/AppointmentCalendar';
-import EmergencyAccess from './component/EmergencyAccess';
+// EmergencyAccess removed - using SOSPage instead
 import FeaturesPage from './component/FeaturesPage';
 import TestimonialsPage from './component/TestimonialsPage';
 import CommunityForum from './component/CommunityForum';
@@ -31,6 +31,7 @@ import HealthAssistant from './component/HealthAssistant';
 import ConsultationChat from './component/consultations/ConsultationChat';
 import FindCare from './component/FindCare';
 import HospitalDetails from './component/HospitalDetails';
+import SOSPage from './component/SOSPage';
 import Layout from './component/Layout';
 import PublicLayout from './component/PublicLayout';
 
@@ -49,6 +50,7 @@ function App() {
           <Route path="/testimonials" element={<PublicLayout><TestimonialsPage /></PublicLayout>} />
           <Route path="/find-care" element={<FindCare />} />
           <Route path="/hospital/:id" element={<HospitalDetails />} />
+          <Route path="/sos" element={<SOSPage />} />
 
           {/* Protected Routes with Layout */}
           <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
@@ -64,7 +66,7 @@ function App() {
           <Route path="/records" element={<ProtectedRoute><Layout><HealthRecords /></Layout></ProtectedRoute>} />
           <Route path="/profile-settings" element={<ProtectedRoute><Layout><ProfileSettings /></Layout></ProtectedRoute>} />
           <Route path="/appointments" element={<ProtectedRoute><Layout><AppointmentCalendar /></Layout></ProtectedRoute>} />
-          <Route path="/emergency" element={<ProtectedRoute><Layout><EmergencyAccess /></Layout></ProtectedRoute>} />
+          <Route path="/emergency" element={<ProtectedRoute><Layout><SOSPage /></Layout></ProtectedRoute>} />
           <Route path="/forum" element={<ProtectedRoute><Layout><CommunityForum /></Layout></ProtectedRoute>} />
           <Route path="/consultations" element={<ProtectedRoute><Layout><DoctorConsultations /></Layout></ProtectedRoute>} />
           <Route path="/notifications" element={<ProtectedRoute><Layout><NotificationsPage /></Layout></ProtectedRoute>} />
