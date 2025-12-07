@@ -211,6 +211,44 @@ export const geminiService = {
         }
     },
 
+    async getPeriodChatResponse(userMessage, history = []) {
+        // Specialized System Prompt for Period Tracker
+        const PERIOD_SYSTEM_PROMPT = `
+        You are Saathi's Menstrual Health Companion AI.
+        Your ONLY role is to answer questions related to menstruation, PMS, fertility, hygiene, and reproductive health.
+        
+        Rules:
+        1. If the user asks about anything else, politely refuse: "I can only help with menstrual health and cycle-related questions. 🌸"
+        2. Be warm, supportive, and use emojis.
+        3. For medical symptoms (extreme pain, heavy bleeding), always add: "Please consult a doctor if symptoms persist."
+        4. Keep answers short and practical.
+        
+        User Context: Woman tracking her cycle.
+        `;
+
+        if (!model) {
+            await delay(1000);
+            return { text: "[Mock] Please add API Key. (Period AI: " + userMessage + ")" };
+        }
+
+        try {
+            const chat = model.startChat({
+                history: history.map(h => ({
+                    role: h.sender === 'user' ? 'user' : 'model',
+                    parts: [{ text: h.text }]
+                })),
+            });
+
+            const result = await chat.sendMessage(`${PERIOD_SYSTEM_PROMPT}\nUser Message: ${userMessage}`);
+            const response = await result.response;
+            return { text: response.text() };
+
+        } catch (error) {
+            console.error("Period AI Error:", error);
+            return { text: "I'm having trouble connecting. Please try again later. 🩸" };
+        }
+    },
+
     async getPregnancyAdvice(week) {
         // Static rules are often safer/better for week-by-week standard advice than generative
         if (week < 13) return "First Trimester: Focus on rest and hydration.";

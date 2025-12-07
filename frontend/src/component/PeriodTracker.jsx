@@ -1,16 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { geminiService } from '../services/geminiService';
 
 const PeriodTracker = () => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [activeTab, setActiveTab] = useState('Calendar');
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+
+    // Main Chat State (Renamed from Sidebar for consistency)
+    const [showMainChat, setShowMainChat] = useState(false);
+    const [mainChatMessages, setMainChatMessages] = useState([
+        { id: 1, text: "Hi! Ask me anything about your cycle or symptoms. 🌸", sender: 'ai' }
+    ]);
+    const [mainChatInput, setMainChatInput] = useState('');
+    const [mainChatLoading, setMainChatLoading] = useState(false);
+    const mainChatEndRef = useRef(null);
+
     const [symptoms, setSymptoms] = useState({
         pain: 5,
         mood: '😊',
         flow: 'Medium',
         notes: ''
     });
+
+    // Auto-scroll main chat
+    useEffect(() => {
+        if (showMainChat) {
+            mainChatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [mainChatMessages, showMainChat]);
+
+    // Main Chat Logic
+    const handleMainChatSubmit = async (e) => {
+        e.preventDefault();
+        if (!mainChatInput.trim()) return;
+
+        const userMsg = mainChatInput;
+        setMainChatMessages(prev => [...prev, { id: Date.now(), text: userMsg, sender: 'user' }]);
+        setMainChatInput('');
+        setMainChatLoading(true);
+
+        try {
+            const history = mainChatMessages.map(m => ({
+                text: m.text,
+                sender: m.sender
+            }));
+
+            const response = await geminiService.getPeriodChatResponse(userMsg, history);
+            setMainChatMessages(prev => [...prev, { id: Date.now() + 1, text: response.text, sender: 'ai' }]);
+        } catch (error) {
+            setMainChatMessages(prev => [...prev, { id: Date.now() + 1, text: "Connection error. Please try again.", sender: 'ai' }]);
+        } finally {
+            setMainChatLoading(false);
+        }
+    };
 
     // Mock AI Insight Generation based on symptoms
     const getAiInsight = () => {
@@ -92,6 +135,53 @@ const PeriodTracker = () => {
                         <div className="absolute bottom-0 left-0 w-40 h-40 bg-white opacity-10 rounded-full -translate-x-1/2 translate-y-1/2"></div>
                     </div>
 
+                    {/* Ask AI Section (Visible only when chat is open) */}
+                    <div className={`transition-all duration-300 ${showMainChat ? 'bg-purple-50 rounded-3xl p-6 border border-purple-100 flex flex-col' : 'hidden'}`}>
+                        {showMainChat && (
+                            <>
+                                <div className="flex justify-between items-center mb-4 animate-fade-in">
+                                    <h3 className="font-bold text-purple-800 flex items-center gap-2">
+                                        <span className="bg-purple-100 p-1.5 rounded-lg">🤖</span> Period Health Companion
+                                    </h3>
+                                </div>
+                                <div className="mt-4 animate-fade-in">
+                                    <div className="h-64 overflow-y-auto mb-4 bg-white rounded-xl p-3 border border-purple-100 space-y-3">
+                                        {mainChatMessages.map(msg => (
+                                            <div key={msg.id} className={`p-2 rounded-lg text-xs ${msg.sender === 'user' ? 'bg-purple-500 text-white ml-auto max-w-[85%]' : 'bg-gray-100 text-gray-700 mr-auto max-w-[90%]'}`}>
+                                                {msg.text}
+                                            </div>
+                                        ))}
+                                        {mainChatLoading && (
+                                            <div className="text-xs text-gray-400 italic">Thinking...</div>
+                                        )}
+                                        <div ref={mainChatEndRef} />
+                                    </div>
+                                    <form onSubmit={handleMainChatSubmit} className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            className="flex-1 text-sm border border-purple-200 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-purple-500"
+                                            placeholder="Type here..."
+                                            value={mainChatInput}
+                                            onChange={(e) => setMainChatInput(e.target.value)}
+                                        />
+                                        <button
+                                            type="submit"
+                                            className="bg-purple-600 text-white px-3 py-2 rounded-lg text-sm font-bold hover:bg-purple-700"
+                                        >
+                                            ➤
+                                        </button>
+                                    </form>
+                                    <button
+                                        onClick={() => setShowMainChat(false)}
+                                        className="w-full text-center text-xs text-purple-600 mt-2 hover:underline"
+                                    >
+                                        Close Chat
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+
                     {/* Calendar Section */}
                     {activeTab === 'Calendar' && (
                         <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
@@ -153,6 +243,60 @@ const PeriodTracker = () => {
                 {/* Sidebar (Right) - AI & Inputs */}
                 <div className="space-y-6">
 
+                    {/* Ask AI Contextual (Inserted) */}
+                    <div className="bg-purple-50 rounded-3xl p-6 border border-purple-100 transition-all duration-300">
+                        <h3 className="font-bold text-purple-800 mb-4 flex items-center gap-2">
+                            <span className="bg-purple-100 p-1.5 rounded-lg">🤖</span> Ask AI Companion
+                        </h3>
+                        <p className="text-sm text-purple-700 mb-4">
+                            "Is this recurring cramp normal?"
+                        </p>
+
+                        {!showSidebarChat ? (
+                            <button
+                                onClick={() => setShowSidebarChat(true)}
+                                className="block w-full py-3 bg-purple-500 text-white rounded-xl font-bold text-center hover:bg-purple-600 transition shadow-lg shadow-purple-200"
+                            >
+                                Ask Now
+                            </button>
+                        ) : (
+                            <div className="mt-4 animate-fade-in">
+                                <div className="h-64 overflow-y-auto mb-4 bg-white rounded-xl p-3 border border-purple-100 space-y-3">
+                                    {sidebarChatMessages.map(msg => (
+                                        <div key={msg.id} className={`p-2 rounded-lg text-xs ${msg.sender === 'user' ? 'bg-purple-500 text-white ml-auto max-w-[85%]' : 'bg-gray-100 text-gray-700 mr-auto max-w-[90%]'}`}>
+                                            {msg.text}
+                                        </div>
+                                    ))}
+                                    {sidebarChatLoading && (
+                                        <div className="text-xs text-gray-400 italic">Thinking...</div>
+                                    )}
+                                    <div ref={sidebarChatEndRef} />
+                                </div>
+                                <form onSubmit={handleSidebarChatSubmit} className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        className="flex-1 text-sm border border-purple-200 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-purple-500"
+                                        placeholder="Type here..."
+                                        value={sidebarChatInput}
+                                        onChange={(e) => setSidebarChatInput(e.target.value)}
+                                    />
+                                    <button
+                                        type="submit"
+                                        className="bg-purple-600 text-white px-3 py-2 rounded-lg text-sm font-bold hover:bg-purple-700"
+                                    >
+                                        ➤
+                                    </button>
+                                </form>
+                                <button
+                                    onClick={() => setShowSidebarChat(false)}
+                                    className="w-full text-center text-xs text-purple-600 mt-2 hover:underline"
+                                >
+                                    Close Chat
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
                     {/* Log Button */}
                     <button
                         onClick={() => setIsBottomSheetOpen(true)}
@@ -163,6 +307,7 @@ const PeriodTracker = () => {
 
                     {/* AI Insight Card */}
                     <div className="bg-gradient-to-br from-indigo-50 to-white rounded-3xl p-6 shadow-sm border border-indigo-100">
+
                         <div className="flex items-center gap-3 mb-4">
                             <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-xl">✨</div>
                             <h3 className="font-bold text-indigo-900">AI Health Insight</h3>

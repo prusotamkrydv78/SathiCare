@@ -1,10 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { geminiService } from '../services/geminiService'; // Import Service
 import PregnancyAiWidget from './PregnancyAiWidget'; // Import New Widget
 
 const PregnancyTracker = () => {
     const [activeTab, setActiveTab] = useState('Overview');
+
+    // Main Chat State
+    const [showMainChat, setShowMainChat] = useState(false);
+    const [mainChatMessages, setMainChatMessages] = useState([
+        { id: 1, text: "Hi! Ask me anything about your pregnancy. 🤰", sender: 'ai' }
+    ]);
+    const [mainChatInput, setMainChatInput] = useState('');
+    const [mainChatLoading, setMainChatLoading] = useState(false);
+    const mainChatEndRef = useRef(null);
 
     // Contraction Timer State
     const [isTimerRunning, setIsTimerRunning] = useState(false);
@@ -50,6 +59,13 @@ const PregnancyTracker = () => {
         return () => clearInterval(interval);
     }, [isTimerRunning]);
 
+    // Auto-scroll main chat
+    useEffect(() => {
+        if (showMainChat) {
+            mainChatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [mainChatMessages, showMainChat]);
+
     // Timer Functions
     const toggleTimer = () => {
         if (isTimerRunning) {
@@ -82,6 +98,32 @@ const PregnancyTracker = () => {
         ));
     };
 
+    // Main Chat Logic
+    const handleMainChatSubmit = async (e) => {
+        e.preventDefault();
+        if (!mainChatInput.trim()) return;
+
+        const userMsg = mainChatInput;
+        setMainChatMessages(prev => [...prev, { id: Date.now(), text: userMsg, sender: 'user' }]);
+        setMainChatInput('');
+        setMainChatLoading(true);
+
+        try {
+            // Reuse the pregnancy-specific chat logic
+            const history = mainChatMessages.map(m => ({
+                text: m.text,
+                sender: m.sender
+            }));
+
+            const response = await geminiService.getPregnancyChatResponse(userMsg, history);
+            setMainChatMessages(prev => [...prev, { id: Date.now() + 1, text: response.text, sender: 'ai' }]);
+        } catch (error) {
+            setMainChatMessages(prev => [...prev, { id: Date.now() + 1, text: "Connection error. Please try again.", sender: 'ai' }]);
+        } finally {
+            setMainChatLoading(false);
+        }
+    };
+
     return (
         <div className="font-sans text-gray-800 pb-12">
 
@@ -107,8 +149,6 @@ const PregnancyTracker = () => {
                         </button>
                     ))}
                 </div>
-                {/* AI Widget Integrated in Header */}
-                <PregnancyAiWidget />
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -145,6 +185,55 @@ const PregnancyTracker = () => {
 
                         {/* Abstract Shapes */}
                         <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full translate-x-1/4 -translate-y-1/4 blur-3xl"></div>
+                    </div>
+
+                    {/* Ask AI Section (Moved Below Hero Card) */}
+                    {/* Ask AI Section (Visible only when chat is open) */}
+                    <div className={`transition-all duration-300 ${showMainChat ? 'bg-teal-50 rounded-3xl p-6 border border-teal-100 flex flex-col' : 'hidden'}`}>
+                        {showMainChat && (
+                            <>
+                                <div className="flex justify-between items-center mb-4 animate-fade-in">
+                                    <h3 className="font-bold text-teal-800 flex items-center gap-2">
+                                        <span className="bg-teal-100 p-1.5 rounded-lg">🤖</span> Ask AI Companion
+                                    </h3>
+                                </div>
+                                {/* Chat Content */}
+                                <div className="mt-4 animate-fade-in">
+                                    <div className="h-64 overflow-y-auto mb-4 bg-white rounded-xl p-3 border border-teal-100 space-y-3">
+                                        {mainChatMessages.map(msg => (
+                                            <div key={msg.id} className={`p-2 rounded-lg text-xs ${msg.sender === 'user' ? 'bg-teal-500 text-white ml-auto max-w-[85%]' : 'bg-gray-100 text-gray-700 mr-auto max-w-[90%]'}`}>
+                                                {msg.text}
+                                            </div>
+                                        ))}
+                                        {mainChatLoading && (
+                                            <div className="text-xs text-gray-400 italic">Thinking...</div>
+                                        )}
+                                        <div ref={mainChatEndRef} />
+                                    </div>
+                                    <form onSubmit={handleMainChatSubmit} className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            className="flex-1 text-sm border border-teal-200 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-teal-500"
+                                            placeholder="Type here..."
+                                            value={mainChatInput}
+                                            onChange={(e) => setMainChatInput(e.target.value)}
+                                        />
+                                        <button
+                                            type="submit"
+                                            className="bg-teal-600 text-white px-3 py-2 rounded-lg text-sm font-bold hover:bg-teal-700"
+                                        >
+                                            ➤
+                                        </button>
+                                    </form>
+                                    <button
+                                        onClick={() => setShowMainChat(false)}
+                                        className="w-full text-center text-xs text-teal-600 mt-2 hover:underline"
+                                    >
+                                        Close Chat
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </div>
 
                     {/* Tab Content Area */}
@@ -274,17 +363,21 @@ const PregnancyTracker = () => {
                 {/* Sidebar (Right) */}
                 <div className="space-y-6">
 
-                    {/* Ask AI Contextual */}
-                    <div className="bg-teal-50 rounded-3xl p-6 border border-teal-100">
+                    {/* Ask AI Contextual (Sidebar Trigger) */}
+                    <div className="bg-teal-50 rounded-3xl p-6 border border-teal-100 transition-all duration-300">
                         <h3 className="font-bold text-teal-800 mb-4 flex items-center gap-2">
                             <span className="bg-teal-100 p-1.5 rounded-lg">🤖</span> Ask AI Companion
                         </h3>
                         <p className="text-sm text-teal-700 mb-4">
                             "Is it safe to eat spicy food in week 20?"
                         </p>
-                        <Link to="/ai-chat" className="block w-full py-3 bg-teal-500 text-white rounded-xl font-bold text-center hover:bg-teal-600 transition shadow-lg shadow-teal-200">
-                            Ask Now
-                        </Link>
+
+                        <button
+                            onClick={() => setShowMainChat(!showMainChat)}
+                            className={`block w-full py-3 rounded-xl font-bold text-center transition shadow-lg ${showMainChat ? 'bg-gray-800 text-white hover:bg-black' : 'bg-teal-500 text-white hover:bg-teal-600 shadow-teal-200'}`}
+                        >
+                            {showMainChat ? 'Close Chat' : 'Ask Now'}
+                        </button>
                     </div>
 
                     {/* Upcoming Appointments */}
