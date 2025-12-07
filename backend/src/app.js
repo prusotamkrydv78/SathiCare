@@ -13,6 +13,7 @@ import healthRoutes from './routes/healthRoutes.js';
 import doctorRoutes from './routes/doctorRoutes.js';
 import appointmentRoutes from './routes/appointmentRoutes.js';
 import consultationRoutes from './routes/consultationRoutes.js';
+import emergencyRoutes from './routes/emergencyRoutes.js';
 import testRoutes from './routes/testRoutes.js';
 import { logger, errorHandler, notFound } from './middlewares/common.js';
 
@@ -69,6 +70,7 @@ app.use('/api/health', healthRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/consultations', consultationRoutes);
+app.use('/api/emergency', emergencyRoutes);
 app.use('/api', testRoutes);
 
 // 404 handler
