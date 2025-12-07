@@ -11,3 +11,23 @@
   --font-body: "Inter", "Noto Sans Devanagari", sans-serif;
   --font-sans: "Inter", "Noto Sans Devanagari", sans-serif;
 }
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) scale(0.8);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: translateY(-100px) scale(1.2);
+    opacity: 0;
+  }
+}
+
+.animate-float {
+  animation: float 6s infinite ease-in;
+}
