@@ -1,0 +1,29 @@
+import express from 'express';
+import { body } from 'express-validator';
+import {
+    getUserProfile,
+    updateUserProfile,
+    deleteUserAccount,
+    updateHealthProfile,
+    updatePreferences
+} from '../controllers/userController.js';
+import { protect } from '../middlewares/authMiddleware.js';
+import { validate } from '../middlewares/validationMiddleware.js';
+
+const router = express.Router();
+
+// All routes are protected
+router.use(protect);
+
+// Profile routes
+router.get('/profile', getUserProfile);
+router.put('/profile', updateUserProfile);
+router.delete('/account', deleteUserAccount);
+
+// Health profile routes
+router.put('/health-profile', updateHealthProfile);
+
+// Preferences routes
+router.put('/preferences', updatePreferences);
+
+export default router;
