@@ -7,6 +7,7 @@ import rateLimit from 'express-rate-limit';
 import connectDB from './config/database.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
 import periodRoutes from './routes/periodRoutes.js';
 import pregnancyRoutes from './routes/pregnancyRoutes.js';
 import healthRoutes from './routes/healthRoutes.js';
@@ -65,6 +66,7 @@ app.get('/', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/period', periodRoutes);
 app.use('/api/pregnancy', pregnancyRoutes);
 app.use('/api/health', healthRoutes);

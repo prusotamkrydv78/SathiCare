@@ -30,17 +30,17 @@ const AppointmentCard = ({ appointment, onCancel }) => {
     const doctorSpecialty = doctorInfo.specialization || doctorInfo.specialty || 'Specialist';
 
     return (
-        <div className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-2xl p-5 border-2 border-gray-200">
+        <div className="bg-white rounded-2xl p-5 border border-gray-100 hover:shadow-lg transition">
             <div className="flex items-start justify-between mb-4">
                 <div className="flex items-start gap-4">
-                    <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-teal-500 rounded-xl flex items-center justify-center text-2xl shadow-md">
+                    <div className="w-14 h-14 bg-gradient-to-br from-primary-pink to-purple-600 rounded-xl flex items-center justify-center text-2xl shadow-md">
                         👨‍⚕️
                     </div>
                     <div>
                         <h3 className="font-bold text-gray-800 text-lg">{doctorName}</h3>
                         <p className="text-sm text-gray-600">{doctorSpecialty}</p>
                         <div className="flex items-center gap-2 mt-2">
-                            <span className={`px-3 py-1 rounded-full text-xs font-bold border-2 ${getStatusColor(appointment.status)}`}>
+                            <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusColor(appointment.status)}`}>
                                 {appointment.status?.toUpperCase()}
                             </span>
                         </div>
@@ -60,7 +60,7 @@ const AppointmentCard = ({ appointment, onCancel }) => {
             </div>
 
             {appointment.reason && (
-                <p className="text-sm text-gray-600 mb-4 bg-white p-3 rounded-xl">
+                <p className="text-sm text-gray-600 mb-4 bg-gray-50 p-3 rounded-xl">
                     <strong>Reason:</strong> {appointment.reason}
                 </p>
             )}
@@ -70,14 +70,14 @@ const AppointmentCard = ({ appointment, onCancel }) => {
                     <>
                         <button
                             onClick={handleJoinChat}
-                            className="flex-1 bg-gradient-to-r from-blue-600 to-teal-600 text-white py-2.5 rounded-xl font-semibold hover:shadow-lg transition flex items-center justify-center gap-2"
+                            className="flex-1 bg-gradient-to-r from-primary-pink to-purple-600 text-white py-2.5 rounded-xl font-semibold hover:shadow-lg transition flex items-center justify-center gap-2"
                         >
                             <MessageSquare className="w-4 h-4" />
                             Join Chat
                         </button>
                         <button
                             onClick={() => onCancel(appointment._id)}
-                            className="px-4 py-2.5 bg-red-50 border-2 border-red-200 text-red-600 rounded-xl font-semibold hover:bg-red-100 transition"
+                            className="px-4 py-2.5 bg-red-50 border border-red-200 text-red-600 rounded-xl font-semibold hover:bg-red-100 transition"
                         >
                             Cancel
                         </button>
@@ -86,7 +86,7 @@ const AppointmentCard = ({ appointment, onCancel }) => {
                 {appointment.status === 'pending' && (
                     <button
                         onClick={() => onCancel(appointment._id)}
-                        className="flex-1 bg-red-50 border-2 border-red-200 text-red-600 py-2 rounded-xl font-semibold hover:bg-red-100 transition"
+                        className="flex-1 bg-red-50 border border-red-200 text-red-600 py-2 rounded-xl font-semibold hover:bg-red-100 transition"
                     >
                         Cancel Request
                     </button>

@@ -52,7 +52,7 @@ function App() {
             <Route path="/features" element={<PublicLayout><FeaturesPage /></PublicLayout>} />
             <Route path="/testimonials" element={<PublicLayout><TestimonialsPage /></PublicLayout>} />
             <Route path="/hospital/:id" element={<HospitalDetails />} />
-            <Route path="/sos" element={<SOSPage />} />
+        
 
             {/* Protected Routes with Layout */}
             <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />

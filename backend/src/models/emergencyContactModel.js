@@ -58,8 +58,7 @@ const emergencyContactSchema = new mongoose.Schema(
     }
 );
 
-// Index
-emergencyContactSchema.index({ userId: 1 });
+
 
 // Method to identify carrier
 emergencyContactSchema.methods.identifyCarrier = function (phoneNumber) {

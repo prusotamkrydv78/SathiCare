@@ -4,15 +4,14 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 if (!process.env.GEMINI_API_KEY) {
     console.error('⚠️ GEMINI_API_KEY is not set in .env file');
 }
-
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Period Tracker AI Model - Using gemini-1.5-flash for higher quota
 // gemini-1.5-flash: 1500 requests/day (free tier)
-// gemini-2.5-flash-lite: 20 requests/day (free tier)
-const periodTrackerModel = genAI.getGenerativeModel({
-    model: "gemini-2.5-flash",
+// gemini-1.5-flash-8b: Higher rate limits
+export const periodTrackerModel = genAI.getGenerativeModel({
+    model: "gemini-2.5-flash-lite",
     generationConfig: {
         temperature: 0.7,
         topK: 40,

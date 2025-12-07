@@ -6,8 +6,7 @@ const consultationChatSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Appointment',
             required: true,
-            unique: true,
-            index: true
+            unique: true
         },
         userId: {
             type: mongoose.Schema.Types.ObjectId,
@@ -79,7 +78,6 @@ const consultationChatSchema = new mongoose.Schema(
 );
 
 // Indexes
-consultationChatSchema.index({ appointmentId: 1 });
 consultationChatSchema.index({ userId: 1, isActive: 1 });
 consultationChatSchema.index({ doctorId: 1, isActive: 1 });
 consultationChatSchema.index({ 'messages.timestamp': -1 });

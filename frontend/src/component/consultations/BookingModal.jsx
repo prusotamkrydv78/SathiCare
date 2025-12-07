@@ -117,18 +117,18 @@ const BookingModal = ({ doctor, onClose, onSuccess }) => {
                             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                             className="w-20 h-20 mx-auto mb-6"
                         >
-                            <Loader className="w-20 h-20 text-blue-600" />
+                            <Loader className="w-20 h-20 text-primary-pink" />
                         </motion.div>
                         <h2 className="text-2xl font-bold text-gray-800 mb-2">Waiting for Approval</h2>
                         <p className="text-gray-600 mb-4">
                             Your appointment request has been sent to the doctor
                         </p>
-                        <div className="bg-blue-50 rounded-2xl p-4 mb-6">
+                        <div className="bg-pink-50 rounded-2xl p-4 mb-6">
                             <p className="text-sm text-gray-600 mb-2">Auto-approval in</p>
-                            <div className="text-4xl font-bold text-blue-600">{countdown}s</div>
+                            <div className="text-4xl font-bold text-primary-pink">{countdown}s</div>
                         </div>
                         <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
-                            <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+                            <div className="w-2 h-2 bg-primary-pink rounded-full animate-pulse"></div>
                             <span>Processing your request...</span>
                         </div>
                     </div>
@@ -137,8 +137,8 @@ const BookingModal = ({ doctor, onClose, onSuccess }) => {
                     <>
                         <h2 className="text-2xl font-bold text-gray-800 mb-6">Book Appointment</h2>
 
-                        <div className="flex items-center gap-4 mb-6 p-4 bg-blue-50 rounded-2xl">
-                            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-teal-500 rounded-xl flex items-center justify-center text-2xl">
+                        <div className="flex items-center gap-4 mb-6 p-4 bg-pink-50 rounded-2xl">
+                            <div className="w-12 h-12 bg-gradient-to-br from-primary-pink to-purple-600 rounded-xl flex items-center justify-center text-2xl">
                                 {doctor.profileImage || doctor.image || '👨‍⚕️'}
                             </div>
                             <div>
@@ -156,7 +156,7 @@ const BookingModal = ({ doctor, onClose, onSuccess }) => {
                                     min={new Date().toISOString().split('T')[0]}
                                     value={formData.scheduledDate}
                                     onChange={(e) => setFormData({ ...formData, scheduledDate: e.target.value })}
-                                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-pink focus:border-primary-pink"
                                 />
                             </div>
 
@@ -167,7 +167,7 @@ const BookingModal = ({ doctor, onClose, onSuccess }) => {
                                     required
                                     value={formData.scheduledTime}
                                     onChange={(e) => setFormData({ ...formData, scheduledTime: e.target.value })}
-                                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-pink focus:border-primary-pink"
                                 />
                             </div>
 
@@ -179,7 +179,7 @@ const BookingModal = ({ doctor, onClose, onSuccess }) => {
                                     onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
                                     placeholder="Describe your symptoms or reason for consultation..."
                                     rows="3"
-                                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-pink focus:border-primary-pink resize-none"
                                 />
                             </div>
 
@@ -195,7 +195,7 @@ const BookingModal = ({ doctor, onClose, onSuccess }) => {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-teal-600 text-white rounded-xl font-semibold hover:shadow-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
+                                    className="flex-1 px-6 py-3 bg-gradient-to-r from-primary-pink to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
                                 >
                                     {loading ? (
                                         <>
