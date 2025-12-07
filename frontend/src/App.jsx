@@ -1,8 +1,10 @@
 
+
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './component/ProtectedRoute';
+import ScrollToTopOnMount from './component/ScrollToTopOnMount';
 import LandingPage from './component/LandingPage'
 import LoginPage from './component/LoginPage';
 import SignupPage from './component/SignupPage';
@@ -28,19 +30,21 @@ import NotificationsPage from './component/NotificationsPage';
 import AboutPage from './component/AboutPage';
 import SymptomChecker from './component/SymptomChecker';
 import Layout from './component/Layout';
+import PublicLayout from './component/PublicLayout';
 
 function App() {
   return (
     <Router>
+      <ScrollToTopOnMount />
       <AuthProvider>
         <Routes>
-          {/* Public Routes */}
+          {/* Public Routes with PublicLayout */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/about" element={<Layout><AboutPage /></Layout>} />
-          <Route path="/features" element={<Layout><FeaturesPage /></Layout>} />
-          <Route path="/testimonials" element={<Layout><TestimonialsPage /></Layout>} />
+          <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />
+          <Route path="/features" element={<PublicLayout><FeaturesPage /></PublicLayout>} />
+          <Route path="/testimonials" element={<PublicLayout><TestimonialsPage /></PublicLayout>} />
 
           {/* Protected Routes with Layout */}
           <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
