@@ -20,7 +20,8 @@ import {
     X,
     ChevronLeft,
     ChevronRight,
-    Heart
+    Heart,
+    HeartPulse
 } from 'lucide-react';
 
 const Layout = ({ children }) => {
@@ -68,7 +69,7 @@ const Layout = ({ children }) => {
         {
             title: 'CARE & SUPPORT',
             items: [
-                { path: '/ai-chat', label: 'AI Assistant', icon: MessageCircle, badge: 'AI' },
+                { path: '/health-assistant', label: 'Health Assistant', icon: HeartPulse, badge: 'NEW' },
                 { path: '/appointments', label: 'Appointments', icon: CalendarCheck },
                 { path: '/consultations', label: 'Find Doctors', icon: UserRound },
                 { path: '/forum', label: 'Community', icon: Users },
@@ -252,8 +253,8 @@ const SidebarContent = ({ user, navSections, isActive, isCollapsed, toggleSideba
                                     <Link key={item.path} to={item.path}>
                                         <motion.div
                                             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${active
-                                                    ? 'bg-pink-50 text-pink-600'
-                                                    : 'text-gray-600 hover:bg-gray-50'
+                                                ? 'bg-pink-50 text-pink-600'
+                                                : 'text-gray-600 hover:bg-gray-50'
                                                 }`}
                                             whileHover={{ x: active ? 0 : 3 }}
                                         >
@@ -265,8 +266,8 @@ const SidebarContent = ({ user, navSections, isActive, isCollapsed, toggleSideba
                                                     </span>
                                                     {item.badge && (
                                                         <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded-md ${typeof item.badge === 'number'
-                                                                ? 'bg-pink-600 text-white'
-                                                                : 'bg-gradient-to-r from-pink-500 to-purple-600 text-white'
+                                                            ? 'bg-pink-600 text-white'
+                                                            : 'bg-gradient-to-r from-pink-500 to-purple-600 text-white'
                                                             }`}>
                                                             {item.badge}
                                                         </span>
@@ -290,8 +291,8 @@ const SidebarContent = ({ user, navSections, isActive, isCollapsed, toggleSideba
                 <Link to="/emergency">
                     <motion.div
                         className={`${isCollapsed && !isMobile
-                                ? 'w-11 h-11 mx-auto flex items-center justify-center'
-                                : 'p-4'
+                            ? 'w-11 h-11 mx-auto flex items-center justify-center'
+                            : 'p-4'
                             } bg-gradient-to-r from-pink-600 to-pink-500 rounded-xl text-white text-center shadow-md hover:shadow-lg transition-shadow cursor-pointer`}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
@@ -314,8 +315,8 @@ const SidebarContent = ({ user, navSections, isActive, isCollapsed, toggleSideba
                 <motion.button
                     onClick={handleLogout}
                     className={`${isCollapsed && !isMobile
-                            ? 'w-11 h-11 mx-auto justify-center'
-                            : 'w-full justify-start'
+                        ? 'w-11 h-11 mx-auto justify-center'
+                        : 'w-full justify-start'
                         } flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors font-medium text-sm`}
                     whileHover={{ x: isCollapsed ? 0 : 3 }}
                 >

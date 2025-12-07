@@ -29,6 +29,7 @@ import DoctorConsultations from './component/DoctorConsultations';
 import NotificationsPage from './component/NotificationsPage';
 import AboutPage from './component/AboutPage';
 import SymptomChecker from './component/SymptomChecker';
+import HealthAssistant from './component/HealthAssistant';
 import Layout from './component/Layout';
 import PublicLayout from './component/PublicLayout';
 
@@ -65,6 +66,7 @@ function App() {
           <Route path="/consultations" element={<ProtectedRoute><Layout><DoctorConsultations /></Layout></ProtectedRoute>} />
           <Route path="/notifications" element={<ProtectedRoute><Layout><NotificationsPage /></Layout></ProtectedRoute>} />
           <Route path="/symptom-checker" element={<ProtectedRoute><Layout><SymptomChecker /></Layout></ProtectedRoute>} />
+          <Route path="/health-assistant" element={<ProtectedRoute><Layout><HealthAssistant /></Layout></ProtectedRoute>} />
         </Routes>
       </AuthProvider>
     </Router>
