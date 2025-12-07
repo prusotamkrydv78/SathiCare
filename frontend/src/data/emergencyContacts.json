@@ -1,0 +1,148 @@
+{
+    "userContacts": [
+        {
+            "id": "c1",
+            "name": "Husband - Ram Kumar",
+            "relationship": "Spouse",
+            "email": "amardeep10as@gmail.com",
+            "phoneNumber": "+977-9800000001",
+            "isPrimary": true,
+            "icon": "❤️"
+        },
+        {
+            "id": "c2",
+            "name": "Mother - Sita Devi",
+            "relationship": "Mother",
+            "email": "sita.devi@email.com",
+            "phoneNumber": "+977-9800000002",
+            "isPrimary": true,
+            "icon": "👩"
+        },
+        {
+            "id": "c3",
+            "name": "Sister - Gita",
+            "relationship": "Sibling",
+            "email": "gita.sharma@email.com",
+            "phoneNumber": "+977-9800000003",
+            "isPrimary": false,
+            "icon": "👧"
+        },
+        {
+            "id": "c4",
+            "name": "Dr. Sharma",
+            "relationship": "Doctor",
+            "email": "dr.sharma@hospital.com",
+            "phoneNumber": "+977-9800000004",
+            "isPrimary": true,
+            "icon": "👨‍⚕️"
+        }
+    ],
+    "emergencyNumbers": [
+        {
+            "id": "e1",
+            "title": "Ambulance",
+            "number": "102",
+            "description": "Emergency Medical Services",
+            "icon": "🚑",
+            "color": "#EF4444"
+        },
+        {
+            "id": "e2",
+            "title": "Women's Helpline",
+            "number": "1145",
+            "description": "24/7 Women Support",
+            "icon": "📞",
+            "color": "#EC4899"
+        },
+        {
+            "id": "e3",
+            "title": "Police",
+            "number": "100",
+            "description": "Nepal Police Emergency",
+            "icon": "👮",
+            "color": "#3B82F6"
+        },
+        {
+            "id": "e4",
+            "title": "Child Helpline",
+            "number": "1098",
+            "description": "Child Protection",
+            "icon": "👶",
+            "color": "#10B981"
+        }
+    ],
+    "firstAidTips": {
+        "bleeding": {
+            "title": "Heavy Bleeding",
+            "icon": "🩸",
+            "steps": [
+                "Apply direct pressure to the wound with a clean cloth",
+                "Keep the injured area elevated above heart level if possible",
+                "DO NOT remove the cloth if blood soaks through - add more layers",
+                "Call ambulance immediately if bleeding doesn't stop in 10 minutes",
+                "Keep the person calm and lying down"
+            ],
+            "warning": "Seek immediate medical help for severe bleeding"
+        },
+        "breathing": {
+            "title": "Difficulty Breathing",
+            "icon": "😮‍💨",
+            "steps": [
+                "Help the person sit upright - do not lay them flat",
+                "Loosen any tight clothing around neck and chest",
+                "Open windows for fresh air circulation",
+                "If they have an inhaler, help them use it",
+                "Call ambulance if condition worsens"
+            ],
+            "warning": "Call 102 immediately if lips turn blue"
+        },
+        "unconscious": {
+            "title": "Person Unconscious",
+            "icon": "😴",
+            "steps": [
+                "Check if the person is breathing",
+                "If breathing, place in recovery position (on their side)",
+                "If NOT breathing, start CPR if trained",
+                "Call ambulance immediately",
+                "Do NOT give food or water to unconscious person"
+            ],
+            "warning": "Never leave an unconscious person alone"
+        },
+        "pregnancy": {
+            "title": "Pregnancy Emergency",
+            "icon": "🤰",
+            "steps": [
+                "Keep the woman calm and comfortable",
+                "If bleeding, have her lie on her left side",
+                "Note the time contractions start and their frequency",
+                "Do NOT give any medication without medical advice",
+                "Call ambulance or go to nearest hospital immediately"
+            ],
+            "warning": "Any vaginal bleeding or severe pain needs immediate attention"
+        },
+        "seizure": {
+            "title": "Seizure / Fits",
+            "icon": "⚡",
+            "steps": [
+                "Clear the area of hard or sharp objects",
+                "DO NOT hold the person down or put anything in their mouth",
+                "Turn them on their side after seizure stops",
+                "Time the seizure - if over 5 minutes, call ambulance",
+                "Stay with them until fully recovered"
+            ],
+            "warning": "Call ambulance if this is their first seizure"
+        },
+        "burn": {
+            "title": "Burns",
+            "icon": "🔥",
+            "steps": [
+                "Cool the burn under running water for at least 20 minutes",
+                "Remove jewelry or tight items near the burn",
+                "Cover loosely with a clean, dry bandage",
+                "DO NOT apply ice, butter, or toothpaste",
+                "Seek medical help for large or deep burns"
+            ],
+            "warning": "Face, hands, or genital burns need immediate medical care"
+        }
+    }
+}

@@ -123,24 +123,40 @@ const Dashboard = () => {
                             </div>
                         </motion.div>
 
-                        {/* Quick Access - Emergency */}
-                        <Link to="/emergency" className="block h-full">
+                        {/* Quick Access - Emergency SOS */}
+                        <Link to="/sos" className="block h-full">
                             <motion.div
                                 variants={itemVariants}
-                                whileHover={{ y: -5 }}
-                                className="bg-white rounded-[2rem] p-8 shadow-lg border border-red-50 h-full relative overflow-hidden group cursor-pointer"
+                                whileHover={{ y: -5, scale: 1.02 }}
+                                className="bg-gradient-to-br from-red-50 to-pink-50 rounded-[2rem] p-8 shadow-lg border border-red-100 h-full relative overflow-hidden group cursor-pointer"
                             >
-                                <div className="absolute inset-0 bg-red-500 opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
+                                {/* Animated pulse background */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                                {/* Pulsing dot indicator */}
+                                <div className="absolute top-4 right-4">
+                                    <span className="relative flex h-3 w-3">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                                    </span>
+                                </div>
+
                                 <div className="flex items-center justify-between mb-6">
-                                    <div className="w-14 h-14 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center text-3xl shadow-sm group-hover:scale-110 transition-transform duration-300">
+                                    <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-500 text-white rounded-2xl flex items-center justify-center text-3xl shadow-lg group-hover:scale-110 transition-transform duration-300">
                                         🆘
                                     </div>
-                                    <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-400">
+                                    <div className="w-10 h-10 rounded-full bg-white/80 flex items-center justify-center text-red-500 shadow-sm group-hover:bg-red-500 group-hover:text-white transition-all duration-300">
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
                                     </div>
                                 </div>
-                                <h3 className="font-bold text-gray-800 text-xl mb-1">Emergency SOS</h3>
-                                <p className="text-gray-400 font-medium text-sm">Instant ambulance & support.</p>
+                                <h3 className="font-bold text-gray-800 text-xl mb-2">Emergency SOS</h3>
+                                <p className="text-gray-500 font-medium text-sm">Instant ambulance, first-aid tips & nearby hospitals.</p>
+
+                                {/* Quick action hint */}
+                                <div className="mt-4 flex items-center gap-2">
+                                    <span className="text-xs font-bold text-red-500 bg-red-100 px-2 py-1 rounded-full">Call 102</span>
+                                    <span className="text-xs font-bold text-pink-500 bg-pink-100 px-2 py-1 rounded-full">Share Location</span>
+                                </div>
                             </motion.div>
                         </Link>
                     </div>
