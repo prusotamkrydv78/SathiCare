@@ -22,33 +22,47 @@ import AppointmentCalendar from './component/AppointmentCalendar';
 import EmergencyAccess from './component/EmergencyAccess';
 import FeaturesPage from './component/FeaturesPage';
 import TestimonialsPage from './component/TestimonialsPage';
+import CommunityForum from './component/CommunityForum';
+import DoctorConsultations from './component/DoctorConsultations';
+import NotificationsPage from './component/NotificationsPage';
 import AboutPage from './component/AboutPage';
+import SymptomChecker from './component/SymptomChecker';
+import Layout from './component/Layout';
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/track" element={<PeriodTracker />} />
-        <Route path="/complete-profile" element={<CompleteProfile />} />
-        <Route path="/health-details" element={<HealthDetails />} />
-        <Route path="/pregnancy-tracker" element={<PregnancyTracker />} />
-        <Route path="/find-facility" element={<FacilityFinder />} />
-        <Route path="/facility/:id" element={<FacilityDetails />} />
-        <Route path="/ai-chat" element={<AiAssistant />} />
-        <Route path="/library" element={<ContentLibrary />} />
-        <Route path="/article/:id" element={<ArticlePage />} />
-        <Route path="/records" element={<HealthRecords />} />
-        <Route path="/profile-settings" element={<ProfileSettings />} />
-        <Route path="/appointments" element={<AppointmentCalendar />} />
-        <Route path="/emergency" element={<EmergencyAccess />} />
-        <Route path="/features" element={<FeaturesPage />} />
-        <Route path="/testimonials" element={<TestimonialsPage />} />
-        <Route path="/about" element={<AboutPage />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/about" element={<AboutPage />} />
+
+          {/* Protected Routes with Layout */}
+          <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
+          <Route path="/track" element={<ProtectedRoute><Layout><PeriodTracker /></Layout></ProtectedRoute>} />
+          <Route path="/complete-profile" element={<ProtectedRoute><Layout><CompleteProfile /></Layout></ProtectedRoute>} />
+          <Route path="/health-details" element={<ProtectedRoute><Layout><HealthDetails /></Layout></ProtectedRoute>} />
+          <Route path="/pregnancy-tracker" element={<ProtectedRoute><Layout><PregnancyTracker /></Layout></ProtectedRoute>} />
+          <Route path="/find-facility" element={<ProtectedRoute><Layout><FacilityFinder /></Layout></ProtectedRoute>} />
+          <Route path="/facility/:id" element={<ProtectedRoute><Layout><FacilityDetails /></Layout></ProtectedRoute>} />
+          <Route path="/ai-chat" element={<ProtectedRoute><Layout><AiAssistant /></Layout></ProtectedRoute>} />
+          <Route path="/library" element={<ProtectedRoute><Layout><ContentLibrary /></Layout></ProtectedRoute>} />
+          <Route path="/article/:id" element={<ProtectedRoute><Layout><ArticlePage /></Layout></ProtectedRoute>} />
+          <Route path="/records" element={<ProtectedRoute><Layout><HealthRecords /></Layout></ProtectedRoute>} />
+          <Route path="/profile-settings" element={<ProtectedRoute><Layout><ProfileSettings /></Layout></ProtectedRoute>} />
+          <Route path="/appointments" element={<ProtectedRoute><Layout><AppointmentCalendar /></Layout></ProtectedRoute>} />
+          <Route path="/emergency" element={<ProtectedRoute><Layout><EmergencyAccess /></Layout></ProtectedRoute>} />
+          <Route path="/features" element={<ProtectedRoute><Layout><FeaturesPage /></Layout></ProtectedRoute>} />
+          <Route path="/testimonials" element={<ProtectedRoute><Layout><TestimonialsPage /></Layout></ProtectedRoute>} />
+          <Route path="/forum" element={<ProtectedRoute><Layout><CommunityForum /></Layout></ProtectedRoute>} />
+          <Route path="/consultations" element={<ProtectedRoute><Layout><DoctorConsultations /></Layout></ProtectedRoute>} />
+          <Route path="/notifications" element={<ProtectedRoute><Layout><NotificationsPage /></Layout></ProtectedRoute>} />
+          <Route path="/symptom-checker" element={<ProtectedRoute><Layout><SymptomChecker /></Layout></ProtectedRoute>} />
+        </Routes>
+      </AuthProvider>
     </Router>
   )
 }
