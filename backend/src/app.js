@@ -1,17 +1,18 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
+import  'dotenv/config';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import connectDB from './config/database.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import periodRoutes from './routes/periodRoutes.js';
 import testRoutes from './routes/testRoutes.js';
 import { logger, errorHandler, notFound } from './middlewares/common.js';
 
 // Load environment variables
-dotenv.config();
+
 
 // Connect to MongoDB
 connectDB();
@@ -57,6 +58,7 @@ app.get('/', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/period', periodRoutes);
 app.use('/api', testRoutes);
 
 // 404 handler
