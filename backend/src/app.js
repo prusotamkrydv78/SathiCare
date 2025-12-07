@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import  'dotenv/config';
+import 'dotenv/config';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
@@ -8,6 +8,8 @@ import connectDB from './config/database.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import periodRoutes from './routes/periodRoutes.js';
+import pregnancyRoutes from './routes/pregnancyRoutes.js';
+import healthRoutes from './routes/healthRoutes.js';
 import testRoutes from './routes/testRoutes.js';
 import { logger, errorHandler, notFound } from './middlewares/common.js';
 
@@ -59,6 +61,8 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/period', periodRoutes);
+app.use('/api/pregnancy', pregnancyRoutes);
+app.use('/api/health', healthRoutes);
 app.use('/api', testRoutes);
 
 // 404 handler
