@@ -29,6 +29,7 @@ import DoctorConsultations from './component/DoctorConsultations';
 import NotificationsPage from './component/NotificationsPage';
 import AboutPage from './component/AboutPage';
 import SymptomChecker from './component/SymptomChecker';
+import FindCare from './component/FindCare';
 import Layout from './component/Layout';
 import PublicLayout from './component/PublicLayout';
 
@@ -45,6 +46,7 @@ function App() {
           <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />
           <Route path="/features" element={<PublicLayout><FeaturesPage /></PublicLayout>} />
           <Route path="/testimonials" element={<PublicLayout><TestimonialsPage /></PublicLayout>} />
+          <Route path="/find-care" element={<FindCare />} />
 
           {/* Protected Routes with Layout */}
           <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
