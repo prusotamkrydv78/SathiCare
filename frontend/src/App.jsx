@@ -16,6 +16,7 @@ import ArticlePage from './component/ArticlePage';
 import HealthRecords from './component/HealthRecords';
 import ProfileSettings from './component/ProfileSettings';
 import AppointmentCalendar from './component/AppointmentCalendar';
+import EmergencyAccess from './component/EmergencyAccess';
 
 function App() {
 
@@ -38,6 +39,7 @@ function App() {
         <Route path="/records" element={<HealthRecords />} />
         <Route path="/profile-settings" element={<ProfileSettings />} />
         <Route path="/appointments" element={<AppointmentCalendar />} />
+        <Route path="/emergency" element={<EmergencyAccess />} />
       </Routes>
     </Router>
   )
