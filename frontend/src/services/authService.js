@@ -62,7 +62,7 @@ const authService = {
 
     // POST /api/auth/logout
     logout: async () => {
-        localStorage.removeItem('sathi_user');
+        // localStorage.removeItem('sathi_user'); // User requested to keep data
         try {
             const response = await api.post('/auth/logout');
             return response.data;
@@ -80,9 +80,11 @@ const authService = {
             }
             return response.data;
         } catch (error) {
-            // If backend is reachable but token is invalid (401), clear local storage
+            // If backend is reachable but token is invalid (401), normally we clear local storage
+            // But per request, we keep it.
             if (error.response && error.response.status === 401) {
-                localStorage.removeItem('sathi_user');
+                // localStorage.removeItem('sathi_user'); 
+                // Return null user so AuthContext knows session is invalid, but data stays on disk.
                 return { data: { user: null } };
             }
 
@@ -92,7 +94,7 @@ const authService = {
                 try {
                     return { data: { user: JSON.parse(storedUser) } };
                 } catch (e) {
-                    localStorage.removeItem('sathi_user');
+                    // localStorage.removeItem('sathi_user');
                 }
             }
 
