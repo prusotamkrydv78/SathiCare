@@ -98,6 +98,17 @@ const UserCheckIcon = () => (
     </svg>
 );
 
+const HeartIcon = ({ filled, size = 16, color }) => {
+    const fillColor = color || (filled ? "#ff6b9c" : "none");
+    const strokeColor = color || (filled ? "#ff6b9c" : "currentColor");
+    return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill={fillColor} stroke={strokeColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+        </svg>
+    );
+};
+
+
 const CrosshairIcon = () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10"></circle>
@@ -275,6 +286,36 @@ const FindCare = () => {
     const mapRef = useRef(null);
     const cardListRef = useRef(null);
 
+    // Saved hospitals state (persisted in localStorage)
+    // Default saved hospitals for new users
+    const defaultSavedHospitals = ['106', '3', '5', '105', '1']; // Sita Women's Hospital, Nepal Mediciti, Clinic One, Janaki Diagnostic, Paropakar
+
+    const [savedHospitals, setSavedHospitals] = useState(() => {
+        const saved = localStorage.getItem('savedHospitals');
+        if (saved) {
+            return JSON.parse(saved);
+        }
+        // Set default saved hospitals for first-time users
+        localStorage.setItem('savedHospitals', JSON.stringify(defaultSavedHospitals));
+        return defaultSavedHospitals;
+    });
+
+    // Save to localStorage when savedHospitals changes
+    useEffect(() => {
+        localStorage.setItem('savedHospitals', JSON.stringify(savedHospitals));
+    }, [savedHospitals]);
+
+    // Toggle save hospital
+    const toggleSaveHospital = (hospitalId, e) => {
+        if (e) e.stopPropagation();
+        setSavedHospitals(prev =>
+            prev.includes(hospitalId)
+                ? prev.filter(id => id !== hospitalId)
+                : [...prev, hospitalId]
+        );
+    };
+
+
     // Get user location
     const getUserLocation = () => {
         setIsLocating(true);
@@ -337,7 +378,9 @@ const FindCare = () => {
         let result = hospitals;
 
         if (selectedType !== 'All') {
-            if (selectedType === 'Female Doctors') {
+            if (selectedType === 'Saved') {
+                result = result.filter(h => savedHospitals.includes(h.id));
+            } else if (selectedType === 'Female Doctors') {
                 result = result.filter(h => h.hasFemaleDoctor);
             } else {
                 result = result.filter(h => h.type === selectedType);
@@ -357,7 +400,7 @@ const FindCare = () => {
         result = [...result].sort((a, b) => b.rating - a.rating);
 
         setFilteredHospitals(result);
-    }, [searchQuery, selectedType]);
+    }, [searchQuery, selectedType, savedHospitals]);
 
     // Fly to hospital when selected
     useEffect(() => {
@@ -381,6 +424,7 @@ const FindCare = () => {
 
     const filterTypes = [
         { key: 'All', label: 'All', icon: null },
+        { key: 'Saved', label: `Saved (${savedHospitals.length})`, icon: <HeartIcon filled={true} /> },
         { key: 'Hospital', label: 'Hospitals', icon: <Building2Icon /> },
         { key: 'Clinic', label: 'Clinics', icon: <StethoscopeIcon /> },
         { key: 'Pharmacy', label: 'Pharmacies', icon: <PillIcon /> },
@@ -457,7 +501,11 @@ const FindCare = () => {
                                 transition: 'all 0.2s ease'
                             }}
                         >
-                            {icon}
+                            {key === 'Saved' ? (
+                                <HeartIcon filled={true} color={selectedType === key ? 'white' : '#ff6b9c'} />
+                            ) : (
+                                icon
+                            )}
                             {label}
                         </button>
                     ))}
@@ -753,17 +801,37 @@ const FindCare = () => {
                                                 </p>
                                             </div>
                                         </div>
-                                        <span style={{
-                                            fontSize: '10px',
-                                            fontWeight: 700,
-                                            padding: '4px 10px',
-                                            borderRadius: '12px',
-                                            backgroundColor: hospital.isOpen ? '#dcfce7' : '#fee2e2',
-                                            color: hospital.isOpen ? '#15803d' : '#dc2626',
-                                            textTransform: 'uppercase'
-                                        }}>
-                                            {hospital.isOpen ? 'Open' : 'Closed'}
-                                        </span>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <button
+                                                onClick={(e) => toggleSaveHospital(hospital.id, e)}
+                                                style={{
+                                                    width: 28,
+                                                    height: 28,
+                                                    borderRadius: '8px',
+                                                    border: 'none',
+                                                    backgroundColor: savedHospitals.includes(hospital.id) ? '#fff5f8' : '#f8fafc',
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    transition: 'all 0.2s'
+                                                }}
+                                                title={savedHospitals.includes(hospital.id) ? 'Remove from saved' : 'Save hospital'}
+                                            >
+                                                <HeartIcon filled={savedHospitals.includes(hospital.id)} size={14} />
+                                            </button>
+                                            <span style={{
+                                                fontSize: '10px',
+                                                fontWeight: 700,
+                                                padding: '4px 10px',
+                                                borderRadius: '12px',
+                                                backgroundColor: hospital.isOpen ? '#dcfce7' : '#fee2e2',
+                                                color: hospital.isOpen ? '#15803d' : '#dc2626',
+                                                textTransform: 'uppercase'
+                                            }}>
+                                                {hospital.isOpen ? 'Open' : 'Closed'}
+                                            </span>
+                                        </div>
                                     </div>
 
                                     {/* Rating */}
@@ -784,131 +852,135 @@ const FindCare = () => {
                                     </div>
 
                                     {/* Expanded Details */}
-                                    {isSelected && (
-                                        <div style={{
-                                            paddingTop: '12px',
-                                            borderTop: '1px dashed #e2e8f0',
-                                            animation: 'fadeIn 0.25s ease'
-                                        }}>
-                                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '8px' }}>
-                                                <span style={{ marginTop: 2, flexShrink: 0, color: '#64748b' }}><MapPinIcon /></span>
-                                                <p style={{ margin: 0, fontSize: '12px', color: '#475569', lineHeight: 1.4 }}>
-                                                    {hospital.address}
-                                                </p>
-                                            </div>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                                                <span style={{ color: '#64748b' }}><ClockIcon /></span>
-                                                <p style={{ margin: 0, fontSize: '12px', color: '#475569' }}>
-                                                    {hospital.operatingHours.Monday}
-                                                </p>
-                                            </div>
+                                    {
+                                        isSelected && (
+                                            <div style={{
+                                                paddingTop: '12px',
+                                                borderTop: '1px dashed #e2e8f0',
+                                                animation: 'fadeIn 0.25s ease'
+                                            }}>
+                                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '8px' }}>
+                                                    <span style={{ marginTop: 2, flexShrink: 0, color: '#64748b' }}><MapPinIcon /></span>
+                                                    <p style={{ margin: 0, fontSize: '12px', color: '#475569', lineHeight: 1.4 }}>
+                                                        {hospital.address}
+                                                    </p>
+                                                </div>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                                                    <span style={{ color: '#64748b' }}><ClockIcon /></span>
+                                                    <p style={{ margin: 0, fontSize: '12px', color: '#475569' }}>
+                                                        {hospital.operatingHours.Monday}
+                                                    </p>
+                                                </div>
 
-                                            {/* Services */}
-                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '12px' }}>
-                                                {hospital.services.slice(0, 4).map((service, idx) => (
-                                                    <span key={idx} style={{
-                                                        fontSize: '10px',
+                                                {/* Services */}
+                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '12px' }}>
+                                                    {hospital.services.slice(0, 4).map((service, idx) => (
+                                                        <span key={idx} style={{
+                                                            fontSize: '10px',
+                                                            fontWeight: 600,
+                                                            padding: '3px 8px',
+                                                            borderRadius: '4px',
+                                                            backgroundColor: '#f1f5f9',
+                                                            color: '#475569'
+                                                        }}>
+                                                            {service}
+                                                        </span>
+                                                    ))}
+                                                </div>
+
+                                                {/* Action Buttons */}
+                                                <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            window.open(`https://www.google.com/maps/dir/?api=1&destination=${hospital.latitude},${hospital.longitude}`, '_blank');
+                                                        }}
+                                                        style={{
+                                                            flex: 1,
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            gap: '6px',
+                                                            padding: '10px',
+                                                            borderRadius: '10px',
+                                                            border: 'none',
+                                                            background: 'linear-gradient(135deg, #ff6b9c 0%, #ff8fb3 100%)',
+                                                            color: 'white',
+                                                            fontSize: '12px',
+                                                            fontWeight: 700,
+                                                            cursor: 'pointer',
+                                                            boxShadow: '0 4px 12px rgba(255,107,156,0.3)'
+                                                        }}>
+                                                        <NavigationIcon />
+                                                        Directions
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            window.open(`tel:${hospital.phone}`, '_self');
+                                                        }}
+                                                        style={{
+                                                            flex: 1,
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            gap: '6px',
+                                                            padding: '10px',
+                                                            borderRadius: '10px',
+                                                            border: '2px solid #ff6b9c',
+                                                            backgroundColor: 'white',
+                                                            color: '#ff6b9c',
+                                                            fontSize: '12px',
+                                                            fontWeight: 700,
+                                                            cursor: 'pointer'
+                                                        }}>
+                                                        <PhoneIcon />
+                                                        Call
+                                                    </button>
+                                                </div>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        navigate(`/hospital/${hospital.id}`);
+                                                    }}
+                                                    style={{
+                                                        width: '100%',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        gap: '6px',
+                                                        padding: '10px',
+                                                        borderRadius: '10px',
+                                                        border: '1px solid #e2e8f0',
+                                                        backgroundColor: '#f8fafc',
+                                                        color: '#475569',
+                                                        fontSize: '12px',
                                                         fontWeight: 600,
-                                                        padding: '3px 8px',
-                                                        borderRadius: '4px',
-                                                        backgroundColor: '#f1f5f9',
-                                                        color: '#475569'
-                                                    }}>
-                                                        {service}
-                                                    </span>
-                                                ))}
-                                            </div>
-
-                                            {/* Action Buttons */}
-                                            <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        window.open(`https://www.google.com/maps/dir/?api=1&destination=${hospital.latitude},${hospital.longitude}`, '_blank');
-                                                    }}
-                                                    style={{
-                                                        flex: 1,
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        gap: '6px',
-                                                        padding: '10px',
-                                                        borderRadius: '10px',
-                                                        border: 'none',
-                                                        background: 'linear-gradient(135deg, #ff6b9c 0%, #ff8fb3 100%)',
-                                                        color: 'white',
-                                                        fontSize: '12px',
-                                                        fontWeight: 700,
-                                                        cursor: 'pointer',
-                                                        boxShadow: '0 4px 12px rgba(255,107,156,0.3)'
-                                                    }}>
-                                                    <NavigationIcon />
-                                                    Directions
-                                                </button>
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        window.open(`tel:${hospital.phone}`, '_self');
-                                                    }}
-                                                    style={{
-                                                        flex: 1,
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        gap: '6px',
-                                                        padding: '10px',
-                                                        borderRadius: '10px',
-                                                        border: '2px solid #ff6b9c',
-                                                        backgroundColor: 'white',
-                                                        color: '#ff6b9c',
-                                                        fontSize: '12px',
-                                                        fontWeight: 700,
                                                         cursor: 'pointer'
                                                     }}>
-                                                    <PhoneIcon />
-                                                    Call
+                                                    View Full Details
+                                                    <ChevronRightIcon />
                                                 </button>
                                             </div>
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    navigate(`/facility/${hospital.id}`);
-                                                }}
-                                                style={{
-                                                    width: '100%',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    gap: '6px',
-                                                    padding: '10px',
-                                                    borderRadius: '10px',
-                                                    border: '1px solid #e2e8f0',
-                                                    backgroundColor: '#f8fafc',
-                                                    color: '#475569',
-                                                    fontSize: '12px',
-                                                    fontWeight: 600,
-                                                    cursor: 'pointer'
-                                                }}>
-                                                View Full Details
-                                                <ChevronRightIcon />
-                                            </button>
-                                        </div>
-                                    )}
+                                        )
+                                    }
 
                                     {/* View Details */}
-                                    {!isSelected && (
-                                        <div style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'flex-end',
-                                            color: '#ff6b9c',
-                                            fontSize: '12px',
-                                            fontWeight: 600
-                                        }}>
-                                            View details
-                                            <ChevronRightIcon />
-                                        </div>
-                                    )}
+                                    {
+                                        !isSelected && (
+                                            <div style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'flex-end',
+                                                color: '#ff6b9c',
+                                                fontSize: '12px',
+                                                fontWeight: 600
+                                            }}>
+                                                View details
+                                                <ChevronRightIcon />
+                                            </div>
+                                        )
+                                    }
                                 </div>
                             );
                         })}
@@ -945,7 +1017,7 @@ const FindCare = () => {
                     height: 36px !important;
                 }
             `}</style>
-        </div>
+        </div >
     );
 };
 
