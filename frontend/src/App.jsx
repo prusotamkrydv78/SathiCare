@@ -13,6 +13,9 @@ import FacilityDetails from './component/FacilityDetails';
 import AiAssistant from './component/AiAssistant';
 import ContentLibrary from './component/ContentLibrary';
 import ArticlePage from './component/ArticlePage';
+import HealthRecords from './component/HealthRecords';
+import ProfileSettings from './component/ProfileSettings';
+import AppointmentCalendar from './component/AppointmentCalendar';
 
 function App() {
 
@@ -32,6 +35,9 @@ function App() {
         <Route path="/ai-chat" element={<AiAssistant />} />
         <Route path="/library" element={<ContentLibrary />} />
         <Route path="/article/:id" element={<ArticlePage />} />
+        <Route path="/records" element={<HealthRecords />} />
+        <Route path="/profile-settings" element={<ProfileSettings />} />
+        <Route path="/appointments" element={<AppointmentCalendar />} />
       </Routes>
     </Router>
   )

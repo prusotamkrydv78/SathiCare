@@ -73,7 +73,7 @@ const ContentLibrary = () => {
             {/* Content Grid */}
             <div className="p-4 grid grid-cols-2 md:grid-cols-3 gap-4">
                 {filteredContent.map(item => (
-                    <div key={item.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg hover:-translate-y-1 transition duration-300 cursor-pointer">
+                    <Link to={`/article/${item.id}`} key={item.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-lg hover:-translate-y-1 transition duration-300 cursor-pointer block">
                         {/* Image Container */}
                         <div className="relative h-32 md:h-40 overflow-hidden">
                             <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
@@ -115,7 +115,7 @@ const ContentLibrary = () => {
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </Link>
                 ))}
             </div>
 
