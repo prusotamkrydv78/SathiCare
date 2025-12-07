@@ -1,4 +1,6 @@
 import React from 'react';
+import { StaggerContainer, StaggerItem, ScaleIn, FadeInUp } from '../animations/ScrollAnimations';
+import { motion } from 'framer-motion';
 
 const WhyChooseSection = () => {
     const reasons = [
@@ -43,29 +45,43 @@ const WhyChooseSection = () => {
     return (
         <section className="py-20 px-6 bg-gradient-to-b from-gray-50 to-white">
             <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
-                        Why Choose SaathiCare?
-                    </h2>
-                    <p className="text-gray-600 max-w-2xl mx-auto">
-                        We're committed to providing the best health companion for women in Nepal
-                    </p>
-                </div>
+                <FadeInUp>
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
+                            Why Choose SaathiCare?
+                        </h2>
+                        <p className="text-gray-600 max-w-2xl mx-auto">
+                            We're committed to providing the best health companion for women in Nepal
+                        </p>
+                    </div>
+                </FadeInUp>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {reasons.map((reason, index) => (
-                        <div
-                            key={index}
-                            className="group p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100"
-                        >
-                            <div className="text-5xl mb-4">{reason.icon}</div>
-                            <h3 className="text-xl font-bold mb-3 text-gray-800">{reason.title}</h3>
-                            <p className="text-gray-600 leading-relaxed">
-                                {reason.description}
-                            </p>
-                        </div>
-                    ))}
-                </div>
+                <StaggerContainer staggerDelay={0.1}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {reasons.map((reason, index) => (
+                            <StaggerItem key={index}>
+                                <ScaleIn delay={index * 0.05}>
+                                    <motion.div
+                                        className="group p-6 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 h-full"
+                                        whileHover={{ y: -8 }}
+                                    >
+                                        <motion.div
+                                            className="text-5xl mb-4"
+                                            whileHover={{ scale: 1.2, rotate: 10 }}
+                                            transition={{ duration: 0.3 }}
+                                        >
+                                            {reason.icon}
+                                        </motion.div>
+                                        <h3 className="text-xl font-bold mb-3 text-gray-800">{reason.title}</h3>
+                                        <p className="text-gray-600 leading-relaxed">
+                                            {reason.description}
+                                        </p>
+                                    </motion.div>
+                                </ScaleIn>
+                            </StaggerItem>
+                        ))}
+                    </div>
+                </StaggerContainer>
             </div>
         </section>
     );

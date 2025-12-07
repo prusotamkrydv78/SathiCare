@@ -1,250 +1,381 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FadeInUp, FadeInLeft, FadeInRight, ScaleIn, StaggerContainer, StaggerItem } from './animations/ScrollAnimations';
+import { motion } from 'framer-motion';
 
 const AboutPage = () => {
-    const team = [
-        { name: 'Development Team', role: 'Full Stack Developers', icon: '👨‍💻' },
-        { name: 'Medical Advisors', role: 'Healthcare Professionals', icon: '👩‍⚕️' },
-        { name: 'AI Engineers', role: 'Machine Learning Experts', icon: '🤖' },
-        { name: 'Design Team', role: 'UX/UI Designers', icon: '🎨' }
-    ];
-
     const values = [
         {
-            icon: '🎯',
-            title: 'Our Mission',
-            description: 'To empower every woman in Nepal with accessible, accurate, and personalized health information and care.'
-        },
-        {
-            icon: '👁️',
-            title: 'Our Vision',
-            description: 'A Nepal where every woman has instant access to trusted health information, regardless of location or background.'
+            icon: '🔒',
+            title: 'Privacy First',
+            description: 'Your health data is sacred. We use bank-level encryption and never share your information without consent.',
+            color: 'blue'
         },
         {
             icon: '💝',
-            title: 'Our Values',
-            description: 'Privacy, accuracy, accessibility, and cultural sensitivity guide everything we do.'
+            title: 'Women-Centric',
+            description: 'Every feature is designed specifically for women\'s health needs, by women who understand the journey.',
+            color: 'pink'
+        },
+        {
+            icon: '🌍',
+            title: 'Accessibility',
+            description: 'Healthcare should be available to everyone, everywhere. That\'s why SaathiCare is completely free.',
+            color: 'green'
         }
     ];
 
-    const milestones = [
-        { year: '2024', event: 'SaathiCare Founded', description: 'Started with a vision to transform women\'s healthcare in Nepal' },
-        { year: '2024', event: '1,000 Users', description: 'Reached our first thousand users within 3 months' },
-        { year: '2024', event: 'AI Integration', description: 'Launched advanced AI-powered health insights' },
-        { year: '2025', event: '10,000+ Users', description: 'Growing community of empowered women across Nepal' }
+    const challenges = [
+        'Limited access to gynecologists in rural areas',
+        'Lack of reliable health information in local languages',
+        'Cultural barriers in discussing women\'s health',
+        'No centralized platform for health tracking',
+        'Expensive healthcare consultations'
+    ];
+
+    const solutions = [
+        'AI-powered health assistant available 24/7',
+        'Verified content in Nepali and English',
+        'Private, judgment-free digital platform',
+        'All-in-one health companion app',
+        'Completely free core features'
+    ];
+
+    const journey = [
+        {
+            year: '2023',
+            title: 'The Idea',
+            description: 'Recognized the gap in women\'s healthcare accessibility in Nepal',
+            icon: '💡'
+        },
+        {
+            year: '2024',
+            title: 'Development',
+            description: 'Built AI-powered features with input from healthcare professionals',
+            icon: '🚀'
+        },
+        {
+            year: '2024',
+            title: 'Beta Launch',
+            description: 'Launched beta version with 1,000 early adopters',
+            icon: '🎉'
+        },
+        {
+            year: '2025',
+            title: 'Growing Strong',
+            description: 'Now serving 10,000+ women across Nepal',
+            icon: '🌟'
+        }
     ];
 
     const features = [
-        { icon: '🔒', title: 'Privacy First', desc: 'Bank-level encryption for your data' },
-        { icon: '🇳🇵', title: 'Made for Nepal', desc: 'Culturally sensitive & localized' },
-        { icon: '🤖', title: 'AI-Powered', desc: 'Advanced machine learning insights' },
-        { icon: '👩‍⚕️', title: 'Expert Verified', desc: 'Medical professionals review content' },
-        { icon: '📱', title: 'Easy to Use', desc: 'Intuitive design for all ages' },
-        { icon: '🆓', title: 'Free Forever', desc: 'No hidden costs or subscriptions' }
+        { icon: '📱', text: 'Period & Pregnancy Tracking' },
+        { icon: '🤖', text: 'AI Health Assistant' },
+        { icon: '👩‍⚕️', text: 'Doctor Consultations' },
+        { icon: '🏥', text: 'Facility Finder' },
+        { icon: '🆘', text: 'Emergency SOS' },
+        { icon: '📚', text: 'Health Library' }
+    ];
+
+    const team = [
+        { name: 'Development Team', icon: '💻', description: 'Building robust, secure features' },
+        { name: 'Medical Advisors', icon: '👩‍⚕️', description: 'Ensuring accuracy and safety' },
+        { name: 'AI Specialists', icon: '🤖', description: 'Creating intelligent predictions' },
+        { name: 'Support Team', icon: '💬', description: 'Helping users 24/7' }
     ];
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white font-sans pb-24">
 
             {/* Hero Section */}
-            <div className="bg-gradient-to-r from-pink-600 to-purple-600 py-20 px-6 text-white">
-                <div className="max-w-4xl mx-auto text-center">
-                    <h1 className="text-4xl md:text-6xl font-bold mb-6">
-                        Empowering Women,
-                        <br />
-                        One Step at a Time
-                    </h1>
-                    <p className="text-xl opacity-90 max-w-2xl mx-auto">
-                        SaathiCare is more than just an app; it's a digital companion designed to bridge the gap in women's healthcare access in Nepal.
-                    </p>
+            <FadeInUp>
+                <div className="bg-gradient-to-r from-pink-600 to-purple-600 py-20 px-6 text-white">
+                    <div className="max-w-4xl mx-auto text-center">
+                        <motion.h1
+                            className="text-4xl md:text-5xl font-bold mb-6"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6 }}
+                        >
+                            Empowering Women's Health in Nepal
+                        </motion.h1>
+                        <motion.p
+                            className="text-xl opacity-90"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
+                        >
+                            Your trusted companion for comprehensive women's healthcare
+                        </motion.p>
+                    </div>
                 </div>
-            </div>
+            </FadeInUp>
 
             {/* Mission, Vision, Values */}
-            <div className="max-w-7xl mx-auto px-6 py-16">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="max-w-6xl mx-auto px-6 py-16">
+                <FadeInUp>
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                            Our Mission & Values
+                        </h2>
+                        <p className="text-gray-600 max-w-2xl mx-auto">
+                            We're committed to making quality healthcare accessible to every woman in Nepal
+                        </p>
+                    </div>
+                </FadeInUp>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
                     {values.map((value, index) => (
-                        <div
-                            key={index}
-                            className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 text-center"
-                        >
-                            <div className="text-6xl mb-4">{value.icon}</div>
-                            <h3 className="text-2xl font-bold mb-4 text-gray-800">{value.title}</h3>
-                            <p className="text-gray-600 leading-relaxed">
-                                {value.description}
-                            </p>
-                        </div>
+                        <ScaleIn delay={index * 0.15} key={index}>
+                            <motion.div
+                                className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 text-center h-full"
+                                whileHover={{ y: -10 }}
+                            >
+                                <motion.div
+                                    className="text-6xl mb-4"
+                                    whileHover={{ scale: 1.2, rotate: 10 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    {value.icon}
+                                </motion.div>
+                                <h3 className="text-xl font-bold text-gray-800 mb-3">{value.title}</h3>
+                                <p className="text-gray-600 leading-relaxed">{value.description}</p>
+                            </motion.div>
+                        </ScaleIn>
                     ))}
                 </div>
             </div>
 
-            {/* Why SaathiCare Section */}
-            <div className="bg-gradient-to-br from-pink-50 to-purple-50 py-16 px-6">
-                <div className="max-w-6xl mx-auto">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
-                            Why SaathiCare?
-                        </h2>
-                        <p className="text-gray-600 max-w-2xl mx-auto">
-                            We understand the unique challenges women face in accessing healthcare
-                        </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                        <div className="bg-white p-8 rounded-3xl shadow-sm">
-                            <h3 className="text-2xl font-bold mb-4 text-gray-800">The Challenge</h3>
-                            <ul className="space-y-3 text-gray-600">
-                                <li className="flex items-start gap-3">
-                                    <span className="text-red-500 mt-1">❌</span>
-                                    <span>Limited access to healthcare in rural areas</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <span className="text-red-500 mt-1">❌</span>
-                                    <span>Cultural barriers in discussing women's health</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <span className="text-red-500 mt-1">❌</span>
-                                    <span>Lack of personalized health information</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <span className="text-red-500 mt-1">❌</span>
-                                    <span>Difficulty finding trusted healthcare providers</span>
-                                </li>
-                            </ul>
+            {/* The Challenge & Our Solution */}
+            <div className="bg-gray-50 py-16">
+                <div className="max-w-6xl mx-auto px-6">
+                    <FadeInUp>
+                        <div className="text-center mb-12">
+                            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                                The Challenge & Our Solution
+                            </h2>
                         </div>
+                    </FadeInUp>
 
-                        <div className="bg-white p-8 rounded-3xl shadow-sm">
-                            <h3 className="text-2xl font-bold mb-4 text-gray-800">Our Solution</h3>
-                            <ul className="space-y-3 text-gray-600">
-                                <li className="flex items-start gap-3">
-                                    <span className="text-green-500 mt-1">✓</span>
-                                    <span>Healthcare accessible from anywhere via mobile</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <span className="text-green-500 mt-1">✓</span>
-                                    <span>Private, safe space for health information</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <span className="text-green-500 mt-1">✓</span>
-                                    <span>AI-powered personalized recommendations</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <span className="text-green-500 mt-1">✓</span>
-                                    <span>Verified network of healthcare professionals</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    {/* Features Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                        {features.map((feature, index) => (
-                            <div
-                                key={index}
-                                className="bg-white p-4 rounded-2xl text-center hover:shadow-md transition-all duration-300"
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Challenges */}
+                        <FadeInLeft delay={0.2}>
+                            <motion.div
+                                className="bg-red-50 p-8 rounded-2xl border-l-4 border-red-500"
+                                whileHover={{ scale: 1.02 }}
                             >
-                                <div className="text-4xl mb-2">{feature.icon}</div>
-                                <h4 className="font-bold text-sm mb-1 text-gray-800">{feature.title}</h4>
-                                <p className="text-xs text-gray-500">{feature.desc}</p>
-                            </div>
-                        ))}
+                                <h3 className="text-2xl font-bold text-red-700 mb-6 flex items-center gap-2">
+                                    <span>⚠️</span> The Challenges
+                                </h3>
+                                <StaggerContainer staggerDelay={0.1}>
+                                    <ul className="space-y-3">
+                                        {challenges.map((challenge, i) => (
+                                            <StaggerItem key={i}>
+                                                <motion.li
+                                                    className="flex items-start gap-3 text-gray-700"
+                                                    whileHover={{ x: 5 }}
+                                                >
+                                                    <svg className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                                    </svg>
+                                                    <span>{challenge}</span>
+                                                </motion.li>
+                                            </StaggerItem>
+                                        ))}
+                                    </ul>
+                                </StaggerContainer>
+                            </motion.div>
+                        </FadeInLeft>
+
+                        {/* Solutions */}
+                        <FadeInRight delay={0.2}>
+                            <motion.div
+                                className="bg-green-50 p-8 rounded-2xl border-l-4 border-green-500"
+                                whileHover={{ scale: 1.02 }}
+                            >
+                                <h3 className="text-2xl font-bold text-green-700 mb-6 flex items-center gap-2">
+                                    <span>✅</span> Our Solutions
+                                </h3>
+                                <StaggerContainer staggerDelay={0.1}>
+                                    <ul className="space-y-3">
+                                        {solutions.map((solution, i) => (
+                                            <StaggerItem key={i}>
+                                                <motion.li
+                                                    className="flex items-start gap-3 text-gray-700"
+                                                    whileHover={{ x: 5 }}
+                                                >
+                                                    <svg className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                    </svg>
+                                                    <span>{solution}</span>
+                                                </motion.li>
+                                            </StaggerItem>
+                                        ))}
+                                    </ul>
+                                </StaggerContainer>
+                            </motion.div>
+                        </FadeInRight>
                     </div>
                 </div>
             </div>
 
-            {/* Our Journey / Milestones */}
+            {/* Features Highlight */}
             <div className="max-w-6xl mx-auto px-6 py-16">
-                <div className="text-center mb-12">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
-                        Our Journey
-                    </h2>
-                    <p className="text-gray-600">
-                        Building a healthier future for women in Nepal
-                    </p>
-                </div>
+                <FadeInUp>
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                            What We Offer
+                        </h2>
+                    </div>
+                </FadeInUp>
 
-                <div className="relative">
-                    {/* Timeline Line */}
-                    <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-pink-300 to-purple-300 hidden md:block"></div>
-
-                    <div className="space-y-12">
-                        {milestones.map((milestone, index) => (
-                            <div
-                                key={index}
-                                className={`flex flex-col md:flex-row items-center gap-8 ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
-                            >
-                                <div className="md:w-1/2 text-center md:text-right">
-                                    <div className={`inline-block bg-white p-6 rounded-3xl shadow-lg ${index % 2 === 0 ? 'md:mr-8' : 'md:ml-8'}`}>
-                                        <div className="text-4xl font-bold text-primary-pink mb-2">{milestone.year}</div>
-                                        <h3 className="text-xl font-bold text-gray-800 mb-2">{milestone.event}</h3>
-                                        <p className="text-gray-600">{milestone.description}</p>
-                                    </div>
-                                </div>
-                                <div className="hidden md:block w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full border-4 border-white shadow-lg z-10"></div>
-                                <div className="md:w-1/2"></div>
-                            </div>
+                <StaggerContainer staggerDelay={0.1}>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                        {features.map((feature, index) => (
+                            <StaggerItem key={index}>
+                                <ScaleIn delay={index * 0.05}>
+                                    <motion.div
+                                        className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all text-center border border-gray-100"
+                                        whileHover={{ y: -5, scale: 1.05 }}
+                                    >
+                                        <motion.div
+                                            className="text-4xl mb-3"
+                                            whileHover={{ rotate: 360 }}
+                                            transition={{ duration: 0.6 }}
+                                        >
+                                            {feature.icon}
+                                        </motion.div>
+                                        <p className="font-semibold text-gray-700 text-sm">{feature.text}</p>
+                                    </motion.div>
+                                </ScaleIn>
+                            </StaggerItem>
                         ))}
+                    </div>
+                </StaggerContainer>
+            </div>
+
+            {/* Journey Timeline */}
+            <div className="bg-gradient-to-r from-pink-50 to-purple-50 py-16">
+                <div className="max-w-4xl mx-auto px-6">
+                    <FadeInUp>
+                        <div className="text-center mb-12">
+                            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                                Our Journey
+                            </h2>
+                            <p className="text-gray-600">
+                                From idea to impact
+                            </p>
+                        </div>
+                    </FadeInUp>
+
+                    <div className="space-y-8">
+                        {journey.map((milestone, index) => {
+                            const AnimationComponent = index % 2 === 0 ? FadeInLeft : FadeInRight;
+
+                            return (
+                                <AnimationComponent delay={index * 0.15} key={index}>
+                                    <motion.div
+                                        className="flex items-center gap-6 bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-all"
+                                        whileHover={{ scale: 1.02, x: index % 2 === 0 ? 10 : -10 }}
+                                    >
+                                        <motion.div
+                                            className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-3xl shadow-lg flex-shrink-0"
+                                            whileHover={{ rotate: 360, scale: 1.2 }}
+                                            transition={{ duration: 0.6 }}
+                                        >
+                                            {milestone.icon}
+                                        </motion.div>
+                                        <div className="flex-grow">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-bold">
+                                                    {milestone.year}
+                                                </span>
+                                                <h3 className="text-xl font-bold text-gray-800">{milestone.title}</h3>
+                                            </div>
+                                            <p className="text-gray-600">{milestone.description}</p>
+                                        </div>
+                                    </motion.div>
+                                </AnimationComponent>
+                            );
+                        })}
                     </div>
                 </div>
             </div>
 
-            {/* Team Section */}
-            <div className="bg-white py-16 px-6">
-                <div className="max-w-6xl mx-auto">
+            {/* Team */}
+            <div className="max-w-6xl mx-auto px-6 py-16">
+                <FadeInUp>
                     <div className="text-center mb-12">
-                        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
-                            Meet the Team
+                        <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                            Our Team
                         </h2>
                         <p className="text-gray-600">
-                            Passionate professionals dedicated to women's health
+                            Dedicated professionals working to serve you better
                         </p>
                     </div>
+                </FadeInUp>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <StaggerContainer staggerDelay={0.15}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {team.map((member, index) => (
-                            <div
-                                key={index}
-                                className="text-center group"
-                            >
-                                <div className="w-32 h-32 mx-auto mb-4 bg-gradient-to-br from-pink-100 to-purple-100 rounded-full flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                                    {member.icon}
-                                </div>
-                                <h4 className="font-bold text-gray-800 mb-1">{member.name}</h4>
-                                <p className="text-sm text-gray-500">{member.role}</p>
-                            </div>
+                            <StaggerItem key={index}>
+                                <ScaleIn delay={index * 0.1}>
+                                    <motion.div
+                                        className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all text-center border border-gray-100"
+                                        whileHover={{ y: -10 }}
+                                    >
+                                        <motion.div
+                                            className="text-5xl mb-4"
+                                            whileHover={{ scale: 1.3, rotate: 15 }}
+                                            transition={{ duration: 0.3 }}
+                                        >
+                                            {member.icon}
+                                        </motion.div>
+                                        <h3 className="text-lg font-bold text-gray-800 mb-2">{member.name}</h3>
+                                        <p className="text-sm text-gray-600">{member.description}</p>
+                                    </motion.div>
+                                </ScaleIn>
+                            </StaggerItem>
                         ))}
                     </div>
-                </div>
+                </StaggerContainer>
             </div>
 
-            {/* CTA Section */}
-            <div className="max-w-4xl mx-auto px-6 mt-16">
-                <div className="bg-gradient-to-r from-pink-600 to-purple-600 rounded-3xl p-12 text-center text-white shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
-
-                    <div className="relative z-10">
-                        <h3 className="text-3xl md:text-4xl font-bold mb-4">Join Us on This Journey</h3>
-                        <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-                            Whether you are a user, a healthcare professional, or just someone who cares, there is a place for you in the SaathiCare community.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Link
-                                to="/signup"
-                                className="inline-block px-8 py-4 bg-white text-primary-pink rounded-xl font-bold shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-200"
+            {/* CTA */}
+            <FadeInUp delay={0.2}>
+                <div className="max-w-4xl mx-auto px-6 mt-16">
+                    <motion.div
+                        className="bg-gradient-to-r from-pink-600 to-purple-600 rounded-3xl p-12 text-center text-white shadow-2xl relative overflow-hidden"
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <motion.div
+                            className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full"
+                            animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }}
+                            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                            style={{ translateX: '50%', translateY: '-50%' }}
+                        />
+                        <div className="relative z-10">
+                            <h3 className="text-3xl font-bold mb-4">Join Our Growing Community</h3>
+                            <p className="text-xl opacity-90 mb-8">
+                                Be part of the movement to empower women's health in Nepal
+                            </p>
+                            <motion.div
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.95 }}
                             >
-                                Get Started Free
-                            </Link>
-                            <a
-                                href="mailto:contact@saathicare.com"
-                                className="inline-block px-8 py-4 bg-white/10 backdrop-blur-sm text-white border-2 border-white/20 rounded-xl font-bold hover:bg-white/20 transition-all duration-200"
-                            >
-                                Contact Us
-                            </a>
+                                <Link
+                                    to="/signup"
+                                    className="inline-block px-10 py-4 bg-white text-primary-pink rounded-xl font-bold shadow-xl hover:shadow-2xl transition-shadow duration-200"
+                                >
+                                    Get Started Free
+                                </Link>
+                            </motion.div>
+                            <p className="mt-6 text-sm opacity-75">Join 10,000+ women already using SaathiCare</p>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
-            </div>
+            </FadeInUp>
 
         </div>
     );
