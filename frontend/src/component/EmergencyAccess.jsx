@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useDialog } from '../context/DialogContext';
 
 const EmergencyAccess = () => {
+    const { showDialog } = useDialog();
     const [isPulsing, setIsPulsing] = useState(true);
 
     const quickDials = [
@@ -35,8 +37,13 @@ const EmergencyAccess = () => {
                         <button
                             className="relative z-10 w-48 h-48 bg-gradient-to-br from-red-500 to-red-600 rounded-full border-8 border-red-200 shadow-2xl flex flex-col items-center justify-center active:scale-95 transition transform"
                             onClick={() => {
-                                alert("🚨 DETECTED: Emergency Alert Sent!\n📍 Location shared with Husband and Police.\n🚑 Dialing Ambulance...");
-                                window.location.href = 'tel:102';
+                                showDialog({
+                                    title: 'Emergency Alert Sent!',
+                                    message: 'Location shared with Husband and Police.\nDialing Ambulance...',
+                                    type: 'error',
+                                    confirmText: 'Calling 102...',
+                                    onConfirm: () => window.location.href = 'tel:102'
+                                });
                             }}
                         >
                             <span className="text-5xl font-black text-white drop-shadow-md">SOS</span>
@@ -48,14 +55,22 @@ const EmergencyAccess = () => {
                 {/* AI & Location Actions */}
                 <div className="grid grid-cols-2 gap-4 mb-8">
                     <button
-                        onClick={() => alert("🤖 AI First Aid:\n\n1. Stay Calm.\n2. Ensure scene safety.\n3. Check breathing.\n4. Apply pressure to bleeding.\n\n(Full AI Guide would open here)")}
+                        onClick={() => showDialog({
+                            title: 'AI First Aid',
+                            message: '1. Stay Calm.\n2. Ensure scene safety.\n3. Check breathing.\n4. Apply pressure to bleeding.\n\n(Full AI Guide would open here)',
+                            type: 'info'
+                        })}
                         className="bg-red-100 text-red-700 py-4 rounded-xl font-bold flex flex-col items-center justify-center gap-2 hover:bg-red-200 transition"
                     >
                         <span className="text-2xl">🩹</span>
                         <span>First Aid AI</span>
                     </button>
                     <button
-                        onClick={() => alert("📍 Location sent to:\n- Husband (+977 98...)\n- Police Control")}
+                        onClick={() => showDialog({
+                            title: 'Location Shared',
+                            message: 'Location sent to:\n- Husband (+977 98...)\n- Police Control',
+                            type: 'success'
+                        })}
                         className="bg-red-100 text-red-700 py-4 rounded-xl font-bold flex flex-col items-center justify-center gap-2 hover:bg-red-200 transition"
                     >
                         <span className="text-2xl">📍</span>

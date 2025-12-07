@@ -16,9 +16,11 @@ import {
 } from 'lucide-react';
 import { io } from 'socket.io-client';
 import { useAuth } from '../../context/AuthContext';
+import { useDialog } from '../../context/DialogContext';
 import doctorService from '../../services/doctorService';
 
 const ConsultationChat = () => {
+    const { showDialog } = useDialog();
     const { appointmentId } = useParams();
     const navigate = useNavigate();
     const { user } = useAuth();
@@ -89,13 +91,21 @@ const ConsultationChat = () => {
         });
 
         newSocket.on('consultation-ended', () => {
-            alert('Consultation has ended');
-            navigate('/consultations');
+            showDialog({
+                title: 'Consultation Ended',
+                message: 'This consultation session has been ended.',
+                type: 'info',
+                onConfirm: () => navigate('/consultations')
+            });
         });
 
         newSocket.on('error', ({ message }) => {
             console.error('Socket error:', message);
-            alert(message);
+            showDialog({
+                title: 'Connection Error',
+                message: message,
+                type: 'error'
+            });
         });
 
         newSocket.on('disconnect', () => {
@@ -125,8 +135,12 @@ const ConsultationChat = () => {
             }
         } catch (error) {
             console.error('Failed to load appointment:', error);
-            alert('Failed to load consultation');
-            navigate('/consultations');
+            showDialog({
+                title: 'Load Error',
+                message: 'Failed to load consultation details.',
+                type: 'error',
+                onConfirm: () => navigate('/consultations')
+            });
         }
     };
 
@@ -194,7 +208,11 @@ const ConsultationChat = () => {
             }
         } catch (error) {
             console.error('File upload failed:', error);
-            alert('Failed to upload file');
+            showDialog({
+                title: 'Upload Failed',
+                message: 'Failed to upload file. Please try again.',
+                type: 'error'
+            });
         }
     };
 
@@ -296,8 +314,8 @@ const ConsultationChat = () => {
                                 <div className={`max-w-[70%] ${isOwnMessage ? 'items-end' : 'items-start'} flex flex-col`}>
                                     <div
                                         className={`px-4 py-3 rounded-2xl ${isOwnMessage
-                                                ? 'bg-gradient-to-r from-blue-600 to-teal-600 text-white rounded-tr-none'
-                                                : 'bg-white text-gray-800 rounded-tl-none shadow-sm border border-gray-200'
+                                            ? 'bg-gradient-to-r from-blue-600 to-teal-600 text-white rounded-tr-none'
+                                            : 'bg-white text-gray-800 rounded-tl-none shadow-sm border border-gray-200'
                                             }`}
                                     >
                                         {msg.messageType === 'text' && (

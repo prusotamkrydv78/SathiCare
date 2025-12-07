@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar as CalendarIcon, Sparkles, MessageSquare, Plus } from 'lucide-react';
 import pregnancyService from '../services/pregnancyService';
+import { useDialog } from '../context/DialogContext';
 
 // Import components
 import PregnancyCalendar from './pregnancy/PregnancyCalendar';
@@ -74,6 +75,8 @@ const PregnancyTrackerNew = () => {
     };
 
     // Handle log pregnancy (start + health log)
+    const { showDialog } = useDialog();
+
     const handleLogPregnancy = async (formData) => {
         try {
             // If no pregnancy exists, start one first
@@ -99,7 +102,11 @@ const PregnancyTrackerNew = () => {
 
                     setIsLogModalOpen(false);
                     await fetchAllData(); // Refresh all data
-                    alert('Pregnancy tracking started successfully!');
+                    showDialog({
+                        title: 'Success',
+                        message: 'Pregnancy tracking started successfully!',
+                        type: 'success'
+                    });
                 }
             } else {
                 // Update existing pregnancy
@@ -121,11 +128,19 @@ const PregnancyTrackerNew = () => {
 
                 setIsLogModalOpen(false);
                 await fetchAllData(); // Refresh all data
-                alert('Pregnancy updated successfully!');
+                showDialog({
+                    title: 'Success',
+                    message: 'Pregnancy updated successfully!',
+                    type: 'success'
+                });
             }
         } catch (error) {
             console.error('Failed to log pregnancy:', error);
-            alert(error.response?.data?.message || 'Failed to save pregnancy data. Please try again.');
+            showDialog({
+                title: 'Error',
+                message: error.response?.data?.message || 'Failed to save pregnancy data. Please try again.',
+                type: 'error'
+            });
         }
     };
 

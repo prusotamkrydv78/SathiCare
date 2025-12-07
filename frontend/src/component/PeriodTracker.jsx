@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar as CalendarIcon, History, Sparkles, Plus, X, Upload, MessageSquare } from 'lucide-react';
 import { geminiService } from '../services/geminiService';
 import periodService from '../services/periodService';
+import { useDialog } from '../context/DialogContext';
 import PeriodAiChat from './PeriodAiChat';
 import CurrentCycleCard from './period/CurrentCycleCard';
 import PeriodHistory from './period/PeriodHistory';
@@ -141,6 +142,8 @@ const PeriodTracker = () => {
     };
 
     // Handle log period
+    const { showDialog } = useDialog();
+
     const handleLogPeriod = async (e) => {
         e.preventDefault();
         try {
@@ -149,33 +152,61 @@ const PeriodTracker = () => {
                 setIsLogModalOpen(false);
                 resetLogForm();
                 fetchAllData(); // Refresh all data
-                alert('Period logged successfully!');
+                showDialog({
+                    title: 'Success',
+                    message: 'Period logged successfully!',
+                    type: 'success'
+                });
             }
         } catch (err) {
             console.error('Failed to log period:', err);
-            alert(err.response?.data?.message || 'Failed to log period. Please try again.');
+            showDialog({
+                title: 'Error',
+                message: err.response?.data?.message || 'Failed to log period. Please try again.',
+                type: 'error'
+            });
         }
     };
 
     // Handle delete period
     const handleDeletePeriod = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this period entry?')) return;
-
-        try {
-            await periodService.deletePeriod(id);
-            fetchAllData(); // Refresh all data
-            alert('Period deleted successfully!');
-        } catch (err) {
-            console.error('Failed to delete period:', err);
-            alert('Failed to delete period. Please try again.');
-        }
+        showDialog({
+            title: 'Delete Period?',
+            message: 'Are you sure you want to delete this period entry? This action cannot be undone.',
+            type: 'warning',
+            confirmText: 'Delete',
+            cancelText: 'Cancel',
+            showCancel: true,
+            onConfirm: async () => {
+                try {
+                    await periodService.deletePeriod(id);
+                    fetchAllData(); // Refresh all data
+                    showDialog({
+                        title: 'Success',
+                        message: 'Period deleted successfully!',
+                        type: 'success'
+                    });
+                } catch (err) {
+                    console.error('Failed to delete period:', err);
+                    showDialog({
+                        title: 'Error',
+                        message: 'Failed to delete period. Please try again.',
+                        type: 'error'
+                    });
+                }
+            }
+        });
     };
 
     // Handle edit period (placeholder)
     const handleEditPeriod = (cycle) => {
         // TODO: Implement edit functionality
         console.log('Edit cycle:', cycle);
-        alert('Edit functionality coming soon!');
+        showDialog({
+            title: 'Coming Soon',
+            message: 'Edit functionality is currently under development.',
+            type: 'info'
+        });
     };
 
     // Handle page change

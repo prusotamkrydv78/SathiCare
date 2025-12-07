@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, Activity } from 'lucide-react';
 import pregnancyService from '../../services/pregnancyService';
+import { useDialog } from '../../context/DialogContext';
 
 const LogPregnancyModal = ({ isOpen, onClose, onSubmit, existingData }) => {
+    const { showDialog } = useDialog();
     const [inputMethod, setInputMethod] = useState('lmp'); // 'lmp' or 'week'
     const [formData, setFormData] = useState({
         lmpDate: existingData?.lmpDate ? new Date(existingData.lmpDate).toISOString().split('T')[0] : '',
@@ -45,12 +47,20 @@ const LogPregnancyModal = ({ isOpen, onClose, onSubmit, existingData }) => {
 
         // Validate based on input method
         if (inputMethod === 'lmp' && !formData.lmpDate) {
-            alert('Please provide your Last Menstrual Period (LMP) date');
+            showDialog({
+                title: 'Missing Information',
+                message: 'Please provide your Last Menstrual Period (LMP) date',
+                type: 'warning'
+            });
             return;
         }
 
         if (inputMethod === 'week' && !formData.currentWeek) {
-            alert('Please provide your current pregnancy week');
+            showDialog({
+                title: 'Missing Information',
+                message: 'Please provide your current pregnancy week',
+                type: 'warning'
+            });
             return;
         }
 

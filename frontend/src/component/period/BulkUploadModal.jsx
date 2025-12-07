@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Upload, Plus, Trash2, Calendar, Check } from 'lucide-react';
 import periodService from '../../services/periodService';
+import { useDialog } from '../../context/DialogContext';
 
 const BulkUploadModal = ({ isOpen, onClose, onSuccess }) => {
+    const { showDialog } = useDialog();
     const [periods, setPeriods] = useState([
         { id: 1, startDate: '', endDate: '', notes: '' }
     ]);
@@ -38,7 +40,11 @@ const BulkUploadModal = ({ isOpen, onClose, onSuccess }) => {
         const validPeriods = periods.filter(p => p.startDate);
 
         if (validPeriods.length === 0) {
-            alert('Please add at least one period with a start date');
+            showDialog({
+                title: 'No Periods',
+                message: 'Please add at least one period with a start date',
+                type: 'warning'
+            });
             return;
         }
 
@@ -76,14 +82,22 @@ const BulkUploadModal = ({ isOpen, onClose, onSuccess }) => {
                 setUploadProgress(0);
                 setPeriods([{ id: 1, startDate: '', endDate: '', notes: '' }]);
                 onSuccess();
-                alert(`Successfully uploaded ${successCount} of ${total} periods!`);
-                onClose();
+                showDialog({
+                    title: 'Upload Complete',
+                    message: `Successfully uploaded ${successCount} of ${total} periods!`,
+                    type: 'success',
+                    onConfirm: onClose
+                });
             }, 500);
 
         } catch (error) {
             console.error('Bulk upload error:', error);
             setUploading(false);
-            alert('Failed to upload periods. Please try again.');
+            showDialog({
+                title: 'Upload Failed',
+                message: 'Failed to upload periods. Please try again.',
+                type: 'error'
+            });
         }
     };
 

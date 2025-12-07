@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Loader, CheckCircle } from 'lucide-react';
 import doctorService from '../../services/doctorService';
+import { useDialog } from '../../context/DialogContext';
 
 const BookingModal = ({ doctor, onClose, onSuccess }) => {
+    const { showDialog } = useDialog();
     const [formData, setFormData] = useState({
         scheduledDate: '',
         scheduledTime: '',
@@ -83,7 +85,11 @@ const BookingModal = ({ doctor, onClose, onSuccess }) => {
             }
         } catch (error) {
             console.error('Booking failed:', error);
-            alert('Failed to book appointment. Please try again.');
+            showDialog({
+                title: 'Booking Failed',
+                message: 'Failed to book appointment. Please try again.',
+                type: 'error'
+            });
             setLoading(false);
         }
     };

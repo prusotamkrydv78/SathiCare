@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useDialog } from '../context/DialogContext';
 // EmailJS removed - using FormSubmit instead
 import hospitalsData from '../data/hospitals.json';
 import emergencyData from '../data/emergencyContacts.json';
@@ -286,6 +287,8 @@ const SOSPage = () => {
     };
 
     // Send emails using FormSubmit (No config needed)
+    const { showDialog } = useDialog();
+
     const sendSOSEmails = async () => {
         if (emailStatus === 'sending') return;
 
@@ -298,7 +301,12 @@ const SOSPage = () => {
 
         const contacts = emergencyData.userContacts;
         if (!contacts || contacts.length === 0) {
-            alert("No contacts found!");
+            showDialog({
+                title: 'No Contacts Found',
+                message: 'Please add emergency contacts in your profile settings.',
+                type: 'warning',
+                confirmText: 'Okay'
+            });
             setEmailStatus('idle');
             return;
         }
@@ -330,7 +338,13 @@ const SOSPage = () => {
         } catch (error) {
             console.error('FAILED TO SEND EMAILS:', error);
             setEmailStatus('error');
-            alert('Network error. Calling 102 is recommended.');
+            showDialog({
+                title: 'Network Error',
+                message: 'Failed to send alerts. Calling 102 is recommended immediately.',
+                type: 'error',
+                confirmText: 'Call 102',
+                onConfirm: () => window.location.href = 'tel:102'
+            });
         }
     };
 
