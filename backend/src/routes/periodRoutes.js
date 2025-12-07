@@ -10,7 +10,8 @@ import {
     getAIPrediction,
     getAIAnalysis,
     getAISymptomTips,
-    getAIInsights
+    getAIInsights,
+    periodAIChat
 } from '../controllers/periodController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 import { validate } from '../middlewares/validationMiddleware.js';
@@ -40,5 +41,6 @@ router.get('/ai/predict', getAIPrediction);
 router.get('/ai/analyze', getAIAnalysis);
 router.post('/ai/symptom-tips', getAISymptomTips);
 router.get('/ai/insights', getAIInsights);
+router.post('/ai/chat', periodAIChat);
 
 export default router;
