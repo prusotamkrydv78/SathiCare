@@ -1,0 +1,863 @@
+{
+    "hospitals": [
+        {
+            "id": "101",
+            "name": "Janakpur Zonal Hospital",
+            "type": "Hospital",
+            "latitude": 26.7285,
+            "longitude": 85.9265,
+            "address": "Janakpurdham, Dhanusha, Nepal",
+            "phone": "+977-41-520111",
+            "email": "info@janakpurhospital.gov.np",
+            "website": "www.janakpurhospital.gov.np",
+            "rating": 4.2,
+            "reviews": 890,
+            "isOpen": true,
+            "hasFemaleDoctor": true,
+            "services": [
+                "Emergency",
+                "Surgery",
+                "Maternity",
+                "Pediatrics",
+                "ICU",
+                "X-Ray",
+                "Blood Bank"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800",
+                "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=800"
+            ],
+            "operatingHours": {
+                "Monday": "Open 24 Hours",
+                "Tuesday": "Open 24 Hours",
+                "Wednesday": "Open 24 Hours",
+                "Thursday": "Open 24 Hours",
+                "Friday": "Open 24 Hours",
+                "Saturday": "Open 24 Hours",
+                "Sunday": "Open 24 Hours"
+            },
+            "description": "Janakpur Zonal Hospital is the largest government hospital in the Mithila region, providing comprehensive healthcare services including emergency care, surgery, and specialized treatments.",
+            "userReviews": [
+                {
+                    "name": "Sita D.",
+                    "rating": 5,
+                    "comment": "Excellent maternity care. The staff was very supportive during my delivery."
+                },
+                {
+                    "name": "Ram K.",
+                    "rating": 4,
+                    "comment": "Good emergency services. Wait times can be long but care is quality."
+                }
+            ]
+        },
+        {
+            "id": "102",
+            "name": "Ram Janaki Hospital",
+            "type": "Hospital",
+            "latitude": 26.7312,
+            "longitude": 85.934,
+            "address": "Station Road, Janakpur, Dhanusha",
+            "phone": "+977-41-521234",
+            "email": "contact@ramjanakihospital.com",
+            "website": "www.ramjanakihospital.com",
+            "rating": 4.5,
+            "reviews": 650,
+            "isOpen": true,
+            "hasFemaleDoctor": true,
+            "services": [
+                "General Medicine",
+                "Gynecology",
+                "Orthopedics",
+                "Cardiology",
+                "Neurology"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1538108149393-fbbd81895907?w=800",
+                "https://images.unsplash.com/photo-1551076805-e1869033e561?w=800"
+            ],
+            "operatingHours": {
+                "Monday": "Open 24 Hours",
+                "Tuesday": "Open 24 Hours",
+                "Wednesday": "Open 24 Hours",
+                "Thursday": "Open 24 Hours",
+                "Friday": "Open 24 Hours",
+                "Saturday": "Open 24 Hours",
+                "Sunday": "Open 24 Hours"
+            },
+            "description": "Ram Janaki Hospital is a leading private hospital offering quality healthcare with modern facilities and experienced doctors.",
+            "userReviews": [
+                {
+                    "name": "Priya S.",
+                    "rating": 5,
+                    "comment": "Very clean and professional. Dr. Sharma is excellent!"
+                },
+                {
+                    "name": "Mohan L.",
+                    "rating": 4,
+                    "comment": "Good facilities but slightly expensive."
+                }
+            ]
+        },
+        {
+            "id": "103",
+            "name": "Mithila Nursing Home",
+            "type": "Clinic",
+            "latitude": 26.7405,
+            "longitude": 85.918,
+            "address": "Bhanu Chowk, Janakpur",
+            "phone": "+977-41-522345",
+            "email": "mithilanursinghome@gmail.com",
+            "website": "www.mithilanursinghome.com",
+            "rating": 4.6,
+            "reviews": 320,
+            "isOpen": true,
+            "hasFemaleDoctor": true,
+            "services": [
+                "OPD",
+                "Minor Surgery",
+                "Vaccination",
+                "Lab Tests",
+                "Prenatal Care"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800"
+            ],
+            "operatingHours": {
+                "Monday": "7:00 AM - 9:00 PM",
+                "Tuesday": "7:00 AM - 9:00 PM",
+                "Wednesday": "7:00 AM - 9:00 PM",
+                "Thursday": "7:00 AM - 9:00 PM",
+                "Friday": "7:00 AM - 9:00 PM",
+                "Saturday": "7:00 AM - 6:00 PM",
+                "Sunday": "9:00 AM - 2:00 PM"
+            },
+            "description": "A trusted nursing home providing personalized healthcare services with a focus on women's health and prenatal care.",
+            "userReviews": [
+                {
+                    "name": "Anita M.",
+                    "rating": 5,
+                    "comment": "The female doctors here are wonderful. Very comfortable environment."
+                },
+                {
+                    "name": "Geeta R.",
+                    "rating": 4,
+                    "comment": "Great for prenatal checkups. Very caring staff."
+                }
+            ]
+        },
+        {
+            "id": "104",
+            "name": "Shree Krishna Pharmacy",
+            "type": "Pharmacy",
+            "latitude": 26.7478,
+            "longitude": 85.923,
+            "address": "Main Bazaar, Janakpur",
+            "phone": "+977-41-523456",
+            "email": "shreekrishnapharmacy@gmail.com",
+            "website": "",
+            "rating": 4.4,
+            "reviews": 180,
+            "isOpen": true,
+            "hasFemaleDoctor": false,
+            "services": [
+                "Prescription Medicine",
+                "OTC Drugs",
+                "Surgical Items",
+                "Baby Products",
+                "Medical Devices"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1585435557343-3b092031a831?w=800"
+            ],
+            "operatingHours": {
+                "Monday": "8:00 AM - 10:00 PM",
+                "Tuesday": "8:00 AM - 10:00 PM",
+                "Wednesday": "8:00 AM - 10:00 PM",
+                "Thursday": "8:00 AM - 10:00 PM",
+                "Friday": "8:00 AM - 10:00 PM",
+                "Saturday": "8:00 AM - 10:00 PM",
+                "Sunday": "9:00 AM - 8:00 PM"
+            },
+            "description": "Your trusted neighborhood pharmacy with a wide range of medicines and healthcare products at affordable prices.",
+            "userReviews": [
+                {
+                    "name": "Rakesh J.",
+                    "rating": 5,
+                    "comment": "Always have what I need. Good prices too."
+                },
+                {
+                    "name": "Sunita D.",
+                    "rating": 4,
+                    "comment": "Friendly staff and quick service."
+                }
+            ]
+        },
+        {
+            "id": "105",
+            "name": "Janaki Diagnostic Center",
+            "type": "Lab",
+            "latitude": 26.752,
+            "longitude": 85.929,
+            "address": "Ram Mandir Road, Janakpur",
+            "phone": "+977-41-524567",
+            "email": "janakidiagnostic@gmail.com",
+            "website": "www.janakidiagnostic.com",
+            "rating": 4.7,
+            "reviews": 420,
+            "isOpen": true,
+            "hasFemaleDoctor": false,
+            "services": [
+                "Blood Test",
+                "X-Ray",
+                "Ultrasound",
+                "ECG",
+                "Pathology",
+                "MRI",
+                "CT Scan"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=800"
+            ],
+            "operatingHours": {
+                "Monday": "6:00 AM - 8:00 PM",
+                "Tuesday": "6:00 AM - 8:00 PM",
+                "Wednesday": "6:00 AM - 8:00 PM",
+                "Thursday": "6:00 AM - 8:00 PM",
+                "Friday": "6:00 AM - 8:00 PM",
+                "Saturday": "6:00 AM - 6:00 PM",
+                "Sunday": "7:00 AM - 2:00 PM"
+            },
+            "description": "Modern diagnostic center with state-of-the-art equipment for accurate and quick test results.",
+            "userReviews": [
+                {
+                    "name": "Arun P.",
+                    "rating": 5,
+                    "comment": "Quick reports and very accurate. Highly recommend."
+                },
+                {
+                    "name": "Maya T.",
+                    "rating": 5,
+                    "comment": "Best diagnostic center in Janakpur."
+                }
+            ]
+        },
+        {
+            "id": "106",
+            "name": "Sita Women's Hospital",
+            "type": "Hospital",
+            "latitude": 26.738,
+            "longitude": 85.931,
+            "address": "Pidari Chowk, Janakpur",
+            "phone": "+977-41-525678",
+            "email": "sitawomenshospital@gmail.com",
+            "website": "www.sitawomenshospital.com",
+            "rating": 4.8,
+            "reviews": 780,
+            "isOpen": true,
+            "hasFemaleDoctor": true,
+            "services": [
+                "Maternity",
+                "Gynecology",
+                "NICU",
+                "Family Planning",
+                "Infertility Treatment",
+                "Prenatal Care",
+                "Ultrasound"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800",
+                "https://images.unsplash.com/photo-1596541223130-5d31a73fb6c6?w=800"
+            ],
+            "operatingHours": {
+                "Monday": "Open 24 Hours",
+                "Tuesday": "Open 24 Hours",
+                "Wednesday": "Open 24 Hours",
+                "Thursday": "Open 24 Hours",
+                "Friday": "Open 24 Hours",
+                "Saturday": "Open 24 Hours",
+                "Sunday": "Open 24 Hours"
+            },
+            "description": "Premier women's hospital dedicated to maternal health, gynecology, and fertility treatments. All female doctors available.",
+            "userReviews": [
+                {
+                    "name": "Kamala S.",
+                    "rating": 5,
+                    "comment": "Amazing care during my pregnancy. The doctors are so supportive!"
+                },
+                {
+                    "name": "Rekha M.",
+                    "rating": 5,
+                    "comment": "Best hospital for women. Clean, safe, and professional."
+                }
+            ]
+        },
+        {
+            "id": "107",
+            "name": "LifeCare Clinic",
+            "type": "Clinic",
+            "latitude": 26.7445,
+            "longitude": 85.9205,
+            "address": "Zero Mile, Janakpur",
+            "phone": "+977-41-526789",
+            "email": "lifecareclinic@gmail.com",
+            "website": "",
+            "rating": 4.3,
+            "reviews": 210,
+            "isOpen": true,
+            "hasFemaleDoctor": true,
+            "services": [
+                "General Checkup",
+                "Dental",
+                "Eye Care",
+                "Vaccination",
+                "Health Screening"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800"
+            ],
+            "operatingHours": {
+                "Monday": "9:00 AM - 6:00 PM",
+                "Tuesday": "9:00 AM - 6:00 PM",
+                "Wednesday": "9:00 AM - 6:00 PM",
+                "Thursday": "9:00 AM - 6:00 PM",
+                "Friday": "9:00 AM - 6:00 PM",
+                "Saturday": "9:00 AM - 4:00 PM",
+                "Sunday": "Closed"
+            },
+            "description": "Multi-specialty clinic offering comprehensive general health checkups, dental care, and eye examinations.",
+            "userReviews": [
+                {
+                    "name": "Suresh B.",
+                    "rating": 4,
+                    "comment": "Good for routine checkups. Affordable prices."
+                },
+                {
+                    "name": "Rina J.",
+                    "rating": 5,
+                    "comment": "The dental care here is excellent!"
+                }
+            ]
+        },
+        {
+            "id": "108",
+            "name": "Medicose Pharmacy",
+            "type": "Pharmacy",
+            "latitude": 26.749,
+            "longitude": 85.9275,
+            "address": "Station Road, Janakpur",
+            "phone": "+977-41-527890",
+            "email": "medicosepharmacy@gmail.com",
+            "website": "",
+            "rating": 4.5,
+            "reviews": 150,
+            "isOpen": true,
+            "hasFemaleDoctor": false,
+            "services": [
+                "24/7 Medicine",
+                "Medical Equipment",
+                "Home Delivery",
+                "First Aid Supplies",
+                "Diabetic Care"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800"
+            ],
+            "operatingHours": {
+                "Monday": "Open 24 Hours",
+                "Tuesday": "Open 24 Hours",
+                "Wednesday": "Open 24 Hours",
+                "Thursday": "Open 24 Hours",
+                "Friday": "Open 24 Hours",
+                "Saturday": "Open 24 Hours",
+                "Sunday": "Open 24 Hours"
+            },
+            "description": "24-hour pharmacy with home delivery service. Your trusted partner for all medical needs.",
+            "userReviews": [
+                {
+                    "name": "Ajay K.",
+                    "rating": 5,
+                    "comment": "Love the 24-hour service. Very helpful staff."
+                },
+                {
+                    "name": "Pooja S.",
+                    "rating": 4,
+                    "comment": "Great home delivery option!"
+                }
+            ]
+        },
+        {
+            "id": "1",
+            "name": "Paropakar Maternity & Women's Hospital",
+            "type": "Hospital",
+            "latitude": 27.6888,
+            "longitude": 85.3197,
+            "address": "Thapathali, Kathmandu, Nepal",
+            "phone": "+977-1-4260405",
+            "email": "info@paropakar.org.np",
+            "website": "www.paropakar.org.np",
+            "rating": 4.5,
+            "reviews": 1250,
+            "isOpen": true,
+            "hasFemaleDoctor": true,
+            "services": [
+                "Maternity",
+                "Gynecology",
+                "NICU",
+                "Family Planning",
+                "Prenatal Care",
+                "Postnatal Care"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800",
+                "https://images.unsplash.com/photo-1632833239869-a37e3a5806d2?w=800"
+            ],
+            "operatingHours": {
+                "Monday": "Open 24 Hours",
+                "Tuesday": "Open 24 Hours",
+                "Wednesday": "Open 24 Hours",
+                "Thursday": "Open 24 Hours",
+                "Friday": "Open 24 Hours",
+                "Saturday": "Open 24 Hours",
+                "Sunday": "Open 24 Hours"
+            },
+            "description": "Nepal's oldest and most trusted maternity hospital, providing comprehensive women's healthcare services since 1959.",
+            "userReviews": [
+                {
+                    "name": "Sushila T.",
+                    "rating": 5,
+                    "comment": "Delivered my baby here. Excellent care and very affordable."
+                },
+                {
+                    "name": "Bina R.",
+                    "rating": 4,
+                    "comment": "Great doctors but can be very crowded."
+                }
+            ]
+        },
+        {
+            "id": "2",
+            "name": "Ishan Children & Women's Hospital",
+            "type": "Hospital",
+            "latitude": 27.7362,
+            "longitude": 85.3306,
+            "address": "Basundhara, Kathmandu",
+            "phone": "+977-1-4354537",
+            "email": "info@ishanhospital.com",
+            "website": "www.ishanhospital.com",
+            "rating": 4.3,
+            "reviews": 450,
+            "isOpen": true,
+            "hasFemaleDoctor": true,
+            "services": [
+                "Pediatrics",
+                "Gynecology",
+                "Surgery",
+                "NICU",
+                "Vaccination"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800"
+            ],
+            "operatingHours": {
+                "Monday": "Open 24 Hours",
+                "Tuesday": "Open 24 Hours",
+                "Wednesday": "Open 24 Hours",
+                "Thursday": "Open 24 Hours",
+                "Friday": "Open 24 Hours",
+                "Saturday": "Open 24 Hours",
+                "Sunday": "Open 24 Hours"
+            },
+            "description": "Specialized hospital for children and women, offering pediatric and gynecological care with modern facilities.",
+            "userReviews": [
+                {
+                    "name": "Kopila A.",
+                    "rating": 5,
+                    "comment": "Best pediatric care in Kathmandu!"
+                },
+                {
+                    "name": "Sunita M.",
+                    "rating": 4,
+                    "comment": "Very child-friendly environment."
+                }
+            ]
+        },
+        {
+            "id": "3",
+            "name": "Nepal Mediciti Hospital",
+            "type": "Hospital",
+            "latitude": 27.6567,
+            "longitude": 85.3022,
+            "address": "Bhaisepati, Lalitpur",
+            "phone": "+977-1-4217766",
+            "email": "info@nepalmediciti.com",
+            "website": "www.nepalmediciti.com",
+            "rating": 4.7,
+            "reviews": 890,
+            "isOpen": true,
+            "hasFemaleDoctor": true,
+            "services": [
+                "Multi-specialty",
+                "Maternity",
+                "Emergency",
+                "Cardiology",
+                "Cancer Care",
+                "Organ Transplant"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=800",
+                "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800"
+            ],
+            "operatingHours": {
+                "Monday": "Open 24 Hours",
+                "Tuesday": "Open 24 Hours",
+                "Wednesday": "Open 24 Hours",
+                "Thursday": "Open 24 Hours",
+                "Friday": "Open 24 Hours",
+                "Saturday": "Open 24 Hours",
+                "Sunday": "Open 24 Hours"
+            },
+            "description": "International standard multi-specialty hospital with world-class facilities and renowned specialists.",
+            "userReviews": [
+                {
+                    "name": "Ramesh S.",
+                    "rating": 5,
+                    "comment": "Excellent facilities. Like being in a 5-star hospital."
+                },
+                {
+                    "name": "Nirmala K.",
+                    "rating": 5,
+                    "comment": "Best hospital in Nepal. Worth every rupee."
+                }
+            ]
+        },
+        {
+            "id": "4",
+            "name": "Norvic International Hospital",
+            "type": "Hospital",
+            "latitude": 27.6915,
+            "longitude": 85.3175,
+            "address": "Thapathali, Kathmandu",
+            "phone": "+977-1-5970032",
+            "email": "info@norvic.com.np",
+            "website": "www.norvichospital.com",
+            "rating": 4.2,
+            "reviews": 670,
+            "isOpen": true,
+            "hasFemaleDoctor": true,
+            "services": [
+                "Cardiology",
+                "Gynecology",
+                "IVF",
+                "Neurology",
+                "Orthopedics"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1551076805-e1869033e561?w=800"
+            ],
+            "operatingHours": {
+                "Monday": "Open 24 Hours",
+                "Tuesday": "Open 24 Hours",
+                "Wednesday": "Open 24 Hours",
+                "Thursday": "Open 24 Hours",
+                "Friday": "Open 24 Hours",
+                "Saturday": "Open 24 Hours",
+                "Sunday": "Open 24 Hours"
+            },
+            "description": "Leading cardiac center with comprehensive IVF and gynecology services.",
+            "userReviews": [
+                {
+                    "name": "Hari B.",
+                    "rating": 4,
+                    "comment": "Great cardiology department."
+                },
+                {
+                    "name": "Sarita L.",
+                    "rating": 4,
+                    "comment": "IVF treatment was successful here. Thank you!"
+                }
+            ]
+        },
+        {
+            "id": "5",
+            "name": "Clinic One",
+            "type": "Clinic",
+            "latitude": 27.6738,
+            "longitude": 85.3135,
+            "address": "Jawalakhel, Lalitpur",
+            "phone": "+977-1-5400400",
+            "email": "hello@clinicone.com.np",
+            "website": "www.clinicone.com.np",
+            "rating": 4.8,
+            "reviews": 320,
+            "isOpen": true,
+            "hasFemaleDoctor": true,
+            "services": [
+                "OPD",
+                "Vaccination",
+                "Ultrasound",
+                "Health Checkup",
+                "Prenatal Care",
+                "Women's Health"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800",
+                "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800"
+            ],
+            "operatingHours": {
+                "Monday": "7:00 AM - 7:00 PM",
+                "Tuesday": "7:00 AM - 7:00 PM",
+                "Wednesday": "7:00 AM - 7:00 PM",
+                "Thursday": "7:00 AM - 7:00 PM",
+                "Friday": "7:00 AM - 7:00 PM",
+                "Saturday": "8:00 AM - 4:00 PM",
+                "Sunday": "9:00 AM - 1:00 PM"
+            },
+            "description": "Modern clinic offering premium outpatient services with online booking and minimal wait times.",
+            "userReviews": [
+                {
+                    "name": "Deepa K.",
+                    "rating": 5,
+                    "comment": "Best clinic experience ever. So organized!"
+                },
+                {
+                    "name": "Amit R.",
+                    "rating": 5,
+                    "comment": "Love the online booking system. No waiting!"
+                }
+            ]
+        },
+        {
+            "id": "6",
+            "name": "Venus Hospital",
+            "type": "Hospital",
+            "latitude": 27.6945,
+            "longitude": 85.3385,
+            "address": "Mid Baneshwor, Kathmandu",
+            "phone": "+977-1-4480208",
+            "email": "info@venushospital.com.np",
+            "website": "www.venushospital.com.np",
+            "rating": 4.0,
+            "reviews": 210,
+            "isOpen": true,
+            "hasFemaleDoctor": true,
+            "services": [
+                "Gynecology",
+                "Neurosurgery",
+                "Orthopedics",
+                "General Surgery"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1538108149393-fbbd81895907?w=800"
+            ],
+            "operatingHours": {
+                "Monday": "Open 24 Hours",
+                "Tuesday": "Open 24 Hours",
+                "Wednesday": "Open 24 Hours",
+                "Thursday": "Open 24 Hours",
+                "Friday": "Open 24 Hours",
+                "Saturday": "Open 24 Hours",
+                "Sunday": "Open 24 Hours"
+            },
+            "description": "Multi-specialty hospital known for neurosurgery and orthopedic treatments.",
+            "userReviews": [
+                {
+                    "name": "Prakash T.",
+                    "rating": 4,
+                    "comment": "Good for orthopedic surgery."
+                },
+                {
+                    "name": "Anita S.",
+                    "rating": 4,
+                    "comment": "Decent hospital with good facilities."
+                }
+            ]
+        },
+        {
+            "id": "7",
+            "name": "Patan Hospital",
+            "type": "Hospital",
+            "latitude": 27.6683,
+            "longitude": 85.3206,
+            "address": "Lagankhel, Lalitpur",
+            "phone": "+977-1-5522278",
+            "email": "info@patanhospital.org.np",
+            "website": "www.patanhospital.org.np",
+            "rating": 4.4,
+            "reviews": 1500,
+            "isOpen": true,
+            "hasFemaleDoctor": true,
+            "services": [
+                "General Medicine",
+                "Maternity",
+                "Pediatrics",
+                "Emergency",
+                "Surgery"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800"
+            ],
+            "operatingHours": {
+                "Monday": "Open 24 Hours",
+                "Tuesday": "Open 24 Hours",
+                "Wednesday": "Open 24 Hours",
+                "Thursday": "Open 24 Hours",
+                "Friday": "Open 24 Hours",
+                "Saturday": "Open 24 Hours",
+                "Sunday": "Open 24 Hours"
+            },
+            "description": "One of Nepal's oldest and most respected hospitals, known for quality care at affordable prices.",
+            "userReviews": [
+                {
+                    "name": "Govinda P.",
+                    "rating": 5,
+                    "comment": "Excellent hospital. Very affordable."
+                },
+                {
+                    "name": "Radha M.",
+                    "rating": 4,
+                    "comment": "Great doctors and caring staff."
+                }
+            ]
+        },
+        {
+            "id": "8",
+            "name": "Alka Hospital",
+            "type": "Hospital",
+            "latitude": 27.6756,
+            "longitude": 85.3167,
+            "address": "Jawalakhel, Lalitpur",
+            "phone": "+977-1-5555555",
+            "email": "info@alkahospital.com",
+            "website": "www.alkahospital.com.np",
+            "rating": 4.1,
+            "reviews": 560,
+            "isOpen": true,
+            "hasFemaleDoctor": true,
+            "services": [
+                "General Medicine",
+                "Dental",
+                "Pharmacy",
+                "Diagnostics"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=800"
+            ],
+            "operatingHours": {
+                "Monday": "Open 24 Hours",
+                "Tuesday": "Open 24 Hours",
+                "Wednesday": "Open 24 Hours",
+                "Thursday": "Open 24 Hours",
+                "Friday": "Open 24 Hours",
+                "Saturday": "Open 24 Hours",
+                "Sunday": "Open 24 Hours"
+            },
+            "description": "Comprehensive healthcare facility with in-house pharmacy and dental services.",
+            "userReviews": [
+                {
+                    "name": "Bijay L.",
+                    "rating": 4,
+                    "comment": "Convenient location and good services."
+                },
+                {
+                    "name": "Mina K.",
+                    "rating": 4,
+                    "comment": "Good dental department."
+                }
+            ]
+        },
+        {
+            "id": "9",
+            "name": "Sajha Pharmacy",
+            "type": "Pharmacy",
+            "latitude": 27.689,
+            "longitude": 85.3195,
+            "address": "Thapathali, Kathmandu",
+            "phone": "+977-1-4244444",
+            "email": "sajhapharmacy@gmail.com",
+            "website": "",
+            "rating": 4.3,
+            "reviews": 120,
+            "isOpen": true,
+            "hasFemaleDoctor": false,
+            "services": [
+                "Prescription Medicine",
+                "OTC Drugs",
+                "Surgical Items",
+                "Medical Supplies"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1585435557343-3b092031a831?w=800"
+            ],
+            "operatingHours": {
+                "Monday": "Open 24 Hours",
+                "Tuesday": "Open 24 Hours",
+                "Wednesday": "Open 24 Hours",
+                "Thursday": "Open 24 Hours",
+                "Friday": "Open 24 Hours",
+                "Saturday": "Open 24 Hours",
+                "Sunday": "Open 24 Hours"
+            },
+            "description": "24-hour pharmacy near major hospitals, offering all essential medicines and medical supplies.",
+            "userReviews": [
+                {
+                    "name": "Suresh K.",
+                    "rating": 4,
+                    "comment": "Convenient location near hospitals."
+                },
+                {
+                    "name": "Meena R.",
+                    "rating": 5,
+                    "comment": "Always open when I need medicines urgently."
+                }
+            ]
+        },
+        {
+            "id": "10",
+            "name": "Hamro Lab",
+            "type": "Lab",
+            "latitude": 27.6725,
+            "longitude": 85.315,
+            "address": "Kupondole, Lalitpur",
+            "phone": "+977-1-5522001",
+            "email": "info@hamrolab.com",
+            "website": "www.hamrolab.com",
+            "rating": 4.6,
+            "reviews": 280,
+            "isOpen": true,
+            "hasFemaleDoctor": false,
+            "services": [
+                "Blood Tests",
+                "Urine Analysis",
+                "X-Ray",
+                "Ultrasound",
+                "ECG",
+                "Hormone Tests"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=800"
+            ],
+            "operatingHours": {
+                "Monday": "6:00 AM - 9:00 PM",
+                "Tuesday": "6:00 AM - 9:00 PM",
+                "Wednesday": "6:00 AM - 9:00 PM",
+                "Thursday": "6:00 AM - 9:00 PM",
+                "Friday": "6:00 AM - 9:00 PM",
+                "Saturday": "6:00 AM - 6:00 PM",
+                "Sunday": "7:00 AM - 1:00 PM"
+            },
+            "description": "Modern diagnostic laboratory with home sample collection service and quick digital reports.",
+            "userReviews": [
+                {
+                    "name": "Puspa L.",
+                    "rating": 5,
+                    "comment": "Home collection service is very convenient!"
+                },
+                {
+                    "name": "Gopal S.",
+                    "rating": 4,
+                    "comment": "Quick reports and accurate results."
+                }
+            ]
+        }
+    ]
+}
