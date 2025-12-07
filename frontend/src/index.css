@@ -3,5 +3,11 @@
 @theme {
   --color-primary-pink: #FF6B9D;
   --color-soft-pink: #FFB3D0;
+  --color-secondary-teal: #4ECDC4;
   --color-text-dark: #2D3748;
+  --color-bg-light: #FAFAFA;
+
+  --font-display: "Inter", "Noto Sans Devanagari", sans-serif;
+  --font-body: "Inter", "Noto Sans Devanagari", sans-serif;
+  --font-sans: "Inter", "Noto Sans Devanagari", sans-serif;
 }

@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const HealthRecords = () => {
+    const [isLocked, setIsLocked] = useState(true);
+    const [pin, setPin] = useState(['', '', '', '']);
+    const [error, setError] = useState('');
     const [activeFilter, setActiveFilter] = useState('All');
     const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
 
@@ -16,9 +19,65 @@ const HealthRecords = () => {
         { id: 5, title: 'Ultrasound Scan', date: 'Jun 15, 2025', type: 'Ultrasounds', color: 'bg-pink-100 text-pink-600', format: 'img' },
     ];
 
+    const handlePinChange = (index, value) => {
+        if (value.length > 1) return;
+        const newPin = [...pin];
+        newPin[index] = value;
+        setPin(newPin);
+
+        // Auto-focus next input
+        if (value && index < 3) {
+            document.getElementById(`pin-${index + 1}`).focus();
+        }
+
+        // Check PIN when filled
+        if (index === 3 && value) {
+            const enteredPin = newPin.join('');
+            // Mock PIN check (Default 1234)
+            if (enteredPin === '1234') {
+                setIsLocked(false);
+            } else {
+                setError('Incorrect PIN. Try 1234.');
+                setPin(['', '', '', '']);
+                document.getElementById('pin-0').focus();
+            }
+        }
+    };
+
     const filteredRecords = activeFilter === 'All'
         ? records
         : records.filter(r => r.type === activeFilter);
+
+    if (isLocked) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] font-sans text-gray-800">
+                <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 text-center max-w-sm w-full">
+                    <div className="w-16 h-16 bg-pink-50 rounded-full flex items-center justify-center text-3xl mb-6 mx-auto">
+                        🔒
+                    </div>
+                    <h2 className="text-2xl font-bold mb-2">Secure Records</h2>
+                    <p className="text-gray-500 text-sm mb-8">Enter your 4-digit PIN to access your health data.</p>
+
+                    <div className="flex justify-center gap-3 mb-6">
+                        {pin.map((digit, idx) => (
+                            <input
+                                key={idx}
+                                id={`pin-${idx}`}
+                                type="password"
+                                inputMode="numeric"
+                                value={digit}
+                                onChange={(e) => handlePinChange(idx, e.target.value)}
+                                className="w-12 h-14 border-2 border-gray-200 rounded-xl text-center text-2xl font-bold focus:border-primary-pink focus:outline-none transition"
+                            />
+                        ))}
+                    </div>
+                    {error && <p className="text-red-500 text-sm font-bold mb-4 animate-shake">{error}</p>}
+
+                    <button className="text-xs text-gray-400 hover:text-primary-pink font-medium">Forgot PIN?</button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[#FAFAFA] font-sans text-text-dark pb-24">

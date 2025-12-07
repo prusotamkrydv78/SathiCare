@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { geminiService } from '../services/geminiService';
 
 const ContentLibrary = () => {
     const [activeTab, setActiveTab] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
+    const [recommendations, setRecommendations] = useState([]);
+    const [loadingRecs, setLoadingRecs] = useState(true);
 
     const tabs = ['All', 'Pregnancy', 'Periods', 'Sexual Health', 'Nutrition', 'Mental Health'];
 
@@ -15,6 +18,22 @@ const ContentLibrary = () => {
         { id: 5, type: 'Video', category: 'Sexual Health', title: 'Safe Sex Practices', image: 'https://images.unsplash.com/photo-1576089172869-4f5f6f315620?q=80&w=2026&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', duration: '5:45', badgeColor: 'bg-teal-100 text-teal-600' },
         { id: 6, type: 'Article', category: 'Nutrition', title: 'Prenatal Vitamins', image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', readTime: '4 min read', badgeColor: 'bg-green-100 text-green-600' },
     ];
+
+    useEffect(() => {
+        const fetchRecommendations = async () => {
+            try {
+                // Mock user interests based on hypothetical profile
+                const interests = ['pregnancy', 'nutrition'];
+                const data = await geminiService.getRecommendedContent(interests);
+                setRecommendations(data);
+            } catch (error) {
+                console.error("Failed to fetch recommendations", error);
+            } finally {
+                setLoadingRecs(false);
+            }
+        };
+        fetchRecommendations();
+    }, []);
 
     const filteredContent = contentData.filter(item => {
         const matchesTab = activeTab === 'All' || item.category === activeTab;
@@ -50,8 +69,35 @@ const ContentLibrary = () => {
                 </div>
             </div>
 
+            {/* AI Recommendations Section */}
+            {!loadingRecs && recommendations.length > 0 && activeTab === 'All' && !searchQuery && (
+                <div className="p-5 pb-0">
+                    <div className="flex items-center gap-2 mb-3">
+                        <span className="text-lg">✨</span>
+                        <h2 className="font-bold text-gray-800">Picked for You</h2>
+                    </div>
+                    <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+                        {recommendations.map(rec => (
+                            <div key={rec.id} className="min-w-[200px] bg-gradient-to-br from-pink-50 to-white p-4 rounded-xl border border-pink-100 shadow-sm flex flex-col justify-between h-[120px]">
+                                <div>
+                                    <span className="text-[10px] uppercase font-bold text-primary-pink tracking-wider bg-white px-2 py-0.5 rounded-full inline-block mb-2">
+                                        {rec.category}
+                                    </span>
+                                    <h3 className="font-bold text-sm text-gray-800 leading-tight line-clamp-2">
+                                        {rec.title}
+                                    </h3>
+                                </div>
+                                <div className="mt-2 text-xs text-gray-500 font-medium">
+                                    Recommended by Saathi AI
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             {/* Tabs */}
-            <div className="bg-white sticky top-[120px] z-10 shadow-[0_4px_6px_-6px_rgba(0,0,0,0.1)]">
+            <div className="bg-white sticky top-[120px] z-10 shadow-[0_4px_6px_-6px_rgba(0,0,0,0.1)] mt-4">
                 <div className="flex overflow-x-auto no-scrollbar px-4 space-x-6 border-b border-gray-100">
                     {tabs.map(tab => (
                         <button

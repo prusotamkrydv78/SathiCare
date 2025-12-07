@@ -1,20 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { geminiService } from '../services/geminiService';
 import { Link } from 'react-router-dom';
 
 const AiAssistant = () => {
     const [messages, setMessages] = useState([
-        { id: 1, type: 'ai', text: 'Hello! I am your Sathi AI health assistant. I can help you with general health questions, explain medical terms, or guide you to nearest facilities. How can I help you today?', time: '10:30 AM' }
+        { id: 1, text: "Namaste! I am Saathi, your personal health assistant. How can I help you today?", sender: 'ai' }
     ]);
     const [inputText, setInputText] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef(null);
-
-    const suggestedQuestions = [
-        "What are symptoms of flu?",
-        "Find nearest gynecologist",
-        "Diet for pregnancy",
-        "Menstrual cycle advice"
-    ];
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -24,141 +18,147 @@ const AiAssistant = () => {
         scrollToBottom();
     }, [messages, isTyping]);
 
-    const handleSend = (text = inputText) => {
-        if (!text.trim()) return;
+    const handleSend = async () => {
+        if (!inputText.trim()) return;
 
-        // User Message
-        const newMessage = {
-            id: messages.length + 1,
-            type: 'user',
-            text: text,
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-
-        setMessages(prev => [...prev, newMessage]);
+        const userMsg = { id: messages.length + 1, text: inputText, sender: 'user' };
+        setMessages(prev => [...prev, userMsg]);
         setInputText('');
         setIsTyping(true);
 
-        // Simulated AI Response
-        setTimeout(() => {
-            const responseText = getSimulatedResponse(text);
-            const aiMessage = {
+        // Process message through Gemini Service
+        try {
+            const history = messages.map(m => ({
+                role: m.sender === 'user' ? 'user' : 'model',
+                parts: [{ text: m.text }]
+            }));
+
+            const response = await geminiService.getChatResponse(inputText, history);
+            const aiMsg = {
                 id: messages.length + 2,
-                type: 'ai',
-                text: responseText,
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                text: response.text,
+                sender: 'ai',
+                type: response.type
             };
-            setMessages(prev => [...prev, aiMessage]);
+
+            setMessages(prev => [...prev, aiMsg]);
+        } catch (error) {
+            setMessages(prev => [...prev, { id: messages.length + 2, text: "Sorry, I am having trouble connecting right now.", sender: 'ai' }]);
+        } finally {
             setIsTyping(false);
-        }, 1500);
+        }
     };
 
-    const getSimulatedResponse = (query) => {
-        const q = query.toLowerCase();
-        if (q.includes('flu') || q.includes('symptom')) return "Common flu symptoms include fever, cough, sore throat, runny nose, muscle aches, headaches, and fatigue. Be sure to stay hydrated and rest!";
-        if (q.includes('find') || q.includes('hospital') || q.includes('doctor')) return "I can help you find that. Check out the 'Facility Finder' feature in the dashboard to see locations near you.";
-        if (q.includes('pregnant') || q.includes('pregnancy')) return "For pregnancy, a balanced diet rich in leafy greens, calcium, and iron is important. Are you tracking your pregnancy week by week?";
-        return "I see. That sounds important. While I am an AI, I suggest consulting a real doctor for specific advice. Would you like to connect with one?";
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') handleSend();
+    };
+
+    const suggestions = [
+        "Remedies for menstrual cramps?",
+        "Is spotting normal during pregnancy?",
+        "I feel anxious lately",
+        "Best diet for PCOD?"
+    ];
+
+    const handleSuggestionClick = (text) => {
+        setInputText(text);
     };
 
     return (
-        <div className="h-screen bg-[#FAFAFA] flex flex-col font-sans">
-            {/* Disclaimer Banner */}
-            <div className="bg-blue-50 text-blue-800 text-[10px] text-center py-1 px-4 font-medium border-b border-blue-100">
-                AI provides information, not medical diagnosis. In emergencies, call standard emergency numbers.
-            </div>
-
-            {/* Top Bar */}
-            <div className="bg-white border-b border-gray-100 p-4 flex justify-between items-center shadow-sm z-10">
-                <div className="flex items-center">
-                    <Link to="/dashboard" className="mr-3 text-gray-500 hover:text-gray-700">←</Link>
+        <div className="flex flex-col h-[calc(100vh-6rem)] bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden font-sans">
+            {/* Chat Header */}
+            <div className="bg-primary-pink p-4 flex justify-between items-center text-white">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-xl backdrop-blur-sm">
+                        🤖
+                    </div>
                     <div>
-                        <h1 className="font-bold text-gray-800 text-lg leading-tight">AI Health Assistant</h1>
-                        <span className="text-[10px] text-green-500 font-medium flex items-center">
-                            <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span>
-                            Online
-                        </span>
+                        <h2 className="font-bold text-lg leading-tight">Saathi AI Assistant</h2>
+                        <div className="flex items-center gap-1.5 opacity-90">
+                            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                            <span className="text-xs font-medium">Online</span>
+                        </div>
                     </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                    <button className="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition">EN</button>
-                    <button className="text-gray-400 text-xl">⋮</button>
-                </div>
             </div>
 
-            {/* Chat Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-6">
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
                 {messages.map((msg) => (
-                    <div key={msg.id} className={`flex flex-col ${msg.type === 'user' ? 'items-end' : 'items-start'}`}>
-                        <div className={`max-w-[80%] rounded-2xl px-5 py-3 text-sm leading-relaxed shadow-sm
-                            ${msg.type === 'user'
-                                ? 'bg-primary-pink text-white rounded-br-none'
-                                : 'bg-[#4ECDC4] text-white rounded-bl-none'
-                            }
-                        `}>
+                    <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                        {msg.sender === 'ai' && (
+                            <div className="w-8 h-8 rounded-full bg-primary-pink flex items-center justify-center text-white text-xs mr-2 self-end mb-1">
+                                AI
+                            </div>
+                        )}
+                        <div
+                            className={`max-w-[80%] p-3 rounded-2xl text-sm leading-relaxed ${msg.sender === 'user'
+                                    ? 'bg-primary-pink text-white rounded-tr-none shadow-md shadow-pink-100'
+                                    : 'bg-white text-gray-800 rounded-tl-none border border-gray-100 shadow-sm'
+                                } ${msg.type === 'emergency' ? 'border-2 border-red-500 bg-red-50 text-red-700' : ''}`}
+                        >
                             {msg.text}
+                            {msg.type === 'emergency' && (
+                                <Link to="/emergency" className="block mt-2 bg-red-600 text-white text-center py-2 rounded-lg font-bold hover:bg-red-700 transition">
+                                    Open Emergency SOS
+                                </Link>
+                            )}
                         </div>
-                        <span className="text-[10px] text-gray-400 mt-1.5 px-1">{msg.time}</span>
                     </div>
                 ))}
-
                 {isTyping && (
-                    <div className="flex items-start">
-                        <div className="bg-[#4ECDC4] text-white rounded-2xl rounded-bl-none px-4 py-3 shadow-sm flex items-center space-x-1">
-                            <div className="w-1.5 h-1.5 bg-white/80 rounded-full animate-bounce"></div>
-                            <div className="w-1.5 h-1.5 bg-white/80 rounded-full animate-bounce delay-75"></div>
-                            <div className="w-1.5 h-1.5 bg-white/80 rounded-full animate-bounce delay-150"></div>
+                    <div className="flex justify-start">
+                        <div className="w-8 h-8 rounded-full bg-primary-pink flex items-center justify-center text-white text-xs mr-2 self-end mb-1">AI</div>
+                        <div className="bg-white p-3 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm flex gap-1">
+                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
+                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></span>
+                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></span>
                         </div>
                     </div>
                 )}
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Suggested Chips (Only if few messages) */}
-            {messages.length < 3 && (
-                <div className="px-4 pb-2">
-                    <p className="text-xs text-gray-400 mb-2 font-medium ml-1">Suggested questions:</p>
-                    <div className="flex flex-wrap gap-2">
-                        {suggestedQuestions.map((q, i) => (
+            {/* Input Area */}
+            <div className="p-4 bg-white border-t border-gray-100">
+                {messages.length < 3 && (
+                    <div className="flex gap-2 overflow-x-auto pb-3 no-scrollbar mb-2">
+                        {suggestions.map((text, i) => (
                             <button
                                 key={i}
-                                onClick={() => handleSend(q)}
-                                className="bg-white border border-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-full hover:bg-gray-50 hover:border-gray-300 transition"
+                                onClick={() => handleSuggestionClick(text)}
+                                className="whitespace-nowrap px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-full text-xs text-gray-600 hover:bg-pink-50 hover:border-pink-200 hover:text-primary-pink transition"
                             >
-                                {q}
+                                {text}
                             </button>
                         ))}
                     </div>
-                </div>
-            )}
-
-            {/* Input Area */}
-            <div className="bg-white p-4 border-t border-gray-100">
-                <div className="bg-gray-50 rounded-full border border-gray-200 flex items-center px-2 py-1 focus-within:ring-1 focus-within:ring-primary-pink focus-within:border-primary-pink transition">
-                    <button className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-200/50 transition">
-                        🎤
-                    </button>
+                )}
+                <div className="flex gap-2 relative">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 flex gap-2">
+                        <button className="hover:text-primary-pink transition">📷</button>
+                        <button className="hover:text-primary-pink transition">🎤</button>
+                    </div>
                     <input
                         type="text"
                         value={inputText}
                         onChange={(e) => setInputText(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                        placeholder="Type your health query..."
-                        className="flex-1 bg-transparent border-none outline-none text-sm text-gray-700 px-2 h-10 placeholder-gray-400"
+                        onKeyPress={handleKeyPress}
+                        placeholder="Type your health concern..."
+                        className="flex-1 bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-pink/50 focus:border-primary-pink transition"
                     />
                     <button
-                        onClick={() => handleSend()}
+                        onClick={handleSend}
                         disabled={!inputText.trim()}
-                        className={`w-10 h-10 rounded-full flex items-center justify-center transition shadow-sm
-                            ${inputText.trim()
-                                ? 'bg-primary-pink text-white hover:bg-pink-500 hover:shadow-md transform hover:scale-105'
-                                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                            }
-                        `}
+                        className="bg-primary-pink text-white w-12 h-12 rounded-2xl flex items-center justify-center hover:bg-pink-600 transition shadow-lg shadow-pink-200 disabled:opacity-50 disabled:shadow-none"
                     >
                         ➤
                     </button>
                 </div>
+                <p className="text-[10px] text-center text-gray-400 mt-2">
+                    AI generated responses can be inaccurate.
+                    <button className="underline hover:text-red-500 ml-1">Report Issue</button>
+                </p>
             </div>
         </div>
     );
