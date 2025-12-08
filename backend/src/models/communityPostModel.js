@@ -1,9 +1,13 @@
 import mongoose from 'mongoose';
 
 const commentSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: false  // Optional for backward compatibility
+    },
     user: {
-        name: { type: String, required: true },
-        // userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } // Optional linking
+        name: { type: String, required: true }
     },
     content: {
         type: String,
@@ -17,9 +21,13 @@ const commentSchema = new mongoose.Schema({
 });
 
 const communityPostSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: false  // Optional for backward compatibility with old posts
+    },
     user: {
-        name: { type: String, required: true },
-        // userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+        name: { type: String, required: true }
     },
     title: {
         type: String,
@@ -45,10 +53,10 @@ const communityPostSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    likes: {
-        type: Number,
-        default: 0
-    },
+    likes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     views: {
         type: Number,
         default: 0

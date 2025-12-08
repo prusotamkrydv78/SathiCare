@@ -104,8 +104,8 @@ const CommunityForum = () => {
                             key={cat}
                             onClick={() => setFilter(cat)}
                             className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${filter === cat
-                                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md transform scale-105'
-                                    : 'bg-white text-gray-600 hover:bg-pink-50 border border-gray-100'
+                                ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md transform scale-105'
+                                : 'bg-white text-gray-600 hover:bg-pink-50 border border-gray-100'
                                 }`}
                         >
                             {cat}
@@ -173,6 +173,28 @@ const CommunityForum = () => {
 
 const PostCard = ({ post, onLike }) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [showComments, setShowComments] = useState(false);
+    const [comments, setComments] = useState(post.comments || []);
+    const [newComment, setNewComment] = useState('');
+    const [submitting, setSubmitting] = useState(false);
+
+    const handleAddComment = async (e) => {
+        e.preventDefault();
+        if (!newComment.trim() || submitting) return;
+
+        try {
+            setSubmitting(true);
+            const response = await communityService.addComment(post._id, newComment);
+            if (response.success) {
+                setComments(response.data);
+                setNewComment('');
+            }
+        } catch (error) {
+            console.error('Failed to add comment:', error);
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     return (
         <motion.div
@@ -232,20 +254,80 @@ const PostCard = ({ post, onLike }) => {
                 <div className="flex items-center gap-6">
                     <button
                         onClick={onLike}
-                        className="flex items-center gap-2 text-gray-500 hover:text-pink-600 transition-colors group"
+                        className={`flex items-center gap-2 transition-colors group ${post.hasLiked ? 'text-pink-600' : 'text-gray-500 hover:text-pink-600'}`}
                     >
-                        <Heart size={18} className={post.likes > 0 ? "fill-pink-50 text-pink-600" : "group-hover:scale-110 transition-transform"} />
-                        <span className="text-sm font-medium">{post.likes}</span>
+                        <Heart size={18} className={post.hasLiked ? "fill-pink-600" : "group-hover:scale-110 transition-transform"} />
+                        <span className="text-sm font-medium">{post.likesCount || 0}</span>
                     </button>
-                    <button className="flex items-center gap-2 text-gray-500 hover:text-purple-600 transition-colors">
+                    <button
+                        onClick={() => setShowComments(!showComments)}
+                        className="flex items-center gap-2 text-gray-500 hover:text-purple-600 transition-colors"
+                    >
                         <MessageCircle size={18} />
-                        <span className="text-sm font-medium">{post.comments.length}</span>
+                        <span className="text-sm font-medium">{comments.length}</span>
                     </button>
                 </div>
                 <button className="text-gray-400 hover:text-gray-600">
                     <Share2 size={18} />
                 </button>
             </div>
+
+            {/* Comments Section */}
+            <AnimatePresence>
+                {showComments && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="mt-4 pt-4 border-t border-gray-100"
+                    >
+                        {/* Add Comment Form */}
+                        <form onSubmit={handleAddComment} className="mb-4">
+                            <div className="flex gap-2">
+                                <input
+                                    type="text"
+                                    value={newComment}
+                                    onChange={(e) => setNewComment(e.target.value)}
+                                    placeholder="Add a comment..."
+                                    className="flex-1 px-4 py-2 rounded-xl border border-gray-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 outline-none text-sm"
+                                    disabled={submitting}
+                                />
+                                <button
+                                    type="submit"
+                                    disabled={!newComment.trim() || submitting}
+                                    className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-md transition-all"
+                                >
+                                    <Send size={16} />
+                                </button>
+                            </div>
+                        </form>
+
+                        {/* Comments List */}
+                        <div className="space-y-3 max-h-64 overflow-y-auto">
+                            {comments.length === 0 ? (
+                                <p className="text-center text-gray-400 text-sm py-4">No comments yet. Be the first!</p>
+                            ) : (
+                                comments.map((comment, idx) => (
+                                    <div key={idx} className="flex gap-3 bg-gray-50 rounded-xl p-3">
+                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+                                            {comment.user.name.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <span className="font-semibold text-gray-800 text-sm">{comment.user.name}</span>
+                                                <span className="text-xs text-gray-400">
+                                                    {new Date(comment.createdAt).toLocaleDateString()}
+                                                </span>
+                                            </div>
+                                            <p className="text-gray-600 text-sm break-words">{comment.content}</p>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.div>
     );
 };
