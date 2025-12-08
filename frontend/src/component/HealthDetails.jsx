@@ -42,7 +42,7 @@ const HealthDetails = () => {
                 </div>
             </div>
 
-            {/* Main Card */}
+            {/* Main Card */}  
             <div className="bg-white w-full max-w-[500px] p-8 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-gray-100">
 
                 <div className="text-center mb-8">
