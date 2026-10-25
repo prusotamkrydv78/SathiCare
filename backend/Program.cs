@@ -26,6 +26,7 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IConsultationService, ConsultationService>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IEmergencyService, EmergencyService>();
+builder.Services.AddScoped<ICommunityService, CommunityService>();
 
 // ----- Auth: JWT everywhere — from the Authorization header (SignalR hub) or the httpOnly cookie (API) -----
 builder.Services
