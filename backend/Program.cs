@@ -18,6 +18,8 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // ----- Application services -----
 builder.Services.AddSingleton<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IPeriodService, PeriodService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 // ----- Auth: JWT everywhere — from the Authorization header (SignalR hub) or the httpOnly cookie (API) -----
 builder.Services
