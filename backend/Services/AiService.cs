@@ -17,30 +17,36 @@ public class AiService
 
     private static readonly string[] RedFlagKeywords =
     {
-        // Heavy bleeding
-        "heavy bleeding", "soaking through", "clots the size", "bleeding too much",
-        "\u0927\u0947\u0930\u0948 \u0930\u0915\u094d\u0924", "\u0927\u0947\u0930\u0948 \u092c\u0917\u093f\u0930\u0939\u0947\u0915\u094b", "\u0930\u0915\u094d\u0924\u0936\u094d\u0930\u093e\u0935 \u0927\u0947\u0930\u0948",
+        // Heavy bleeding — many natural phrasings, users rarely use clinical terms
+        "heavy bleeding", "bleeding heavily", "bleeding very heavily", "bleeding a lot", "bleeding so much",
+        "soaking through", "clots the size", "bleeding too much", "lots of blood", "a lot of blood",
+        "bleeding nonstop", "bleeding won't stop", "bleeding won’t stop", "bleeding not stopping", "blood loss",
+        "\u0927\u0947\u0930\u0948 \u0930\u0915\u094d\u0924", "\u0927\u0947\u0930\u0948 \u092c\u0917\u093f\u0930\u0939\u0947\u0915\u094b", "\u0930\u0915\u094d\u0924\u0936\u094d\u0930\u093e\u0935 \u0927\u0947\u0930\u0948", "\u0930\u0915\u094d\u0924 \u092c\u0928\u094d\u0926 \u0939\u0941\u0926\u0948\u0928",
+        // Any bleeding mentioned with dizziness/fainting/pregnancy = urgent combination
+        "bleeding and dizzy", "dizzy and bleeding", "bleeding and faint", "bleeding while pregnant", "bleeding and pregnant",
         // Bleeding in pregnancy
-        "bleeding and pregnant", "pregnant and bleeding", "bleeding during pregnancy", "spotting during pregnancy",
+        "bleeding during pregnancy", "spotting during pregnancy",
         "\u0917\u0930\u094d\u092d\u093e\u0935\u0938\u094d\u0925\u093e\u092e\u093e \u0930\u0915\u094d\u0924", "\u0917\u0930\u094d\u092d\u093e\u0935\u0938\u094d\u0925\u093e\u092e\u093e \u092c\u0917\u093f\u0930\u0939\u0947\u0915\u094b",
         // Severe abdominal pain
-        "severe abdominal pain", "severe stomach pain", "unbearable pain", "severe cramps",
+        "severe abdominal pain", "severe stomach pain", "unbearable pain", "severe cramps", "excruciating pain",
         "\u0915\u0921\u093e \u092a\u0947\u091f \u0926\u0941\u0916\u093e\u0907", "\u0905\u0938\u0939\u094d\u092f \u0926\u0941\u0916\u093e\u0907",
         // Reduced fetal movement
-        "reduced fetal movement", "baby not moving", "less fetal movement", "fewer kicks",
-        "baby movement stopped", "movement stopped", "stopped moving", "no kicks",
+        "reduced fetal movement", "baby not moving", "less fetal movement", "fewer kicks", "no kicks", "kicks stopped",
+        "baby movement stopped", "movement stopped", "stopped moving", "not moving since",
         "\u092c\u091a\u094d\u091a\u093e \u091a\u0932\u094d\u0926\u0948\u0928", "\u092c\u091a\u094d\u091a\u093e\u0915\u094b \u091a\u093e\u0932 \u0918\u091f\u094d\u092f\u094b",
         // Severe headache / blurred vision
-        "severe headache", "blurred vision", "worst headache", "vision problems",
+        "severe headache", "blurred vision", "worst headache", "vision problems", "can't see properly", "cannot see properly",
         "\u0915\u0921\u093e \u091f\u093e\u0909\u0915\u094b \u0926\u0941\u0916\u093e\u0907", "\u0906\u0901\u0916\u093e \u0927\u092e\u093f\u0932\u094b",
         // Seizures
         "seizure", "convulsion", "fitting", "fits", "\u092e\u093f\u0930\u094d\u0917\u0940",
         // Fluid leaking
-        "water broke", "fluid leaking", "amniotic fluid", "\u092a\u093e\u0928\u0940 \u092b\u0941\u091f\u094d\u092f\u094b", "\u092a\u093e\u0928\u0940 \u092d\u093e\u0917\u094d\u092f\u094b",
+        "water broke", "fluid leaking", "amniotic fluid", "water leaking", "leaking fluid",
+        "\u092a\u093e\u0928\u0940 \u092b\u0941\u091f\u094d\u092f\u094b", "\u092a\u093e\u0928\u0940 \u092d\u093e\u0917\u094d\u092f\u094b",
         // Fever after delivery
         "fever after delivery", "fever after birth", "postpartum fever", "\u0938\u0941\u0924\u094d\u0915\u0947\u0930\u0940 \u091c\u094d\u0935\u0930\u094b",
-        // Fainting
+        // Fainting / dizziness combos
         "fainted", "fainting", "passed out", "unconscious", "\u092c\u0947\u0939\u094b\u0936",
+        "dizzy and pregnant", "feeling dizzy and",
         // Self-harm
         "self harm", "self-harm", "kill myself", "suicide", "end my life", "hurt myself", "\u0906\u0924\u094d\u092e\u0939\u0924\u094d\u092f\u093e"
     };
