@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, Sparkles, Stethoscope, UserRound, Users } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Bell, LogOut, Sparkles, Stethoscope, UserRound, Users } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 
 const LINKS = [
@@ -13,7 +14,8 @@ const LINKS = [
 ];
 
 export default function MorePage() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const router = useRouter();
   if (!user) return null;
 
   return (
@@ -23,8 +25,8 @@ export default function MorePage() {
           {user.name.split(" ").map((p) => p[0]).slice(0, 2).join("")}
         </span>
         <div className="min-w-0">
-          <h1 className="text-lg font-bold text-gray-900 truncate">{user.name}</h1>
-          <p className="text-xs text-gray-400 truncate">{user.email}</p>
+          <h1 className="text-lg font-bold truncate">{user.name}</h1>
+          <p className="text-xs text-ink/45 truncate">{user.email}</p>
         </div>
       </div>
 
@@ -33,18 +35,30 @@ export default function MorePage() {
           <Link
             key={href}
             href={href}
-            className="rounded-2xl border border-gray-100 bg-white p-4 active:scale-[0.98] transition-transform"
+            className="rounded-2xl border border-line bg-white p-4 active:scale-[0.98] transition-transform"
           >
             <span className="w-9 h-9 rounded-xl bg-accent-soft text-accent flex items-center justify-center">
               <Icon className="w-4 h-4" aria-hidden />
             </span>
-            <p className="mt-2.5 text-sm font-semibold text-gray-900 leading-tight">{label}</p>
-            <p className="text-[11px] text-gray-400 mt-0.5">{desc}</p>
+            <p className="mt-2.5 text-sm font-semibold leading-tight">{label}</p>
+            <p className="text-[11px] text-ink/40 mt-0.5">{desc}</p>
           </Link>
         ))}
       </div>
 
-      <p className="text-[11px] text-gray-400 text-center pt-2">
+      <button
+        type="button"
+        onClick={async () => {
+          await logout();
+          router.push("/login");
+        }}
+        className="w-full flex items-center gap-3 rounded-2xl border border-rust/20 bg-rust-soft px-4 py-3.5 text-sm font-semibold text-rust active:scale-[0.99] transition-transform"
+      >
+        <LogOut className="w-4 h-4" aria-hidden />
+        Log out
+      </button>
+
+      <p className="text-[11px] text-ink/40 text-center pt-2 leading-relaxed">
         SathiCare · care with compassion · Saathi AI powered by GPT
       </p>
     </div>
