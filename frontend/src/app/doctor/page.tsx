@@ -121,7 +121,7 @@ export default function DoctorDashboard() {
                   </p>
                 </div>
                 <Link href={`/consultations/${a.id}/chat`}
-                  className="rounded-xl bg-[#FF6B9D] px-4 py-2 text-sm font-semibold text-white hover:bg-[#f43f8e] inline-flex items-center gap-1.5">
+                  className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong inline-flex items-center gap-1.5">
                   <MessageSquare className="w-4 h-4" aria-hidden /> Open chat
                 </Link>
               </li>

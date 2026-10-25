@@ -65,12 +65,12 @@ export default function FindCarePage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" aria-hidden />
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search facilities…" aria-label="Search facilities"
-            className="w-full rounded-xl border border-gray-200 bg-white pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]" />
+            className="w-full rounded-xl border border-gray-200 bg-white pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
         </div>
         <div className="flex gap-1.5 overflow-x-auto">
           {["all", "Hospital", "Clinic", "PHC", "Maternity"].map((t) => (
             <button key={t} type="button" onClick={() => setType(t)}
-              className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium border ${type === t ? "bg-[#FF6B9D] border-[#FF6B9D] text-white" : "border-gray-200 bg-white text-gray-600"}`}>
+              className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium border ${type === t ? "bg-accent border-accent text-white" : "border-gray-200 bg-white text-gray-600"}`}>
               {t === "PHC" ? "Health post" : t === "all" ? "All types" : t}
             </button>
           ))}
@@ -78,16 +78,16 @@ export default function FindCarePage() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-16"><Loader2 className="w-7 h-7 text-[#FF6B9D] animate-spin" aria-hidden /></div>
+        <div className="flex justify-center py-16"><Loader2 className="w-7 h-7 text-accent animate-spin" aria-hidden /></div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="space-y-3">
             {facilities.map((f) => (
               <button key={f.id} type="button" onClick={() => void openFacility(f)}
-                className={`w-full text-left rounded-2xl border bg-white p-5 transition-colors ${selected?.id === f.id ? "border-[#FF6B9D]" : "border-gray-100 hover:border-gray-200"}`}>
+                className={`w-full text-left rounded-2xl border bg-white p-5 transition-colors ${selected?.id === f.id ? "border-accent" : "border-gray-100 hover:border-gray-200"}`}>
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <span className="w-10 h-10 rounded-xl bg-[#FFE9F0] text-[#c2446f] flex items-center justify-center shrink-0">
+                    <span className="w-10 h-10 rounded-xl bg-accent-soft text-accent flex items-center justify-center shrink-0">
                       <Building2 className="w-5 h-5" aria-hidden />
                     </span>
                     <div className="min-w-0">
@@ -117,7 +117,7 @@ export default function FindCarePage() {
               <p className="text-sm text-gray-500 mt-1">{selected.type} · {selected.distanceKm} km away</p>
               <div className="mt-3 space-y-1.5 text-sm text-gray-600">
                 {selected.address && <p className="flex items-start gap-2"><MapPin className="w-4 h-4 mt-0.5 text-gray-400 shrink-0" aria-hidden />{selected.address}</p>}
-                {selected.phone && <p className="flex items-center gap-2"><Phone className="w-4 h-4 text-gray-400" aria-hidden /><a className="hover:text-[#e0447d]" href={`tel:${selected.phone}`}>{selected.phone}</a></p>}
+                {selected.phone && <p className="flex items-center gap-2"><Phone className="w-4 h-4 text-gray-400" aria-hidden /><a className="hover:text-accent" href={`tel:${selected.phone}`}>{selected.phone}</a></p>}
               </div>
 
               <h3 className="mt-6 text-sm font-semibold text-gray-900">
@@ -151,9 +151,9 @@ export default function FindCarePage() {
                 </div>
                 <textarea value={myComment} onChange={(e) => setMyComment(e.target.value)} rows={2}
                   placeholder="How was your visit? (optional)" aria-label="Review comment"
-                  className="mt-2.5 w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]" />
+                  className="mt-2.5 w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
                 <button type="button" onClick={() => void submitReview()} disabled={!myRating}
-                  className="mt-2.5 rounded-xl bg-[#FF6B9D] px-4 py-2 text-sm font-semibold text-white hover:bg-[#f43f8e] disabled:opacity-50">
+                  className="mt-2.5 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong disabled:opacity-50">
                   Post review
                 </button>
                 {msg && <p className="mt-2 text-xs text-gray-500">{msg}</p>}

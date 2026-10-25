@@ -7,7 +7,7 @@ import { useAuth } from "@/context/auth-context";
 
 interface Msg { id?: string; role: "user" | "assistant"; content: string; danger?: boolean; createdAt?: string }
 interface ChatMeta { id: string; title: string; updatedAt: string }
-interface ChatResponse { chatId: string; reply: string; redFlag: boolean; actions: { label: string; phone: string }[] }
+interface ChatResponse { chatId: string; reply: string; redFlag: boolean; actions: { label: string; phone: string }[]; source?: string }
 
 const SUGGESTIONS = [
   "How can I ease period cramps?",
@@ -89,7 +89,8 @@ export default function AiChatPage() {
           ...(redFlag && actions?.length ? { id: `actions-${Date.now()}` } : {}),
         },
       ]);
-      (window as unknown as { __lastActions?: { label: string; phone: string }[] }).__lastActions = redFlag ? actions : undefined;
+      (window as unknown as { __lastActions?: { label: string; phone: string }[]; __lastSource?: string }).__lastActions = redFlag ? actions : undefined;
+      (window as unknown as { __lastSource?: string }).__lastSource = res.data.source;
     } catch (e) {
       setMessages((prev) => [
         ...prev,
@@ -101,6 +102,7 @@ export default function AiChatPage() {
   };
 
   const lastActions = (window as unknown as { __lastActions?: { label: string; phone: string }[] }).__lastActions;
+  const lastSource = (window as unknown as { __lastSource?: string }).__lastSource;
 
   return (
     <div className="space-y-4">
@@ -117,7 +119,7 @@ export default function AiChatPage() {
           <button
             type="button"
             onClick={newChat}
-            className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#FF6B9D] px-3 py-2.5 text-sm font-semibold text-white hover:bg-[#f43f8e]"
+            className="w-full flex items-center justify-center gap-2 rounded-xl bg-accent px-3 py-2.5 text-sm font-semibold text-white hover:bg-accent-strong"
           >
             <Plus className="w-4 h-4" aria-hidden /> New chat
           </button>
@@ -131,7 +133,7 @@ export default function AiChatPage() {
                     type="button"
                     onClick={() => void openChat(c.id)}
                     className={`flex-1 min-w-0 text-left px-3 py-2 rounded-lg text-xs truncate ${
-                      activeChat === c.id ? "bg-[#FFE9F0] text-[#c2446f] font-medium" : "text-gray-600 hover:bg-gray-50"
+                      activeChat === c.id ? "bg-accent-soft text-accent font-medium" : "text-gray-600 hover:bg-gray-50"
                     }`}
                   >
                     {c.title}
@@ -155,12 +157,14 @@ export default function AiChatPage() {
         {/* Chat area */}
         <section className="rounded-2xl border border-gray-100 bg-white flex flex-col h-[560px]">
           <div className="flex items-center gap-2.5 px-4 py-3 border-b border-gray-100">
-            <span className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#FF6B9D] to-[#7C3AED] text-white flex items-center justify-center">
+            <span className="w-8 h-8 rounded-xl bg-accent text-white flex items-center justify-center">
               <MessageCircleHeart className="w-4 h-4" aria-hidden />
             </span>
             <div>
               <p className="text-sm font-semibold text-gray-900">Saathi</p>
-              <p className="text-[11px] text-gray-400">General guidance · not a medical diagnosis</p>
+              <p className="text-[11px] text-gray-400">
+                {lastSource === "ai" ? "Powered by GPT · general guidance, not a diagnosis" : "General guidance · not a medical diagnosis"}
+              </p>
             </div>
           </div>
 
@@ -174,7 +178,7 @@ export default function AiChatPage() {
                       key={s}
                       type="button"
                       onClick={() => void send(s)}
-                      className="rounded-xl border border-gray-200 px-3.5 py-2.5 text-xs text-gray-600 hover:border-[#FF6B9D] hover:text-[#c2446f] transition-colors"
+                      className="rounded-xl border border-gray-200 px-3.5 py-2.5 text-xs text-gray-600 hover:border-accent hover:text-accent transition-colors"
                     >
                       {s}
                     </button>
@@ -188,7 +192,7 @@ export default function AiChatPage() {
                 <div
                   className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap ${
                     m.role === "user"
-                      ? "bg-[#FF6B9D] text-white rounded-br-md"
+                      ? "bg-accent text-white rounded-br-md"
                       : m.danger
                         ? "bg-red-50 border border-red-200 text-red-800 rounded-bl-md"
                         : "bg-gray-100 text-gray-800 rounded-bl-md"
@@ -243,13 +247,13 @@ export default function AiChatPage() {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your question…"
               autoComplete="off"
-              className="flex-1 rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]"
+              className="flex-1 rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
             />
             <button
               type="submit"
               disabled={!input.trim() || sending}
               aria-label="Send message"
-              className="rounded-xl bg-[#FF6B9D] px-4 text-white hover:bg-[#f43f8e] disabled:opacity-50"
+              className="rounded-xl bg-accent px-4 text-white hover:bg-accent-strong disabled:opacity-50"
             >
               <Send className="w-4 h-4" aria-hidden />
             </button>

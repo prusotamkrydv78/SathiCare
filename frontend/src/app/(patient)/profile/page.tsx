@@ -81,7 +81,7 @@ export default function ProfilePage() {
   };
 
   if (loading || !data) {
-    return <div className="flex justify-center py-20"><Loader2 className="w-7 h-7 text-[#FF6B9D] animate-spin" aria-hidden /></div>;
+    return <div className="flex justify-center py-20"><Loader2 className="w-7 h-7 text-accent animate-spin" aria-hidden /></div>;
   }
 
   return (
@@ -99,7 +99,7 @@ export default function ProfilePage() {
 
       <section className="rounded-2xl border border-gray-100 bg-white p-6">
         <div className="flex items-center gap-4">
-          <span className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#FF6B9D] to-[#7C3AED] text-white flex items-center justify-center font-bold text-lg">
+          <span className="w-14 h-14 rounded-2xl bg-accent text-white flex items-center justify-center font-bold text-lg">
             {name.split(" ").map((p) => p[0]).slice(0, 2).join("")}
           </span>
           <div>
@@ -113,17 +113,17 @@ export default function ProfilePage() {
           <div>
             <label htmlFor="p-name" className="block text-xs font-medium text-gray-500 mb-1.5">Name</label>
             <input id="p-name" value={name} onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]" />
+              className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
           </div>
           <div>
             <label htmlFor="p-phone" className="block text-xs font-medium text-gray-500 mb-1.5">Phone</label>
             <input id="p-phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+977 98…"
-              className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]" />
+              className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
           </div>
           <div>
             <label htmlFor="p-lang" className="block text-xs font-medium text-gray-500 mb-1.5">Language</label>
             <select id="p-lang" value={language} onChange={(e) => setLanguage(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]">
+              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent">
               <option value="english">English</option>
               <option value="nepali">नेपाली (Nepali)</option>
               <option value="maithili">Maithili</option>
@@ -132,7 +132,7 @@ export default function ProfilePage() {
           </div>
         </div>
         <button type="button" onClick={() => void saveBasic()} disabled={saving}
-          className="mt-4 rounded-xl bg-[#FF6B9D] px-4 py-2 text-sm font-semibold text-white hover:bg-[#f43f8e] disabled:opacity-60 inline-flex items-center gap-2">
+          className="mt-4 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong disabled:opacity-60 inline-flex items-center gap-2">
           <Save className="w-4 h-4" aria-hidden /> Save profile
         </button>
       </section>
@@ -145,12 +145,12 @@ export default function ProfilePage() {
           <div>
             <label htmlFor="h-age" className="block text-xs font-medium text-gray-500 mb-1.5">Age</label>
             <input id="h-age" type="number" value={age} onChange={(e) => setAge(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]" />
+              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
           </div>
           <div>
             <label htmlFor="h-blood" className="block text-xs font-medium text-gray-500 mb-1.5">Blood group</label>
             <select id="h-blood" value={bloodGroup} onChange={(e) => setBloodGroup(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]">
+              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent">
               <option value="">—</option>
               {BLOOD_GROUPS.map((b) => <option key={b}>{b}</option>)}
             </select>
@@ -158,12 +158,12 @@ export default function ProfilePage() {
           <div>
             <label htmlFor="h-height" className="block text-xs font-medium text-gray-500 mb-1.5 flex items-center gap-1"><Ruler className="w-3 h-3" aria-hidden /> Height (cm)</label>
             <input id="h-height" type="number" value={heightCm} onChange={(e) => setHeightCm(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]" />
+              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
           </div>
           <div>
             <label htmlFor="h-weight" className="block text-xs font-medium text-gray-500 mb-1.5 flex items-center gap-1"><Scale className="w-3 h-3" aria-hidden /> Weight (kg)</label>
             <input id="h-weight" type="number" value={weightKg} onChange={(e) => setWeightKg(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]" />
+              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
           </div>
         </div>
 
@@ -175,7 +175,7 @@ export default function ProfilePage() {
               return (
                 <button key={c} type="button"
                   onClick={() => setConditions((prev) => on ? prev.filter((x) => x !== c) : [...prev, c])}
-                  className={`rounded-full px-3 py-1 text-xs font-medium border ${on ? "bg-[#FF6B9D] border-[#FF6B9D] text-white" : "border-gray-200 text-gray-600"}`}>
+                  className={`rounded-full px-3 py-1 text-xs font-medium border ${on ? "bg-accent border-accent text-white" : "border-gray-200 text-gray-600"}`}>
                   {c}
                 </button>
               );
@@ -187,7 +187,7 @@ export default function ProfilePage() {
           <label htmlFor="h-notes" className="block text-xs font-medium text-gray-500 mb-1.5">Notes for doctors</label>
           <textarea id="h-notes" rows={2} value={notes} onChange={(e) => setNotes(e.target.value)}
             placeholder="Anything a doctor should know…"
-            className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]" />
+            className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
         </div>
 
         <button type="button" onClick={() => void saveHealth()} disabled={saving}

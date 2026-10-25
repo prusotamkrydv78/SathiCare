@@ -125,7 +125,7 @@ export default function ConsultationsPage() {
               type="button"
               onClick={() => setTab(t)}
               aria-pressed={tab === t}
-              className={`px-4 py-1.5 rounded-lg font-medium capitalize ${tab === t ? "bg-[#FF6B9D] text-white" : "text-gray-600 hover:bg-gray-50"}`}
+              className={`px-4 py-1.5 rounded-lg font-medium capitalize ${tab === t ? "bg-accent text-white" : "text-gray-600 hover:bg-gray-50"}`}
             >
               {t === "doctors" ? "Find doctors" : "My appointments"}
             </button>
@@ -135,7 +135,7 @@ export default function ConsultationsPage() {
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <Loader2 className="w-7 h-7 text-[#FF6B9D] animate-spin" aria-hidden />
+          <Loader2 className="w-7 h-7 text-accent animate-spin" aria-hidden />
         </div>
       ) : tab === "doctors" ? (
         <>
@@ -147,7 +147,7 @@ export default function ConsultationsPage() {
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by name or specialty…"
                 aria-label="Search doctors"
-                className="w-full rounded-xl border border-gray-200 bg-white pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]"
+                className="w-full rounded-xl border border-gray-200 bg-white pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
               />
             </div>
             <div className="flex gap-1.5 overflow-x-auto pb-1">
@@ -157,7 +157,7 @@ export default function ConsultationsPage() {
                   type="button"
                   onClick={() => setSpecialization(s)}
                   className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium border ${
-                    specialization === s ? "bg-[#FF6B9D] border-[#FF6B9D] text-white" : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                    specialization === s ? "bg-accent border-accent text-white" : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
                   }`}
                 >
                   {s}
@@ -170,12 +170,12 @@ export default function ConsultationsPage() {
             {doctors.map((d) => (
               <article key={d.id} className="rounded-2xl border border-gray-100 bg-white p-5 flex flex-col">
                 <div className="flex items-start gap-4">
-                  <span className="w-12 h-12 rounded-2xl bg-[#FFE9F0] text-[#c2446f] flex items-center justify-center font-bold">
+                  <span className="w-12 h-12 rounded-2xl bg-accent-soft text-accent flex items-center justify-center font-bold">
                     {d.name.replace("Dr. ", "").split(" ").map((p) => p[0]).slice(0, 2).join("")}
                   </span>
                   <div className="flex-1 min-w-0">
                     <h2 className="font-semibold text-gray-900 truncate">{d.name}</h2>
-                    <p className="text-sm text-[#c2446f]">{d.specialization}</p>
+                    <p className="text-sm text-accent">{d.specialization}</p>
                     <p className="text-xs text-gray-400 mt-0.5">{d.experienceYears} yrs · {d.languages.join(", ")}</p>
                   </div>
                   <span className="flex items-center gap-1 text-sm font-semibold text-amber-600 shrink-0">
@@ -189,7 +189,7 @@ export default function ConsultationsPage() {
                   <button
                     type="button"
                     onClick={() => void openBooking(d)}
-                    className="inline-flex items-center gap-2 rounded-xl bg-[#FF6B9D] px-4 py-2 text-sm font-semibold text-white hover:bg-[#f43f8e]"
+                    className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-strong"
                   >
                     <CalendarPlus className="w-4 h-4" aria-hidden /> Book
                   </button>
@@ -244,7 +244,7 @@ export default function ConsultationsPage() {
                           {a.status === "accepted" && (
                             <Link
                               href={`/consultations/${a.id}/chat`}
-                              className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#FF6B9D] px-3.5 py-2 text-xs font-semibold text-white hover:bg-[#f43f8e]"
+                              className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-accent px-3.5 py-2 text-xs font-semibold text-white hover:bg-accent-strong"
                             >
                               <MessageSquare className="w-3.5 h-3.5" aria-hidden /> Chat
                             </Link>
@@ -286,7 +286,7 @@ export default function ConsultationsPage() {
                 <button
                   type="button"
                   onClick={() => { setBookingDoctor(null); setTab("appointments"); }}
-                  className="mt-5 rounded-xl bg-[#FF6B9D] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#f43f8e]"
+                  className="mt-5 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-white hover:bg-accent-strong"
                 >
                   View my appointments
                 </button>
@@ -296,7 +296,7 @@ export default function ConsultationsPage() {
                 <div className="flex items-start justify-between">
                   <div>
                     <h2 className="font-bold text-gray-900">{bookingDoctor.name}</h2>
-                    <p className="text-sm text-[#c2446f]">{bookingDoctor.specialization} · NPR {bookingDoctor.consultationFee}</p>
+                    <p className="text-sm text-accent">{bookingDoctor.specialization} · NPR {bookingDoctor.consultationFee}</p>
                   </div>
                   <button type="button" onClick={() => setBookingDoctor(null)} aria-label="Close" className="p-1.5 text-gray-400 hover:bg-gray-100 rounded-lg">
                     <X className="w-4 h-4" aria-hidden />
@@ -312,7 +312,7 @@ export default function ConsultationsPage() {
                       value={bookingDate}
                       min={new Date().toISOString().slice(0, 10)}
                       onChange={(e) => void pickDate(e.target.value)}
-                      className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]"
+                      className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
                     />
                   </div>
 
@@ -327,7 +327,7 @@ export default function ConsultationsPage() {
                               type="button"
                               onClick={() => setSlot(s)}
                               className={`rounded-xl border px-2 py-2 text-xs font-medium ${
-                                slot === s ? "bg-[#FF6B9D] border-[#FF6B9D] text-white" : "border-gray-200 text-gray-600 hover:border-gray-300"
+                                slot === s ? "bg-accent border-accent text-white" : "border-gray-200 text-gray-600 hover:border-gray-300"
                               }`}
                             >
                               {s}
@@ -348,7 +348,7 @@ export default function ConsultationsPage() {
                       value={reason}
                       onChange={(e) => setReason(e.target.value)}
                       placeholder="Describe your symptoms or question…"
-                      className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]"
+                      className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
                     />
                   </div>
 
@@ -358,7 +358,7 @@ export default function ConsultationsPage() {
                     type="button"
                     onClick={() => void book()}
                     disabled={!bookingDate || !slot || !reason.trim() || bookingBusy}
-                    className="w-full rounded-xl bg-[#FF6B9D] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#f43f8e] disabled:opacity-50 inline-flex items-center justify-center gap-2"
+                    className="w-full rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white hover:bg-accent-strong disabled:opacity-50 inline-flex items-center justify-center gap-2"
                   >
                     {bookingBusy && <Loader2 className="w-4 h-4 animate-spin" aria-hidden />}
                     Send request

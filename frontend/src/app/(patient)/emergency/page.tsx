@@ -198,7 +198,7 @@ export default function SosPage() {
             <button
               type="button"
               onClick={() => setShowForm((s) => !s)}
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-[#e0447d] hover:underline">
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline">
               <UserPlus className="w-4 h-4" aria-hidden /> Add
             </button>
           )}
@@ -210,17 +210,17 @@ export default function SosPage() {
             onSubmit={(e) => { e.preventDefault(); void addContact(); }}
           >
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" required aria-label="Contact name"
-              className="rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]" />
+              className="rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
             <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+977 98XXXXXXXX" required aria-label="Phone number"
-              className="rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]" />
+              className="rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
             <select value={relation} onChange={(e) => setRelation(e.target.value)} aria-label="Relation"
-              className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]">
+              className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent">
               {["Family", "Friend", "Husband", "Mother", "Father", "Sister", "Neighbor", "Doctor"].map((r) => (
                 <option key={r}>{r}</option>
               ))}
             </select>
             <button type="submit" disabled={adding}
-              className="rounded-xl bg-[#FF6B9D] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#f43f8e] disabled:opacity-60 inline-flex items-center gap-1.5">
+              className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white hover:bg-accent-strong disabled:opacity-60 inline-flex items-center gap-1.5">
               {adding ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden /> : <Plus className="w-4 h-4" aria-hidden />} Save
             </button>
             {formError && <p role="alert" className="sm:col-span-4 text-xs text-red-600">{formError}</p>}
@@ -236,7 +236,7 @@ export default function SosPage() {
             {contacts.map((c) => (
               <li key={c.id} className="py-3 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
-                  <span className="w-9 h-9 rounded-xl bg-[#FFE9F0] text-[#c2446f] flex items-center justify-center text-xs font-bold shrink-0">
+                  <span className="w-9 h-9 rounded-xl bg-accent-soft text-accent flex items-center justify-center text-xs font-bold shrink-0">
                     {c.name.split(" ").map((p) => p[0]).slice(0, 2).join("")}
                   </span>
                   <div className="min-w-0">

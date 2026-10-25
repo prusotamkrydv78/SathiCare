@@ -1,16 +1,46 @@
 @import "tailwindcss";
 
+/*
+  SathiCare design language — "warm editorial", built for a young woman's private companion.
+  Not-AI-look rules: no gradients, no purple, no emoji in headings, one accent hue,
+  serif display type on paper tones, hairline borders, tight 12px radii.
+*/
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #fbfaf7;
+  --ink: #201a15;
+  --accent: #b4315f;        /* deep rose — readable on paper (AA) */
+  --accent-strong: #99274f;
+  --accent-soft: #f9edf1;   /* blush surface */
+  --sage: #3f6a4f;
+  --sage-soft: #edf3ee;
+  --amber-strong: #92600a;
+  --amber-soft: #fbf3e4;
+  --rust: #b3261e;
+  --rust-soft: #fceeed;
+  --line: #e9e4dc;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-sage: var(--sage);
+  --color-sage-soft: var(--sage-soft);
+  --color-warn: var(--amber-strong);
+  --color-warn-soft: var(--amber-soft);
+  --color-rust: var(--rust);
+  --color-rust-soft: var(--rust-soft);
+  --color-line: var(--line);
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, serif;
 }
 
-/* SathiCare is a light-themed app: page backgrounds and text colors
-   come from Tailwind utilities in each layout, not forced here. */
+html {
+  background: var(--paper);
+}
+
+::selection {
+  background: var(--accent-soft);
+}

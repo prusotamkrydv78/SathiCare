@@ -14,12 +14,17 @@ public interface IHealthService
     Task<object> DailyTipAsync();
 }
 
-/// <summary>Saathi AI — deterministic mock with danger-sign escalation, persisted history.</summary>
+/// <summary>Saathi AI — real GPT replies (gpt-6-luna) with a deterministic fallback; danger-sign escalation always runs first.</summary>
 public class HealthService : IHealthService
 {
     private readonly IUnitOfWork _uow;
+    private readonly AiService _ai;
 
-    public HealthService(IUnitOfWork uow) => _uow = uow;
+    public HealthService(IUnitOfWork uow, AiService ai)
+    {
+        _uow = uow;
+        _ai = ai;
+    }
 
     public async Task<object> ChatAsync(Guid userId, Guid? chatId, string message)
     {
@@ -42,7 +47,7 @@ public class HealthService : IHealthService
             await _uow.HealthChats.AddAsync(chat);
         }
 
-        var ai = AiService.Reply(message);
+        var ai = await _ai.ChatAsync(message);
         await _uow.HealthChatMessages.AddRangeAsync(new[]
         {
             new HealthChatMessage { ChatId = chat.Id, Role = "user", Content = message },
@@ -58,7 +63,8 @@ public class HealthService : IHealthService
             reply = ai.Reply,
             redFlag = ai.RedFlag,
             actions = ai.Actions,
-            dangerSigns = ai.Matches
+            dangerSigns = ai.Matches,
+            source = ai.Source
         };
     }
 
@@ -91,14 +97,15 @@ public class HealthService : IHealthService
 
     public async Task<object> AnalyzeSymptomsAsync(Guid userId, List<string> symptoms, string? notes)
     {
-        var ai = AiService.AnalyzeSymptoms(symptoms, notes);
+        var ai = await _ai.SymptomAdviceAsync(symptoms, notes);
         return new
         {
             analyzed = symptoms,
             severity = ai.RedFlag ? "emergency" : "mild",
             advice = ai.Reply,
             redFlag = ai.RedFlag,
-            actions = ai.Actions
+            actions = ai.Actions,
+            source = ai.Source
         };
     }
 

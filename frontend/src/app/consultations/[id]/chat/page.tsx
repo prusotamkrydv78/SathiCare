@@ -129,7 +129,7 @@ export default function ConsultationChatPage() {
   const selfId = isDoctor ? user?.doctorId : user?.id;
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] flex flex-col">
+    <div className="min-h-screen bg-paper flex flex-col">
       <header className="bg-white border-b border-gray-100">
         <div className="max-w-3xl mx-auto flex items-center justify-between px-4 h-16">
           <div className="flex items-center gap-3 min-w-0">
@@ -141,7 +141,7 @@ export default function ConsultationChatPage() {
             >
               <ArrowLeft className="w-5 h-5" aria-hidden />
             </button>
-            <span className="w-10 h-10 rounded-full bg-[#FF6B9D]/15 text-[#c2446f] flex items-center justify-center font-bold text-sm shrink-0">
+            <span className="w-10 h-10 rounded-full bg-accent/15 text-accent flex items-center justify-center font-bold text-sm shrink-0">
               {peerName?.split(" ").map((p) => p[0]).slice(0, 2).join("") || "?"}
             </span>
             <div className="min-w-0">
@@ -174,7 +174,7 @@ export default function ConsultationChatPage() {
           {info && (
             <div className="rounded-xl bg-white border border-gray-100 px-4 py-3 text-xs text-gray-500 flex items-center justify-between">
               <span className="flex items-center gap-2">
-                <MessageSquare className="w-3.5 h-3.5 text-[#FF6B9D]" aria-hidden />
+                <MessageSquare className="w-3.5 h-3.5 text-accent" aria-hidden />
                 {new Date(info.date).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" })} · {info.time}
               </span>
               <span className="capitalize font-medium">{info.status}</span>
@@ -187,7 +187,7 @@ export default function ConsultationChatPage() {
             return (
               <div key={m.id ?? i} className={`flex ${own ? "justify-end" : "justify-start"}`}>
                 <div className={`max-w-[78%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                  own ? "bg-[#FF6B9D] text-white rounded-br-md" : "bg-white border border-gray-100 text-gray-800 rounded-bl-md"
+                  own ? "bg-accent text-white rounded-br-md" : "bg-white border border-gray-100 text-gray-800 rounded-bl-md"
                 }`}>
                   {!own && m.senderName && (
                     <p className="text-[11px] font-semibold text-gray-400 mb-0.5">{m.senderName}</p>
@@ -236,13 +236,13 @@ export default function ConsultationChatPage() {
             placeholder={status === "closed" ? "Consultation ended" : "Type a message…"}
             disabled={status !== "connected"}
             autoComplete="off"
-            className="flex-1 rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D] disabled:bg-gray-50"
+            className="flex-1 rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:bg-gray-50"
           />
           <button
             type="submit"
             disabled={!input.trim() || sending || status !== "connected"}
             aria-label="Send message"
-            className="rounded-xl bg-[#FF6B9D] px-4 py-2.5 text-white hover:bg-[#f43f8e] disabled:opacity-50"
+            className="rounded-xl bg-accent px-4 py-2.5 text-white hover:bg-accent-strong disabled:opacity-50"
           >
             {sending ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden /> : <Send className="w-4 h-4" aria-hidden />}
           </button>

@@ -56,7 +56,7 @@ export default function NotificationsPage() {
           <div className="flex rounded-xl border border-gray-200 bg-white p-1 text-xs">
             {(["all", "unread"] as const).map((f) => (
               <button key={f} type="button" onClick={() => setFilter(f)} aria-pressed={filter === f}
-                className={`px-3 py-1.5 rounded-lg font-medium capitalize ${filter === f ? "bg-[#FF6B9D] text-white" : "text-gray-600"}`}>
+                className={`px-3 py-1.5 rounded-lg font-medium capitalize ${filter === f ? "bg-accent text-white" : "text-gray-600"}`}>
                 {f}
               </button>
             ))}
@@ -73,14 +73,14 @@ export default function NotificationsPage() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-16"><Loader2 className="w-7 h-7 text-[#FF6B9D] animate-spin" aria-hidden /></div>
+        <div className="flex justify-center py-16"><Loader2 className="w-7 h-7 text-accent animate-spin" aria-hidden /></div>
       ) : items.length ? (
         <ul className="space-y-2.5">
           {items.map((n) => {
             const Icon = ICONS[n.type] ?? Bell;
             return (
-              <li key={n.id} className={`rounded-2xl border bg-white p-4 flex items-start gap-3.5 ${n.isRead ? "border-gray-100" : "border-[#FF6B9D]/30 bg-[#FFF5F8]"}`}>
-                <span className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${n.isRead ? "bg-gray-100 text-gray-400" : "bg-[#FFE9F0] text-[#c2446f]"}`}>
+              <li key={n.id} className={`rounded-2xl border bg-white p-4 flex items-start gap-3.5 ${n.isRead ? "border-gray-100" : "border-accent/30 bg-accent-soft/50"}`}>
+                <span className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${n.isRead ? "bg-gray-100 text-gray-400" : "bg-accent-soft text-accent"}`}>
                   <Icon className="w-5 h-5" aria-hidden />
                 </span>
                 <div className="flex-1 min-w-0">

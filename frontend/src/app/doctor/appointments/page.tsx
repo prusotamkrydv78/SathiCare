@@ -109,7 +109,7 @@ export default function DoctorAppointmentsPage() {
                   {a.status === "accepted" && (
                     <>
                       <Link href={`/consultations/${a.id}/chat`}
-                        className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#FF6B9D] px-3.5 py-2 text-xs font-semibold text-white hover:bg-[#f43f8e]">
+                        className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-accent px-3.5 py-2 text-xs font-semibold text-white hover:bg-accent-strong">
                         <MessageSquare className="w-3.5 h-3.5" aria-hidden /> Chat
                       </Link>
                       <button type="button" onClick={() => openComplete(a)}

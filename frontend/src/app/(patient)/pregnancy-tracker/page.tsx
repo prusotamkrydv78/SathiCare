@@ -82,7 +82,7 @@ export default function PregnancyTrackerPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-3">
-        <Loader2 className="w-7 h-7 text-[#FF6B9D] animate-spin" aria-hidden />
+        <Loader2 className="w-7 h-7 text-accent animate-spin" aria-hidden />
         <p className="text-sm text-gray-500">Loading…</p>
       </div>
     );
@@ -101,10 +101,10 @@ export default function PregnancyTrackerPage() {
           </label>
           <input id="lmp" type="date" value={lmp} max={new Date().toISOString().slice(0, 10)}
             onChange={(e) => setLmp(e.target.value)}
-            className="mt-1.5 w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]" />
+            className="mt-1.5 w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
           <p className="mt-2 text-xs text-gray-400">We calculate your due date and week from this.</p>
           <button type="button" onClick={() => void start()} disabled={!lmp || busy}
-            className="mt-4 w-full rounded-xl bg-[#FF6B9D] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#f43f8e] disabled:opacity-60">
+            className="mt-4 w-full rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white hover:bg-accent-strong disabled:opacity-60">
             Start tracking
           </button>
         </section>
@@ -125,7 +125,7 @@ export default function PregnancyTrackerPage() {
         <p className="text-sm text-gray-500 mt-1">Day {current.day} of the week · Trimester {current.trimester}</p>
       </div>
 
-      <section className="rounded-2xl bg-gradient-to-br from-[#FF6B9D] to-[#7C3AED] text-white p-6 sm:p-8">
+      <section className="rounded-2xl bg-accent text-white p-6 sm:p-8">
         <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
           <div>
             <p className="text-white/75 text-xs uppercase tracking-wide font-semibold">Week</p>
@@ -149,7 +149,7 @@ export default function PregnancyTrackerPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <section className="rounded-2xl border border-gray-100 bg-white p-5 sm:p-6">
           <h2 className="font-semibold text-gray-900 flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[#FF6B9D]" aria-hidden /> This week ({insights?.thisWeekTip.weeks} weeks)
+            <Sparkles className="w-4 h-4 text-accent" aria-hidden /> This week ({insights?.thisWeekTip.weeks} weeks)
           </h2>
           <p className="mt-3 text-sm text-gray-600 leading-relaxed">{insights?.thisWeekTip.text}</p>
           {insights?.weightTrend && (
@@ -180,16 +180,16 @@ export default function PregnancyTrackerPage() {
           <div className="mt-4 flex gap-2">
             <input type="number" step="0.1" placeholder="Weight (kg)" value={weight}
               onChange={(e) => setWeight(e.target.value)} aria-label="Weight in kilograms"
-              className="flex-1 rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]" />
+              className="flex-1 rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
             <button type="button" onClick={() => void logWeight()} disabled={!weight || busy}
-              className="rounded-xl bg-[#FF6B9D] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#f43f8e] disabled:opacity-60">
+              className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white hover:bg-accent-strong disabled:opacity-60">
               Save
             </button>
           </div>
           <div className="mt-3 flex gap-2">
             <input placeholder="A note for today — symptoms, questions…" value={note}
               onChange={(e) => setNote(e.target.value)} aria-label="Daily note"
-              className="flex-1 rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]" />
+              className="flex-1 rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
             <button type="button" onClick={() => void saveNote()} disabled={!note.trim() || busy}
               className="rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-60">
               Note

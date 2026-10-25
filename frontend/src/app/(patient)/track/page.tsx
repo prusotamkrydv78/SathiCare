@@ -49,7 +49,7 @@ const SYMPTOMS = ["Cramps", "Headache", "Fatigue", "Bloating", "Back pain", "Ten
 const MOODS = ["Happy", "Calm", "Neutral", "Tired", "Sad", "Anxious", "Irritable"];
 
 const PHASES: Record<string, { label: string; icon: typeof Sun; tone: string }> = {
-  menstrual: { label: "Menstrual", icon: Moon, tone: "bg-[#FFE9F0] text-[#c2446f]" },
+  menstrual: { label: "Menstrual", icon: Moon, tone: "bg-accent-soft text-accent" },
   follicular: { label: "Follicular", icon: Sun, tone: "bg-amber-50 text-amber-700" },
   ovulation: { label: "Ovulation", icon: Flower2, tone: "bg-emerald-50 text-emerald-700" },
   luteal: { label: "Luteal", icon: Moon, tone: "bg-indigo-50 text-indigo-700" },
@@ -171,7 +171,7 @@ export default function PeriodTrackerPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-3">
-        <Loader2 className="w-7 h-7 text-[#FF6B9D] animate-spin" aria-hidden />
+        <Loader2 className="w-7 h-7 text-accent animate-spin" aria-hidden />
         <p className="text-sm text-gray-500">Loading your tracker…</p>
       </div>
     );
@@ -196,7 +196,7 @@ export default function PeriodTrackerPage() {
 
       {/* Current cycle + stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <section className="rounded-2xl bg-gradient-to-br from-[#FF6B9D] to-[#f43f8e] text-white p-6 md:col-span-1">
+        <section className="rounded-2xl bg-accent text-white p-6 md:col-span-1">
           {current ? (
             <>
               <p className="text-white/75 text-xs uppercase tracking-wide font-semibold">Cycle day</p>
@@ -224,7 +224,7 @@ export default function PeriodTrackerPage() {
           { label: "Regularity", value: stats ? stats.regularity : "—", icon: Activity },
         ].map((s) => (
           <section key={s.label} className="rounded-2xl border border-gray-100 bg-white p-6">
-            <s.icon className="w-5 h-5 text-[#FF6B9D]" aria-hidden />
+            <s.icon className="w-5 h-5 text-accent" aria-hidden />
             <p className="mt-3 text-xs uppercase tracking-wide text-gray-400 font-semibold">{s.label}</p>
             <p className="mt-1 text-xl font-bold text-gray-900 capitalize">{s.value}</p>
           </section>
@@ -255,7 +255,7 @@ export default function PeriodTrackerPage() {
               <div className="flex rounded-xl border border-gray-200 overflow-hidden">
                 {["light", "medium", "heavy"].map((f) => (
                   <button key={f} type="button" onClick={() => setFlow(f)}
-                    className={`flex-1 px-2 py-2 text-xs font-medium capitalize ${flow === f ? "bg-[#FF6B9D] text-white" : "text-gray-600 hover:bg-gray-50"}`}>
+                    className={`flex-1 px-2 py-2 text-xs font-medium capitalize ${flow === f ? "bg-accent text-white" : "text-gray-600 hover:bg-gray-50"}`}>
                     {f}
                   </button>
                 ))}
@@ -264,11 +264,11 @@ export default function PeriodTrackerPage() {
             <div>
               <label htmlFor="pain" className="block text-xs font-medium text-gray-500 mb-1.5">Pain level: {pain}/10</label>
               <input id="pain" type="range" min={0} max={10} value={pain} onChange={(e) => setPain(Number(e.target.value))}
-                className="w-full accent-[#FF6B9D]" />
+                className="w-full accent-accent" />
             </div>
             <div className="flex items-end">
               <button type="button" onClick={() => void startPeriod()} disabled={busy}
-                className="w-full rounded-xl bg-[#FF6B9D] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#f43f8e] disabled:opacity-60 inline-flex items-center justify-center gap-2">
+                className="w-full rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white hover:bg-accent-strong disabled:opacity-60 inline-flex items-center justify-center gap-2">
                 {busy && <Loader2 className="w-4 h-4 animate-spin" aria-hidden />} Start period today
               </button>
             </div>
@@ -280,7 +280,7 @@ export default function PeriodTrackerPage() {
       <section className="rounded-2xl border border-gray-100 bg-white p-5 sm:p-6">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold text-gray-900 flex items-center gap-2">
-            <CalendarDays className="w-4 h-4 text-[#FF6B9D]" aria-hidden /> Calendar
+            <CalendarDays className="w-4 h-4 text-accent" aria-hidden /> Calendar
           </h2>
           <div className="flex items-center gap-1">
             <button type="button" aria-label="Previous month" onClick={() => setMonthOffset((m) => m - 1)}
@@ -307,10 +307,10 @@ export default function PeriodTrackerPage() {
             return (
               <span key={key} title={mark === "period" ? "Period" : mark === "predicted" ? "Predicted" : undefined}
                 className={`h-9 flex items-center justify-center rounded-lg text-sm ${
-                  isToday ? "ring-2 ring-[#FF6B9D] ring-offset-1 font-bold" : ""
+                  isToday ? "ring-2 ring-accent ring-offset-1 font-bold" : ""
                 } ${
-                  mark === "period" ? "bg-[#FF6B9D] text-white"
-                  : mark === "predicted" ? "bg-[#FFE9F0] text-[#c2446f] border border-dashed border-[#FF6B9D]/50"
+                  mark === "period" ? "bg-accent text-white"
+                  : mark === "predicted" ? "bg-accent-soft text-accent border border-dashed border-accent/50"
                   : "text-gray-700"
                 }`}>
                 {dt.getUTCDate()}
@@ -319,9 +319,9 @@ export default function PeriodTrackerPage() {
           })}
         </div>
         <div className="mt-3 flex items-center gap-4 text-[11px] text-gray-500">
-          <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-[#FF6B9D] inline-block" aria-hidden /> period</span>
-          <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-[#FFE9F0] border border-dashed border-[#FF6B9D]/50 inline-block" aria-hidden /> predicted</span>
-          <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded ring-2 ring-[#FF6B9D] inline-block" aria-hidden /> today</span>
+          <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-accent inline-block" aria-hidden /> period</span>
+          <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-accent-soft border border-dashed border-accent/50 inline-block" aria-hidden /> predicted</span>
+          <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded ring-2 ring-accent inline-block" aria-hidden /> today</span>
         </div>
       </section>
 
@@ -371,7 +371,7 @@ export default function PeriodTrackerPage() {
                   <button key={s} type="button"
                     onClick={() => setSymptoms((prev) => on ? prev.filter((x) => x !== s) : [...prev, s])}
                     className={`rounded-full px-3 py-1 text-xs font-medium border transition-colors ${
-                      on ? "bg-[#FF6B9D] border-[#FF6B9D] text-white" : "border-gray-200 text-gray-600 hover:border-gray-300"
+                      on ? "bg-accent border-accent text-white" : "border-gray-200 text-gray-600 hover:border-gray-300"
                     }`}>
                     {s}
                   </button>
@@ -396,7 +396,7 @@ export default function PeriodTrackerPage() {
             <label htmlFor="log-notes" className="block text-xs font-medium text-gray-500 mb-1.5">Notes</label>
             <textarea id="log-notes" rows={2} value={notes} onChange={(e) => setNotes(e.target.value)}
               placeholder="Anything you want to remember about today…"
-              className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]" />
+              className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
           </div>
           <button type="button" onClick={() => void saveLog()} disabled={busy}
             className="mt-4 w-full rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-60">
@@ -421,7 +421,7 @@ export default function PeriodTrackerPage() {
                   </p>
                 </div>
                 <span className={`text-[10px] font-semibold uppercase rounded-full px-2 py-0.5 ${
-                  c.endDate ? "bg-gray-100 text-gray-500" : "bg-[#FFE9F0] text-[#c2446f]"
+                  c.endDate ? "bg-gray-100 text-gray-500" : "bg-accent-soft text-accent"
                 }`}>
                   {c.endDate ? "completed" : "active"}
                 </span>

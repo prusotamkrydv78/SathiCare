@@ -98,7 +98,7 @@ export default function ForumPage() {
           <p className="text-sm text-gray-500 mt-1">Ask, share and support each other — anonymously if you prefer.</p>
         </div>
         <button type="button" onClick={() => setShowCompose((s) => !s)}
-          className="rounded-xl bg-[#FF6B9D] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#f43f8e]">
+          className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white hover:bg-accent-strong">
           {showCompose ? "Close" : "Share something"}
         </button>
       </div>
@@ -106,16 +106,16 @@ export default function ForumPage() {
       {showCompose && (
         <section className="rounded-2xl border border-gray-100 bg-white p-5">
           <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title (optional)" aria-label="Post title"
-            className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]" />
+            className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
           <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={3} placeholder="What would you like to share?" aria-label="Post content"
-            className="mt-2.5 w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]" />
+            className="mt-2.5 w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
           <div className="mt-3 flex items-center justify-between">
             <label className="flex items-center gap-2 text-sm text-gray-600">
-              <input type="checkbox" checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)} className="accent-[#FF6B9D] w-4 h-4" />
+              <input type="checkbox" checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)} className="accent-accent w-4 h-4" />
               Post anonymously
             </label>
             <button type="button" onClick={() => void share()} disabled={!content.trim() || busy}
-              className="rounded-xl bg-[#FF6B9D] px-5 py-2 text-sm font-semibold text-white hover:bg-[#f43f8e] disabled:opacity-50 inline-flex items-center gap-2">
+              className="rounded-xl bg-accent px-5 py-2 text-sm font-semibold text-white hover:bg-accent-strong disabled:opacity-50 inline-flex items-center gap-2">
               {busy && <Loader2 className="w-4 h-4 animate-spin" aria-hidden />} Share
             </button>
           </div>
@@ -126,7 +126,7 @@ export default function ForumPage() {
         {CATEGORIES.map((c) => (
           <button key={c} type="button" onClick={() => setCategory(c)}
             className={`rounded-full px-3.5 py-1.5 text-xs font-medium border capitalize ${
-              category === c ? "bg-[#FF6B9D] border-[#FF6B9D] text-white" : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+              category === c ? "bg-accent border-accent text-white" : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
             }`}>
             {c.replace("-", " ")}
           </button>
@@ -142,14 +142,14 @@ export default function ForumPage() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-16"><Loader2 className="w-7 h-7 text-[#FF6B9D] animate-spin" aria-hidden /></div>
+        <div className="flex justify-center py-16"><Loader2 className="w-7 h-7 text-accent animate-spin" aria-hidden /></div>
       ) : (
         <div className="space-y-3">
           {posts.map((p) => (
             <article key={p.id} className="rounded-2xl border border-gray-100 bg-white p-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <span className="w-8 h-8 rounded-full bg-[#FFE9F0] text-[#c2446f] flex items-center justify-center">
+                  <span className="w-8 h-8 rounded-full bg-accent-soft text-accent flex items-center justify-center">
                     <UserRound className="w-4 h-4" aria-hidden />
                   </span>
                   <div className="min-w-0">
@@ -168,9 +168,9 @@ export default function ForumPage() {
 
               <div className="mt-4 pt-3 border-t border-gray-50 flex items-center gap-5 text-xs text-gray-500">
                 <button type="button" onClick={() => void like(p.id)}
-                  className={`inline-flex items-center gap-1.5 font-medium hover:text-[#e0447d] ${p.hasLiked ? "text-[#e0447d]" : ""}`}
+                  className={`inline-flex items-center gap-1.5 font-medium hover:text-accent ${p.hasLiked ? "text-accent" : ""}`}
                   aria-pressed={p.hasLiked} aria-label={p.hasLiked ? "Unlike" : "Like"}>
-                  <Heart className={`w-4 h-4 ${p.hasLiked ? "fill-[#FF6B9D]" : ""}`} aria-hidden /> {p.likesCount}
+                  <Heart className={`w-4 h-4 ${p.hasLiked ? "fill-accent" : ""}`} aria-hidden /> {p.likesCount}
                 </button>
                 <button type="button" onClick={() => void openPostComments(p.id)}
                   className="inline-flex items-center gap-1.5 font-medium hover:text-gray-800">
@@ -190,7 +190,7 @@ export default function ForumPage() {
                   <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); void addComment(p.id); }}>
                     <input value={commentDraft[p.id] ?? ""} onChange={(e) => setCommentDraft((prev) => ({ ...prev, [p.id]: e.target.value }))}
                       placeholder="Add a kind comment…" aria-label="Add comment"
-                      className="flex-1 rounded-xl border border-gray-200 px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B9D]" />
+                      className="flex-1 rounded-xl border border-gray-200 px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
                     <button type="submit" aria-label="Send comment" className="rounded-xl bg-gray-900 text-white px-3.5 hover:bg-gray-800">
                       <Send className="w-4 h-4" aria-hidden />
                     </button>
