@@ -16,6 +16,11 @@ public class Appointment
     public string? ConsultationNotes { get; set; }
     public string? Prescription { get; set; }
     public string? RejectionReason { get; set; }
+
+    /// <summary>Patient rating 1-5, set once after completion.</summary>
+    public int? Rating { get; set; }
+    public bool RatingGiven { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }

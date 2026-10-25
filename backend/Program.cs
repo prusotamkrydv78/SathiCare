@@ -22,6 +22,9 @@ builder.Services.AddScoped<IPeriodService, PeriodService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IPregnancyService, PregnancyService>();
 builder.Services.AddScoped<IHealthService, HealthService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IConsultationService, ConsultationService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
 // ----- Auth: JWT everywhere — from the Authorization header (SignalR hub) or the httpOnly cookie (API) -----
 builder.Services
@@ -73,6 +76,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<Microsoft.AspNetCore.SignalR.IUserIdProvider, SathiCare.Api.Hubs.SubUserIdProvider>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 

@@ -45,6 +45,12 @@ namespace SathiCare.Api.Migrations
                         .HasMaxLength(4000)
                         .HasColumnType("nvarchar(4000)");
 
+                    b.Property<int?>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("RatingGiven")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Reason")
                         .IsRequired()
                         .HasMaxLength(1000)

@@ -97,4 +97,15 @@ public class AuthController : ControllerBase
                    ?? throw ApiException.Unauthorized("Account not found");
         return Ok(ApiResult.Ok(UserDto.From(user)));
     }
+
+    /// <summary>Token for the SignalR hub (the hub lives on the API origin,
+    /// while the browser session cookie is first-party to the web origin).</summary>
+    [HttpPost("signalr-token")]
+    [Authorize]
+    public async Task<IActionResult> SignalRToken()
+    {
+        var user = await _uow.Users.GetByIdAsync(User.UserId())
+                   ?? throw ApiException.Unauthorized("Account not found");
+        return Ok(ApiResult.Ok(new { token = _tokens.CreateAccessToken(user) }));
+    }
 }
