@@ -178,6 +178,11 @@ export default function LoginPage() {
               Already signed in as {user.name} — signing in again switches accounts.
             </p>
           )}
+
+          <p className="mt-6 text-sm text-gray-500 text-center">
+            New here?{" "}
+            <a href="/signup" className="font-semibold text-[#e0447d] hover:underline">Create an account</a>
+          </p>
         </div>
       </section>
     </main>

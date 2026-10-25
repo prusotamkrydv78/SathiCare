@@ -67,9 +67,6 @@ export default function ConsultationChatPage() {
 
     const conn = createConsultationConnection();
     connRef.current = conn;
-    if (typeof window !== "undefined") {
-      (window as unknown as { __conn?: unknown }).__conn = conn;
-    }
 
     conn.on("consultation-joined", () => setStatus("connected"));
     conn.on("message-received", (m: { id: string; senderType: "user" | "doctor"; senderName: string; content: string; sentAt: string }) => {
